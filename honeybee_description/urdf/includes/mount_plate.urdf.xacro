@@ -1,0 +1,191 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro">
+
+  <xacro:macro name="mount_plate" params="prefix parent height:=0 pattern:='0 0' radius:='0.003' material:='cpr_grey'">
+           
+    <xacro:property name="plate" value="${plate.split(',')}" lazy_eval="false" />
+    <xacro:property name="plate" value="${plate.pop(0).split(' ')}" lazy_eval="false" />
+
+    <xacro:property name="pattern" value="${pattern.split(',')}" lazy_eval="false" />
+    <xacro:property name="pattern" value="${pattern.pop(0).split(' ')}" lazy_eval="false" />
+
+    <xacro:property name="xyz" value="${xyz.split(',')}" lazy_eval="false" />
+    <xacro:property name="xyz" value="${xyz.pop(0).split(' ')}" lazy_eval="false" />
+    <xacro:property name="mount_base_zaxis" value="${xyz[2]}" />
+
+    <xacro:property name="rpy" value="${rpy.split(',')}" lazy_eval="false" />
+    <xacro:property name="rpy" value="${rpy.pop(0).split(' ')}" lazy_eval="false" />
+
+    <xacro:property name="plate_length" value="${plate[0]}" />
+    <xacro:property name="plate_width"  value="${plate[1]}" />
+    <xacro:property name="plate_height" value="${plate[2]}" />
+
+    <xacro:property name="pattern_x"    value="${pattern[0]}" />
+    <xacro:property name="pattern_y"    value="${pattern[1]}" />
+    
+
+    <!--#################################################
+                       MOUNTING PLATE
+    #####################################################-->
+
+    <link name="${prefix}_custom_mount" />
+
+    <link name="${prefix}_mount_plate">
+      <visual>
+        <material name="cpr_grey" />
+        <geometry>
+          <box size="${plate_length} ${plate_width} ${plate_height}" />
+        </geometry>
+        <origin xyz="0 0 -${(plate_height/2)}" rpy="0 0 0" />
+      </visual>
+      <collision>
+        <geometry>
+          <box size="${plate_length} ${plate_width} ${plate_height}" />
+        </geometry>
+        <origin xyz="0 0 -${(plate_height/2)}" rpy="0 0 0" />
+      </collision>
+    </link>
+
+    <joint name="${prefix}_custom_mount_joint" type="fixed">
+      <parent link="${parent}" />
+      <child link="${prefix}_custom_mount" />
+      <origin xyz="${xyz[0]} ${xyz[1]} ${mount_base_zaxis}" rpy="${rpy[0]} ${rpy[1]} ${rpy[2]}" />
+      <!--<xacro:insert_block name="origin" />-->
+    </joint>
+
+    <joint name="${prefix}_mount_plate_joint" type="fixed">
+      <parent link="${prefix}_custom_mount" />
+      <child link="${prefix}_mount_plate" />
+      <origin xyz="0 0 ${(height+plate_height)}" rpy="0 0 0" />
+    </joint>
+
+    <!--#################################################
+                          LEG LINKS
+    #####################################################-->
+
+    <xacro:if value="${height}">
+    
+        <link name="${prefix}_tower_leg1">
+          <visual>
+            <material name="cpr_white" />
+            <geometry>
+              <cylinder length="${height}" radius="${radius}" />
+            </geometry>
+            <origin xyz="0 0 ${height/2}" rpy="0 0 0" />
+          </visual>
+          <collision>
+            <geometry>
+              <cylinder length="${height}" radius="${radius}" />
+            </geometry>
+            <origin xyz="0 0 ${height/2}" rpy="0 0 0" />
+          </collision>
+        </link>
+
+        <link name="${prefix}_tower_leg2">
+          <visual>
+            <material name="cpr_white" />
+            <geometry>
+              <cylinder length="${height}" radius="${radius}" />
+            </geometry>
+            <origin xyz="0 0 ${height/2}" rpy="0 0 0" />
+          </visual>
+          <collision>
+            <geometry>
+              <cylinder length="${height}" radius="${radius}" />
+            </geometry>
+            <origin xyz="0 0 ${height/2}" rpy="0 0 0" />
+          </collision>
+        </link>
+
+        <link name="${prefix}_tower_leg3">
+          <visual>
+            <material name="cpr_white" />
+            <geometry>
+              <cylinder length="${height}" radius="${radius}" />
+            </geometry>
+            <origin xyz="0 0 ${height/2}" rpy="0 0 0" />
+          </visual>
+          <collision>
+            <geometry>
+              <cylinder length="${height}" radius="${radius}" />
+            </geometry>
+            <origin xyz="0 0 ${height/2}" rpy="0 0 0" />
+          </collision>
+        </link>
+        
+        <link name="${prefix}_tower_leg4">
+          <visual>
+            <material name="cpr_white" />
+            <geometry>
+              <cylinder length="${height}" radius="${radius}" />
+            </geometry>
+            <origin xyz="0 0 ${height/2}" rpy="0 0 0" />
+          </visual>
+          <collision>
+            <geometry>
+              <cylinder length="${height}" radius="${radius}" />
+            </geometry>
+            <origin xyz="0 0 ${height/2}" rpy="0 0 0" />
+          </collision>
+        </link>
+
+        <!--#################################################
+                              LEG JOINTS 
+        #####################################################-->
+
+        <!-- LEG 1 -->
+        <joint name="${prefix}_tower_leg1_joint" type="fixed">
+          <parent link="${prefix}_custom_mount" />
+          <child link="${prefix}_tower_leg1" />
+          <origin xyz="${pattern_x/2} ${pattern_y/2} 0" rpy="0 0 0" />
+        </joint>
+
+        <!-- LEG 2 -->
+        <joint name="${prefix}_tower_leg2_joint" type="fixed">
+          <parent link="${prefix}_custom_mount" />
+          <child link="${prefix}_tower_leg2" />
+          <origin xyz="${pattern_x/2} ${-pattern_y/2} 0" rpy="0 0 0" />
+        </joint>
+
+        <!-- LEG 3 -->
+        <joint name="${prefix}_tower_leg3_joint" type="fixed">
+          <parent link="${prefix}_custom_mount" />
+          <child link="${prefix}_tower_leg3" />
+          <origin xyz="-${pattern_x/2} ${pattern_y/2} 0" rpy="0 0 0" />
+        </joint>
+
+        <!-- LEG 4 -->
+        <joint name="${prefix}_tower_leg4_joint" type="fixed">
+          <parent link="${prefix}_custom_mount" />
+          <child link="${prefix}_tower_leg4" />
+          <origin xyz="${-pattern_x/2} ${-pattern_y/2} 0" rpy="0 0 0" />
+        </joint>
+
+    </xacro:if>
+  
+  </xacro:macro>
+
+  <xacro:if value="$(optenv MOUNT_PLATE_ENABLED 0)">
+
+    <xacro:property name="prefix"                    value="$(optenv MOUNT_PLATE_PREFIX tower)" />
+    <xacro:property name="parent"                    value="$(optenv MOUNT_PLATE_PARENT base_link)" />
+    <xacro:property name="height"                    value="$(optenv MOUNT_TOWER_HEIGHT 0)" />
+    <xacro:property name="radius"                    value="$(optenv MOUNT_LEG_RADIUS 0.003)" />
+
+    <xacro:property name="dimensions"                value="$(optenv MOUNT_PLATE_DIMENSIONS 0.140 0.140 0.00635)" />
+    <xacro:property name="pattern"                   value="$(optenv MOUNT_PLATE_PATTERN 0 0)" />
+    <xacro:property name="xyz"                       value="$(optenv MOUNT_PLATE_XYZ 0 0 0)" />
+    <xacro:property name="rpy"                       value="$(optenv MOUNT_PLATE_RPY 0 0 0)" />
+
+    <xacro:mount_plate prefix="${prefix}" parent="${parent}" height="${height}" pattern="${pattern}" radius="${radius}">
+      <xacro:property name="plate"     value="${dimensions}" lazy_eval="false" />
+      <xacro:property name="radius"    value="${radius}"     lazy_eval="false" />
+      <xacro:property name="xyz"       value="${xyz}"        lazy_eval="false" />
+      <xacro:property name="rpy"       value="${rpy}"        lazy_eval="false" />
+    </xacro:mount_plate>
+    
+  </xacro:if>
+  
+</robot>
+
+

@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:include filename="${find_package}/urdf/includes/colours.urdf.xacro" />
+  <xacro:include filename="${find_package}/urdf/includes/mount_plate.urdf.xacro" />
+
+  <!--#################################################
+                    CREATE REF LINK
+  #####################################################-->
+
+  <xacro:macro name="link" params="name parent type:='fixed' *origin">
+    <link name="${name}_link" />
+    <joint name="${name}_joint" type="fixed">
+      <parent link="${parent}" />
+      <child link="${name}_link" />
+      <xacro:insert_block name="origin" />
+    </joint>
+  </xacro:macro>
+
+  <!--#################################################
+                        ADD MESH
+  #####################################################-->
+
+  <xacro:macro name="mesh" params="name parent include:='${package}/meshes' mesh material *origin">
+    <link name="${name}_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://${include}/${mesh}" />
+        </geometry>
+        <material name="${material}" />
+      </visual>
+      <collision>
+        <origin xyz="0 0 0"/>
+        <geometry>
+          <mesh filename="package://${include}/${mesh}" />
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="${name}_joint" type="fixed">
+      <parent link="${parent}" />
+      <child link="${name}_link" />
+      <xacro:insert_block name="origin" />
+    </joint>
+  </xacro:macro>
+
+  <!--#################################################
+                        ADD SHAPE
+  #####################################################-->
+
+  <!-- INSERT SHAPE -->
+  <xacro:macro name="insert_shape" params="type dimensions">
+    <xacro:if value="${type == 'box'}">
+      <box size="${dimensions[0]} ${dimensions[1]} ${dimensions[2]}" />
+    </xacro:if>
+    <xacro:if value="${type == 'cylinder'}">
+      <cylinder length="${dimensions[0]}" radius="${dimensions[1]}" />
+    </xacro:if>
+    <xacro:if value="${type == 'sphere'}">
+      <sphere radius="${dimensions}" />
+    </xacro:if>
+  </xacro:macro>
+
+  <!-- CREATE SHAPE -->
+  <xacro:macro name="shape" params="name parent type material:='cpr_grey'">
+    
+    <!-- BOX:       <xacro:property name="dimensions" value="length width height" />  -->
+    <!-- CYLINDER:  <xacro:property name="dimensions" value="length radius" />        -->
+    <xacro:if value="${type == 'box' or type == 'cylinder'}">
+      <!-- string to array -->
+      <xacro:property name="dimensions" value="${dimensions.split(',')}" lazy_eval="false" />
+      <xacro:property name="dimensions" value="${dimensions.pop(0).split(' ')}" lazy_eval="false" />
+      <!-- set height for box/cylinder -->
+      <xacro:if value="${type == 'box'}">
+        <xacro:property name="height" value="${dimensions[2]}" />
+      </xacro:if>
+      <xacro:if value="${type == 'cylinder'}">
+        <xacro:property name="height" value="${dimensions[0]}" />
+      </xacro:if>
+    </xacro:if>
+
+    <!-- SPHERE:   <xacro:property name="radius" value="radius" /> -->
+    <xacro:if value="${type == 'sphere'}">
+      <xacro:property name="height" value="${radius*2}" />
+      <xacro:property name="dimensions" value="${radius}" />
+    </xacro:if>
+
+    <xacro:property name="xyz" value="${xyz.split(',')}" lazy_eval="false" />
+    <xacro:property name="xyz" value="${xyz.pop(0).split(' ')}" lazy_eval="false" />
+    
+    <xacro:property name="rpy" value="${rpy.split(',')}" lazy_eval="false" />
+    <xacro:property name="rpy" value="${rpy.pop(0).split(' ')}" lazy_eval="false" />
+
+    <!-- CREATE LINK -->
+    <link name="${name}_link">
+      <visual>
+        <geometry>
+          <xacro:insert_shape type="${type}" dimensions="${dimensions}" />
+        </geometry>
+        <material name="${material}"/>
+          <origin xyz="0 0 -${height/2}" rpy="0 0 0" /> 
+      </visual>
+      <collision>
+        <geometry>
+          <xacro:insert_shape type="${type}" dimensions="${dimensions}" />
+        </geometry>
+        <origin xyz="0 0 -${height/2}" rpy="0 0 0" />
+      </collision>
+    </link>
+
+    <!-- CREATE JOINT -->
+    <joint name="${name}_joint" type="fixed">
+      <parent link="${parent}" />
+      <child link="${name}_link" />
+      <origin 
+        xyz="${xyz[0]} ${xyz[1]} ${height + float(xyz[2])}" 
+        rpy="${rpy[0]} ${rpy[1]} ${rpy[2]}" 
+      />
+    </joint>
+
+  </xacro:macro>
+
+</robot>
