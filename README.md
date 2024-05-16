@@ -1,5 +1,11 @@
-# ona01_jackal
+# Open Navigation - AMD Demonstrations
 
-A repository for ONA01 Jackal. x2 Jackals come with the ARK enclosure, an Ouster OS0-32 Lidar, RealSense D435i and Microstrain GX-25.
+A project for demonstrations using AMD's Ryzen AI CPU and acceleration technologies with Nav2, ROS 2, and the robotics industry.
 
-![ONA01 Custom Jackal](doc/ona01_jackal.png "ONA01 Custom Jackal")
+These demonstrations orbit around Honeybee, a Clearpath Robotics Jackal outfitted with:
+- AMD Ryzen Zen4 CPU
+- Ouster OS0-32 lidar
+- Realsense D435i depth camera
+- Microstrain GX-25
+
+![Honeybee](./honeybee_description/doc/ona01_jackal.png)
