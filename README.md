@@ -1,4 +1,4 @@
-# Open Navigation - AMD Demonstrations
+# Open Navigation - AMD Ryzen AI Demonstrations
 
 A project for demonstrations using AMD's Ryzen AI CPU and acceleration technologies with Nav2, ROS 2, and the robotics industry.
 
