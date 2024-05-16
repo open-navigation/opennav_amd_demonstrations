@@ -8,4 +8,4 @@ These demonstrations orbit around Honeybee, a Clearpath Robotics Jackal outfitte
 - Realsense D435i depth camera
 - Microstrain GX-25
 
-![Honeybee](./honeybee_description/doc/ona01_jackal.png)
+![Honeybee](./honeybee_description/docs/ona01_jackal.png)
