@@ -8,9 +8,4 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 
-install(PROGRAMS
-  scripts/install
-  DESTINATION lib/${PROJECT_NAME}/
-)
-
 ament_package()

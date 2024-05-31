@@ -23,13 +23,15 @@ Steve Notes:
 
 AMD
 
-- [ ] simulation
+- [ ] simulation (problem with wheels?)
+
+- [ ] IMU filter for the internal or external? can just throw out internal?
+- [ ] There is the mux / teleop node / joy / localization / ros control configs used?
 
 - [ ] DOCUMENT for future reference for myself and others
 
-- [ ] Ouster
-
-- [ ] bringup launch files for robot
+- [ ] bringup launch files for robot + ouster
+- [ ] parent bringup on the sensors and platform
 - [ ] daemon for bringup
 - [ ] nav2 launch files 
 - [ ] demo files
