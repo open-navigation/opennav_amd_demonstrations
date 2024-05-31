@@ -1,39 +1,58 @@
 <?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="honeybee">
 
-<robot xmlns:xacro="http://ros.org/wiki/xacro">
-
-  <!-- Description Package -->
-  <xacro:property name="package"      value="ona01_description" />
+  <!-- Properties -->
+  <xacro:property name="package"      value="honeybee_description" />
   <xacro:property name="find_package" value="$(find ${package})" />
+  <xacro:property name="meshes"             value="${package}/meshes/" />
+  <xacro:property name="realsense_mount"    value="realsense_fixed_mount.STL" />
 
   <!-- Includes -->
   <xacro:include filename="${find_package}/urdf/includes/custom_macros.urdf.xacro" />
   <xacro:include filename="${find_package}/urdf/includes/OS0-32.urdf.xacro" />
-  
-  <!-- MESHES -->
-  <xacro:property name="meshes"             value="${package}/meshes/" />
-  <xacro:property name="realsense_mount"    value="realsense_fixed_mount.STL" />
+  <xacro:include filename="$(find clearpath_platform_description)/urdf/common.urdf.xacro"/>
+  <xacro:include filename="$(find clearpath_platform_description)/urdf/j100/j100.urdf.xacro"/>
+  <xacro:include filename="$(find clearpath_platform_description)/urdf/j100/attachments/fender.urdf.xacro"/>
+  <xacro:include filename="$(find clearpath_platform_description)/urdf/j100/attachments/top_plate.urdf.xacro"/>
+  <xacro:include filename="$(find clearpath_sensors_description)/urdf/intel_realsense.urdf.xacro"/>
+  <xacro:include filename="$(find clearpath_sensors_description)/urdf/microstrain_imu.urdf.xacro"/>
 
-  <!-- ARK Bulkhead Top Ref. Link -->
+  <!-- Clearpath base platform -->
+  <xacro:j100 wheel="default"/>
+  <xacro:fender name="front_fender" model="default" parent_link="base_link">
+    <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+  </xacro:fender>
+  <xacro:fender name="rear_fender" model="default" parent_link="base_link">
+    <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 3.1415"/>
+  </xacro:fender>
+  <xacro:top_plate name="ark_enclosure" model="ark_enclosure" parent_link="default_mount">
+    <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+  </xacro:top_plate>
+
+  <!-- Metal enclosure -->
   <xacro:link name="ark_enclosure_top" parent="ark_enclosure_link" type="fixed">
   	<origin xyz="0 0 0.06803" rpy="0 0 0" />
   </xacro:link>
 
-  <!-- RealSense Mount -->
+  <!-- Sensors -->
+  <xacro:intel_realsense name="camera_0" parent_link="realsense_mount_link" update_rate="30" image_height="480" image_width="640">
+    <origin xyz="0.0 0.0 0.004" rpy="0.0 0.0 0.0"/>
+  </xacro:intel_realsense>
   <xacro:mesh name="realsense_mount" parent="ark_enclosure_top_link" mesh="${realsense_mount}" material="cpr_grey">
     <origin xyz="0.1344 0 0" rpy="0 0 0" />
   </xacro:mesh>
-  
-  <!-- Ouster Tower -->
+
+  <xacro:microstrain_imu name="imu_1" parent_link="base_link" update_rate="100">
+    <origin xyz="0.093 0.103 0.1881" rpy="0.0 0.0 -1.57"/>
+  </xacro:microstrain_imu>
+
+  <xacro:OS0-32 parent="ouster_tower_mount_plate">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </xacro:OS0-32>
   <xacro:mount_plate prefix="ouster_tower" parent="ark_enclosure_top_link" pattern=".08 .08" height="0.125" radius="0.005">
     <xacro:property name="plate"     value="0 0 0" />
     <xacro:property name="xyz"       value="0 0 0" />
     <xacro:property name="rpy"       value="0 0 0" />
   </xacro:mount_plate>
 
-  <!-- Ouster Lidar -->
-  <xacro:OS0-32 parent="ouster_tower_mount_plate">
-    <origin xyz="0 0 0" rpy="0 0 0" />
-  </xacro:OS0-32>
-  
 </robot>

@@ -7,11 +7,15 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(urdf REQUIRED)
 
 install(DIRECTORY
   urdf
   meshes
+  launch
+  rviz
   DESTINATION share/${PROJECT_NAME}/
 )
 
+ament_export_dependencies(xacro urdf)
 ament_package()

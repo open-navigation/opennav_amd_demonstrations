@@ -55,7 +55,7 @@
       <visual name="base_visual">
          <origin xyz="0 0 0.0" rpy="0 0 1.5707" />
          <geometry>
-	         <mesh filename="package://ona01_description/meshes/os1_64.dae" />
+	         <mesh filename="package://honeybee_description/meshes/os1_64.dae" />
            <!-- <cylinder length="0.073" radius="0.04" /> -->
          </geometry>
       </visual>
