@@ -1,0 +1,14 @@
+ouster_driver:
+  ros__parameters:
+    lidar_ip: 10.5.5.96         
+    computer_ip: 10.5.5.1    
+    lidar_mode: "1024x10"
+    imu_port: 7503
+    lidar_port: 7502
+    sensor_frame: laser_sensor_frame
+    laser_frame: laser_data_frame
+    imu_frame: imu_data_frame
+
+    use_system_default_qos: False
+    timestamp_mode: TIME_FROM_INTERNAL_OSC
+    proc_mask: IMG|PCL|IMU|SCAN

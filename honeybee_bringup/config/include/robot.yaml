@@ -5,7 +5,7 @@ system:
     - hostname: cpr-j100-0849 # or j100-0842
       ip: 192.168.131.1
   ros2:
-    namespace: j100_0849 # or j100-0842
+    namespace: '' # j100_0849 or j100-0842
     domain_id: 0
     workspaces: [/home/administrator/colcon_ws/install/setup.bash]
 platform:
@@ -50,7 +50,7 @@ sensors:
         camera:
           camera_name: camera_0
           device_type: d435
-          serial_no: "341622073339"
+          serial_no: "341622073339" # or the other
           enable_color: true
           rgb_camera.profile: 640,480,30
           enable_depth: true

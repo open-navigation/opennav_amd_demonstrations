@@ -7,24 +7,26 @@ from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
+    pkg_microstrain_inertial_driver = FindPackageShare('microstrain_inertial_driver')
 
-    # Include Packages
-    pkg_clearpath_sensors = FindPackageShare('clearpath_sensors')
+    parameters = LaunchConfiguration('parameters')
+    arg_parameters = DeclareLaunchArgument(
+        'parameters',
+        default_value=PathJoinSubstitution([
+          FindPackageShare('honeybee_bringup'), 'config', 'microstrain.yaml']))
 
-    # Declare launch files
-    launch_file_microstrain_imu = PathJoinSubstitution([
-        pkg_clearpath_sensors, 'launch', 'microstrain_imu.launch.py'])
+    launch_microstrain_imu = Node(
+        package = 'microstrain_inertial_driver',
+        executable = 'microstrain_inertial_driver_node',
+        name = 'microstrain_inertial_driver',
+        parameters = [parameters],
+        output='screen',
+        remappings=[
+            ('/tf_static', 'tf_static'), ('/tf', 'tf'),
+            ('/imu/data', 'data'), ('/moving_ang', 'moving_ang')]
+        )
 
-    # Include launch files
-    launch_microstrain_imu = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([launch_file_microstrain_imu]),
-        launch_arguments=
-            [('parameters', '/etc/clearpath/sensors/config/imu_1.yaml'),
-             ('namespace', 'j100_0849/sensors/imu_1'),
-             ('robot_namespace', 'j100_0849')]
-    )
-
-    # Create LaunchDescription
     ld = LaunchDescription()
+    ld.add_action(arg_parameters)
     ld.add_action(launch_microstrain_imu)
     return ld

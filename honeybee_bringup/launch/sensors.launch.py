@@ -1,30 +1,33 @@
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, ExecuteProcess
+from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import EnvironmentVariable, FindExecutable, PathJoinSubstitution, LaunchConfiguration
-from launch_ros.actions import Node
+from launch.substitutions import PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
 
-    # Include Packages
+    launch_file_camera = PathJoinSubstitution([
+          FindPackageShare('honeybee_bringup'), 'launch', 'realsense.launch.py'])
+    launch_file_imu = PathJoinSubstitution([
+          FindPackageShare('honeybee_bringup'), 'launch', 'microstrain.launch.py'])
+    launch_file_lidar = PathJoinSubstitution([
+          FindPackageShare('honeybee_bringup'), 'launch', 'ouster.launch.py'])
 
-    # Declare launch files
-    launch_file_camera_0 = '/etc/clearpath/sensors/launch/camera_0.launch.py'
-    launch_file_imu_1 = '/etc/clearpath/sensors/launch/imu_1.launch.py'
-
-    # Include launch files
-    launch_camera_0 = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([launch_file_camera_0]),
+    launch_camera = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([launch_file_camera]),
     )
 
-    launch_imu_1 = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([launch_file_imu_1]),
+    launch_imu = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([launch_file_imu]),
     )
 
-    # Create LaunchDescription
+    launch_lidar = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([launch_file_lidar]),
+    )
+
     ld = LaunchDescription()
-    ld.add_action(launch_camera_0)
-    ld.add_action(launch_imu_1)
+    ld.add_action(launch_camera)
+    ld.add_action(launch_imu)
+    ld.add_action(launch_lidar)
     return ld

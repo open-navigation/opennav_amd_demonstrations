@@ -8,42 +8,133 @@ from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
 
-    launch_arg_imu_filter = DeclareLaunchArgument(
-        'imu_filter',
-        default_value='/etc/clearpath/platform/config/imu_filter.yaml',
-        description='')
+    imu_filter_params = FindPackageShare('honeybee_bringup'), 'config', 'imu_filter.yaml']
+    robot_localization_params = FindPackageShare('honeybee_bringup'), 'config', 'robot_localization.yaml']
+    teleop_joy_params = FindPackageShare('honeybee_bringup'), 'config', 'teleop_joy.yaml']
+    twist_mux_params = FindPackageShare('honeybee_bringup'), 'config', 'twist_mux.yaml']
+    ros_control_params = FindPackageShare('honeybee_bringup'), 'config', 'ros_control.yaml']
 
-    imu_filter = LaunchConfiguration('imu_filter')
+    setup_path = PathJoinSubstitution([
+        FindPackageShare('honeybee_bringup'), 'config', 'include'])
+ 
+    use_sim_time = LaunchConfiguration('use_sim_time')
+    arg_use_sim_time = DeclareLaunchArgument(
+        'use_sim_time',
+        choices=['true', 'false'],
+        default_value='false',
+        description='Use simulation time'
+    )
 
-    # Include Packages
-    pkg_clearpath_platform = FindPackageShare('clearpath_platform')
-    pkg_clearpath_diagnostics = FindPackageShare('clearpath_diagnostics')
+    # Nodes and launch files for robot base
+    action_control_group = GroupAction([
+        Node(
+            package='controller_manager',
+            executable='ros2_control_node',
+            parameters=[ros_control_params],
+            output={
+                'stdout': 'screen',
+                'stderr': 'screen',
+            },
+            remappings=[
+              ('platform_velocity_controller/odom', 'platform/odom'),
+              ('platform_velocity_controller/cmd_vel_unstamped', 'platform/cmd_vel_unstamped'),
+              ('joint_states', 'platform/joint_states'),
+              ('dynamic_joint_states', 'platform/dynamic_joint_states'),
+              ('/diagnostics', 'diagnostics'),
+              ('/tf', 'tf'),
+              ('/tf_static', 'tf_static'),
+              ('~/robot_description', 'robot_description')
+            ],
+            condition=UnlessCondition(use_sim_time)
+        ),
 
-    # Declare launch files
-    launch_file_platform = PathJoinSubstitution([
-        pkg_clearpath_platform, 'launch', 'platform.launch.py'])
-    launch_file_diagnostics = PathJoinSubstitution([
-        pkg_clearpath_diagnostics, 'launch', 'diagnostics.launch.py'])
+        # Joint State Broadcaster
+        Node(
+            package='controller_manager',
+            executable='spawner',
+            arguments=['--controller-manager-timeout', '60', 'joint_state_broadcaster'],
+            output='screen',
+        ),
 
-    # Include launch files
-    launch_platform = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([launch_file_platform]),
-        launch_arguments=
-            [('setup_path', '/etc/clearpath/'),
-             ('use_sim_time', 'false'),
-             ('namespace', 'j100_0849')]
+        # Velocity Controller
+        Node(
+            package='controller_manager',
+            executable='spawner',
+            arguments=['--controller-manager-timeout', '60', 'platform_velocity_controller'],
+            output='screen',
+        )
+    ])
+
+    node_localization = Node(
+            package='robot_localization',
+            executable='ekf_node',
+            name='ekf_node',
+            output='screen',
+            parameters=[robot_localization_params],
+            remappings=[
+              ('odometry/filtered', 'platform/odom/filtered'),
+              ('/diagnostics', 'diagnostics'),
+              ('/tf', 'tf'),
+              ('/tf_static', 'tf_static'),
+            ]
+        )
+
+    node_joy = Node(
+        package='joy_linux',
+        executable='joy_linux_node',
+        output='screen',
+        name='joy_node',
+        parameters=[
+            teleop_joy_params,
+            {'use_sim_time': use_sim_time}],
+        remappings=[
+            ('/diagnostics', 'diagnostics'),
+            ('/tf', 'tf'),
+            ('/tf_static', 'tf_static'),
+            ('joy', 'joy_teleop/joy'),
+            ('joy/set_feedback', 'joy_teleop/joy/set_feedback'),
+        ]
+    )
+
+    node_teleop_twist_joy = Node(
+        package='teleop_twist_joy',
+        executable='teleop_node',
+        output='screen',
+        name='teleop_twist_joy_node',
+        parameters=[
+            teleop_joy_params,
+            {'use_sim_time': use_sim_time}],
+        remappings=[
+            ('joy', 'joy_teleop/joy'),
+            ('cmd_vel', 'joy_teleop/cmd_vel'),
+        ]
+    )
+
+    node_twist_mux = Node(
+        package='twist_mux',
+        executable='twist_mux',
+        output='screen',
+        remappings={
+            ('cmd_vel_out', 'platform/cmd_vel_unstamped'),
+            ('/diagnostics', 'diagnostics'),
+            ('/tf', 'tf'),
+            ('/tf_static', 'tf_static'),
+        },
+        parameters=[
+            twist_mux_params,
+            {'use_sim_time': use_sim_time}]
     )
 
     launch_diagnostics = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([launch_file_diagnostics]),
+        PythonLaunchDescriptionSource([PathJoinSubstitution([
+            FindPackageShare('clearpath_diagnostics'), 'launch', 'diagnostics.launch.py'])]),
+        launch_arguments=[('setup_path', setup_path)]
     )
 
-    # Nodes
     node_wireless_watcher = Node(
         name='wireless_watcher',
         executable='wireless_watcher',
         package='wireless_watcher',
-        namespace='j100_0849',
         output='screen',
         parameters=
             [{'hz': 1.0, 'dev': '',
@@ -55,39 +146,35 @@ def generate_launch_description():
         name='battery_state_estimator',
         executable='battery_state_estimator',
         package='clearpath_diagnostics',
-        namespace='j100_0849',
         output='screen',
-        arguments=['-s', '/etc/clearpath/'],
+        arguments=['-s', setup_path],
     )
 
     node_battery_state_control = Node(
         name='battery_state_control',
         executable='battery_state_control',
         package='clearpath_diagnostics',
-        namespace='j100_0849',
         output='screen',
-        arguments=['-s', '/etc/clearpath/']
+        arguments=['-s', setup_path]
     )
 
     node_imu_filter_node = Node(
         name='imu_filter_node',
         executable='imu_filter_madgwick_node',
         package='imu_filter_madgwick',
-        namespace='j100_0849',
         output='screen',
         remappings=
             [('imu/data_raw', 'sensors/imu_0/data_raw'),
              ('imu/mag', 'sensors/imu_0/magnetic_field'),
              ('imu/data', 'sensors/imu_0/data'),
              ('/tf', 'tf')],
-        parameters=[imu_filter],
+        parameters=[imu_filter_params],
     )
 
     node_micro_ros_agent = Node(
         name='micro_ros_agent',
         executable='micro_ros_agent',
         package='micro_ros_agent',
-        namespace='j100_0849',
         output='screen',
         arguments=['serial', '--dev', '/dev/clearpath/j100'],
     )
@@ -96,7 +183,6 @@ def generate_launch_description():
         name='nmea_topic_driver',
         executable='nmea_topic_driver',
         package='nmea_navsat_driver',
-        namespace='j100_0849',
         output='screen',
         remappings=
             [('nmea_sentence', 'sensors/gps_0/nmea_sentence'),
@@ -115,14 +201,18 @@ def generate_launch_description():
               ' service call platform/mcu/configure',
               ' clearpath_platform_msgs/srv/ConfigureMcu',
               ' "{domain_id: 0,',
-              ' robot_namespace: \'j100_0849\'}"'],
+              ' robot_namespace: \'\'}"'],
             ]
     )
 
     # Create LaunchDescription
     ld = LaunchDescription()
-    ld.add_action(launch_arg_imu_filter)
-    ld.add_action(launch_platform)
+    ld.add_action(arg_use_sim_time)
+    ld.add_action(node_localization)
+    ld.add_action(action_control_group) 
+    ld.add_action(node_joy)
+    ld.add_action(node_teleop_twist_joy)
+    ld.add_action(node_twist_mux)
     ld.add_action(launch_diagnostics)
     ld.add_action(node_wireless_watcher)
     ld.add_action(node_battery_state_estimator)

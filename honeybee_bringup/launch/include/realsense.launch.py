@@ -7,24 +7,22 @@ from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
+    parameters = LaunchConfiguration('parameters')
+    arg_parameters = DeclareLaunchArgument(
+        'parameters',
+        default_value=PathJoinSubstitution([
+          FindPackageShare('honeybee_bringup'), 'config', 'realsense.yaml']))
 
-    # Include Packages
-    pkg_clearpath_sensors = FindPackageShare('clearpath_sensors')
-
-    # Declare launch files
-    launch_file_intel_realsense = PathJoinSubstitution([
-        pkg_clearpath_sensors, 'launch', 'intel_realsense.launch.py'])
-
-    # Include launch files
-    launch_intel_realsense = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([launch_file_intel_realsense]),
-        launch_arguments=
-            [('parameters', '/etc/clearpath/sensors/config/camera_0.yaml'),
-             ('namespace', 'j100_0849/sensors/camera_0'),
-             ('robot_namespace', 'j100_0849')]
+    realsense2_camera_node = Node(
+        package='realsense2_camera',
+        name='intel_realsense',
+        executable='realsense2_camera_node',
+        parameters=[parameters],
+        output='screen',
+        remappings=[('/tf_static', 'tf_static'), ('/tf', 'tf')]
     )
 
-    # Create LaunchDescription
     ld = LaunchDescription()
-    ld.add_action(launch_intel_realsense)
+    ld.add_action(arg_parameters)
+    ld.add_action(realsense2_camera_node)
     return ld

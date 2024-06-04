@@ -10,6 +10,9 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
   
   <exec_depend>clearpath_config</exec_depend>
+  <exec_depend>honeybee_description</exec_depend>
+  <exec_depend>microstrain_inertial_driver</exec_depend>
+  <exec_depend>realsense2_camera</exec_depend>
   
   <export>
     <build_type>ament_cmake</build_type>
