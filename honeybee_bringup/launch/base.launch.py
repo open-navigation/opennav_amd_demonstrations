@@ -44,7 +44,7 @@ def generate_launch_description():
         Node(
             package='controller_manager',
             executable='ros2_control_node',
-            parameters=[ros_control_params],
+            parameters=[ros_control_params, {'use_sim_time': use_sim_time}],
             output={
                 'stdout': 'screen',
                 'stderr': 'screen',
@@ -67,6 +67,7 @@ def generate_launch_description():
             package='controller_manager',
             executable='spawner',
             arguments=['--controller-manager-timeout', '60', 'joint_state_broadcaster'],
+            parameters=[{'use_sim_time': use_sim_time}],
             output='screen',
         ),
 
@@ -75,6 +76,7 @@ def generate_launch_description():
             package='controller_manager',
             executable='spawner',
             arguments=['--controller-manager-timeout', '60', 'platform_velocity_controller'],
+            parameters=[{'use_sim_time': use_sim_time}],
             output='screen',
         )
     ])
@@ -84,7 +86,7 @@ def generate_launch_description():
             executable='ekf_node',
             name='ekf_node',
             output='screen',
-            parameters=[robot_localization_params],
+            parameters=[robot_localization_params, {'use_sim_time': use_sim_time}],
             remappings=[
               ('odometry/filtered', 'platform/odom/filtered'),
               ('/diagnostics', 'diagnostics'),
@@ -149,14 +151,14 @@ def generate_launch_description():
              ('imu/mag', 'sensors/imu_0/magnetic_field'),
              ('imu/data', 'sensors/imu_0/data'),
              ('/tf', 'tf')],
-        parameters=[imu_filter_params],
+        parameters=[imu_filter_params, {'use_sim_time': use_sim_time}],
     )
 
     # Below should only be run on hardware (not simulation)
     # launch_diagnostics = IncludeLaunchDescription(
     #     PythonLaunchDescriptionSource([PathJoinSubstitution([
     #         FindPackageShare('clearpath_diagnostics'), 'launch', 'diagnostics.launch.py'])]),
-    #     launch_arguments=[('setup_path', setup_path)],
+    #     launch_arguments={'setup_path': setup_path}.items(),
     #     condition=UnlessCondition(use_simulation)
     # )
 
@@ -168,36 +170,40 @@ def generate_launch_description():
         parameters=
             [{'hz': 1.0, 'dev': '',
               'connected_topic': 'platform/wifi_connected',
-              'connection_topic': 'platform/wifi_status'}],
+              'connection_topic': 'platform/wifi_status',
+              'use_sim_time': use_sim_time}],
         condition=UnlessCondition(use_simulation)
     )
 
-    # node_battery_state_estimator = Node(
-    #     name='battery_state_estimator',
-    #     executable='battery_state_estimator',
-    #     package='clearpath_diagnostics',
-    #     output='screen',
-    #     arguments=['-s', setup_path],
-    #     condition=UnlessCondition(use_simulation)
-    # )
+    node_battery_state_estimator = Node(
+        name='battery_state_estimator',
+        executable='battery_state_estimator',
+        package='clearpath_diagnostics',
+        output='screen',
+        arguments=['-s', setup_path],
+        parameters=[{'use_sim_time': use_sim_time}],
+        condition=UnlessCondition(use_simulation)
+    )
 
-    # node_battery_state_control = Node(
-    #     name='battery_state_control',
-    #     executable='battery_state_control',
-    #     package='clearpath_diagnostics',
-    #     output='screen',
-    #     arguments=['-s', setup_path],
-    #     condition=UnlessCondition(use_simulation)
-    # )
+    node_battery_state_control = Node(
+        name='battery_state_control',
+        executable='battery_state_control',
+        package='clearpath_diagnostics',
+        output='screen',
+        arguments=['-s', setup_path],
+        parameters=[{'use_sim_time': use_sim_time}],
+        condition=UnlessCondition(use_simulation)
+    )
 
-    # node_micro_ros_agent = Node(
-    #     name='micro_ros_agent',
-    #     executable='micro_ros_agent',
-    #     package='micro_ros_agent',
-    #     output='screen',
-    #     arguments=['serial', '--dev', '/dev/clearpath/j100'],
-    #     condition=UnlessCondition(use_simulation)
-    # )
+    node_micro_ros_agent = Node(
+        name='micro_ros_agent',
+        executable='micro_ros_agent',
+        package='micro_ros_agent',
+        output='screen',
+        arguments=['serial', '--dev', '/dev/clearpath/j100'],
+        parameters=[{'use_sim_time': use_sim_time}],
+        condition=UnlessCondition(use_simulation)
+    )
 
     node_nmea_topic_driver = Node(
         name='nmea_topic_driver',
@@ -210,6 +216,7 @@ def generate_launch_description():
              ('heading', 'sensors/gps_0/heading'),
              ('time_reference', 'sensors/gps_0/time_reference'),
              ('vel', 'sensors/gps_0/vel')],
+        parameters=[{'use_sim_time': use_sim_time}],
         condition=UnlessCondition(use_simulation)
     )
 
@@ -237,10 +244,10 @@ def generate_launch_description():
     ld.add_action(node_twist_mux)
     # ld.add_action(launch_diagnostics)
     ld.add_action(node_wireless_watcher)
-    # ld.add_action(node_battery_state_estimator)
-    # ld.add_action(node_battery_state_control)
+    ld.add_action(node_battery_state_estimator)
+    ld.add_action(node_battery_state_control)
     ld.add_action(node_imu_filter_node)
-    # ld.add_action(node_micro_ros_agent)
+    ld.add_action(node_micro_ros_agent)
     ld.add_action(node_nmea_topic_driver)
     ld.add_action(process_configure_mcu)
     return ld

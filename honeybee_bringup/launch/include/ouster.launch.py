@@ -26,6 +26,8 @@ from launch_ros.event_handlers import OnStateTransition
 from launch.actions import LogInfo
 from launch.events import matches_action
 from launch.event_handlers.on_shutdown import OnShutdown
+from launch.substitutions import LaunchConfiguration
+from launch.actions import DeclareLaunchArgument
 
 import lifecycle_msgs.msg
 import os
@@ -41,6 +43,13 @@ def generate_launch_description():
         'params_file',
         default_value=os.path.join(honeybee_dir, 'config', 'ouster.yaml'),
         description='')
+    use_sim_time = LaunchConfiguration('use_sim_time')
+    arg_use_sim_time = DeclareLaunchArgument(
+        'use_sim_time',
+        choices=['true', 'false'],
+        default_value='false',
+        description='Use simulation time'
+    )
 
     driver_node = LifecycleNode(package='ros2_ouster',
                                 executable='ouster_driver',
@@ -48,7 +57,7 @@ def generate_launch_description():
                                 output='screen',
                                 namespace='',
                                 emulate_tty=True,
-                                parameters=[parameter_file])
+                                parameters=[parameter_file, {'use_sim_time': use_sim_time}])
 
     configure_event = EmitEvent(
         event=ChangeState(
@@ -85,6 +94,7 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
+        arg_use_sim_time,
         params_declare,
         driver_node,
         activate_event,
