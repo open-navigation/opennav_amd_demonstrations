@@ -25,6 +25,14 @@ def generate_launch_description():
         description='Use simulation time'
     )
 
+    use_simulation = LaunchConfiguration('use_simulation')
+    arg_use_simulation = DeclareLaunchArgument(
+        'use_simulation',
+        choices=['true', 'false'],
+        default_value='false',
+        description='Use simulation'
+    )
+
     # Nodes and launch files for robot base
     action_control_group = GroupAction([
         Node(
@@ -138,14 +146,14 @@ def generate_launch_description():
         parameters=[imu_filter_params],
     )
 
-    # TODO not in sim
+    # Below should only be run on hardware (not simulation)
     launch_diagnostics = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([PathJoinSubstitution([
             FindPackageShare('clearpath_diagnostics'), 'launch', 'diagnostics.launch.py'])]),
-        launch_arguments=[('setup_path', setup_path)]
+        launch_arguments=[('setup_path', setup_path)],
+        condition=UnlessCondition(use_simulation)
     )
 
-    # TODO not in sim
     node_wireless_watcher = Node(
         name='wireless_watcher',
         executable='wireless_watcher',
@@ -155,36 +163,36 @@ def generate_launch_description():
             [{'hz': 1.0, 'dev': '',
               'connected_topic': 'platform/wifi_connected',
               'connection_topic': 'platform/wifi_status'}],
+        condition=UnlessCondition(use_simulation)
     )
 
-    # TODO not in sim
     node_battery_state_estimator = Node(
         name='battery_state_estimator',
         executable='battery_state_estimator',
         package='clearpath_diagnostics',
         output='screen',
         arguments=['-s', setup_path],
+        condition=UnlessCondition(use_simulation)
     )
 
-    # TODO not in sim
     node_battery_state_control = Node(
         name='battery_state_control',
         executable='battery_state_control',
         package='clearpath_diagnostics',
         output='screen',
-        arguments=['-s', setup_path]
+        arguments=['-s', setup_path],
+        condition=UnlessCondition(use_simulation)
     )
 
-    # TODO not in sim
     node_micro_ros_agent = Node(
         name='micro_ros_agent',
         executable='micro_ros_agent',
         package='micro_ros_agent',
         output='screen',
         arguments=['serial', '--dev', '/dev/clearpath/j100'],
+        condition=UnlessCondition(use_simulation)
     )
 
-    # TODO not in sim
     node_nmea_topic_driver = Node(
         name='nmea_topic_driver',
         executable='nmea_topic_driver',
@@ -196,9 +204,9 @@ def generate_launch_description():
              ('heading', 'sensors/gps_0/heading'),
              ('time_reference', 'sensors/gps_0/time_reference'),
              ('vel', 'sensors/gps_0/vel')],
+        condition=UnlessCondition(use_simulation)
     )
 
-    # TODO not in sim
     process_configure_mcu = ExecuteProcess(
         shell=True,
         cmd=
@@ -208,11 +216,13 @@ def generate_launch_description():
               ' clearpath_platform_msgs/srv/ConfigureMcu',
               ' "{domain_id: 0,',
               ' robot_namespace: \'\'}"'],
-            ]
+            ],
+        condition=UnlessCondition(use_simulation)
     )
 
     # Create LaunchDescription
     ld = LaunchDescription()
+    ld.add_action(arg_use_simulation)
     ld.add_action(arg_use_sim_time)
     ld.add_action(node_localization)
     ld.add_action(action_control_group) 

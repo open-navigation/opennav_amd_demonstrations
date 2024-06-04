@@ -17,21 +17,37 @@ def generate_launch_description():
         description='Use simulation time'
     )
 
+    use_simulation = LaunchConfiguration('use_simulation')
+    arg_use_simulation = DeclareLaunchArgument(
+        'use_simulation',
+        choices=['true', 'false'],
+        default_value='false',
+        description='Use simulation'
+    )
+
     launch_robot_hardware = PathJoinSubstitution([
           FindPackageShare('honeybee_bringup'), 'launch', 'base.launch.py'])
     launch_robot_sensors = PathJoinSubstitution([
           FindPackageShare('honeybee_bringup'), 'launch', 'sensors.launch.py'])
+    launch_robot_simulation = PathJoinSubstitution([
+          FindPackageShare('honeybee_bringup'), 'launch', 'simulation.launch.py'])
 
-    # TODO if sim, use sim launch file. If hardware, use hardware launch file
-    # TODO launch sim + bridge
     launch_base = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([launch_robot_hardware]),
         launch_arguments=[('use_sim_time', use_sim_time),
+                          ('use_simulation', use_simulation)]
     )
 
     launch_sensors = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([launch_robot_sensors]),
         launch_arguments=[('use_sim_time', use_sim_time),
+        condition=UnlessCondition(use_simulation)
+    )
+
+    launch_sensors = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([launch_robot_simulation]),
+        launch_arguments=[('use_sim_time', use_sim_time),
+        condition=IfCondition(use_simulation)
     )
 
     urdf = os.path.join(description_dir, 'urdf', 'honeybee_description.urdf.xacro')
@@ -55,6 +71,7 @@ def generate_launch_description():
 
     ld = LaunchDescription()
     ld.add_action(arg_use_sim_time)
+    ld.add_action(arg_use_simulation)
     ld.add_action(launch_robot_state_publisher_cmd)
     ld.add_action(launch_base)
     ld.add_action(launch_sensors)
