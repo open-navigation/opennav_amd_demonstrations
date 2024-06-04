@@ -44,7 +44,7 @@ def generate_launch_description():
         condition=UnlessCondition(use_simulation)
     )
 
-    launch_sensors = IncludeLaunchDescription(
+    launch_simulation = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([launch_robot_simulation]),
         launch_arguments=[('use_sim_time', use_sim_time),
         condition=IfCondition(use_simulation)
@@ -75,4 +75,5 @@ def generate_launch_description():
     ld.add_action(launch_robot_state_publisher_cmd)
     ld.add_action(launch_base)
     ld.add_action(launch_sensors)
+    ld.add_action(launch_simulation)
     return ld
