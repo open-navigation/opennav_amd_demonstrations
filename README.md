@@ -14,8 +14,3 @@ These demonstrations orbit around Honeybee, a Clearpath Robotics Jackal outfitte
 Clearpath specific assets
 - https://github.com/clearpathrobotics/clearpath_common
 - https://github.com/clearpathrobotics/clearpath_robot/
-
-AMD
-
-- [ ] simulation (problem with wheels?)
-- [ ] IMU filter for the internal or external? can just throw out internal?
