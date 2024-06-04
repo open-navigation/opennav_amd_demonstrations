@@ -1,4 +1,4 @@
-j100_0849:
+j100_0842:
   ekf_node:
     ros__parameters:
       odom_frame: 'odom'
@@ -6,7 +6,7 @@ j100_0849:
       world_frame: 'odom'
       publish_tf: True
       two_d_mode: True
-      use_sim_time: False
+      use_sim_time: True
       frequency: 50.0
       odom0: 'platform/odom'
       odom0_config: [True, True, False, False, False, True, True, True, False, False, False, True, False, False, False]

@@ -1,7 +1,7 @@
-j100_0849:
+j100_0842:
   twist_server_node:
     ros__parameters:
-      use_sim_time: False
+      use_sim_time: True
       link_name: 'base_link'
       robot: 'j100'
       linear_scale: 1.0

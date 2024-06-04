@@ -1,0 +1,74 @@
+serial_number: j100-0842
+version: 0
+system:
+  hosts:
+    - hostname: cpr-j100-0842
+      ip: 192.168.131.1
+  ros2:
+    namespace: j100_0842
+    domain_id: 0
+    workspaces: [/home/administrator/colcon_ws/install/setup.bash]
+platform:
+  attachments:
+    - name: front_fender
+      type: j100.fender
+    - name: rear_fender
+      type: j100.fender
+      rpy: [0.0, 0.0, 3.1415]
+    - name: ark_enclosure
+      type: top_plate
+      model: ark_enclosure
+      parent: default_mount
+      xyz: [0.0, 0.0, 0.0]
+      rpy: [0.0, 0.0, 0.0]
+      enabled: true
+  extras:
+    urdf:
+      package: ona01_description
+      path: urdf/ona01_jackal_description.urdf.xacro
+links:
+  box: []
+  cylinder: []
+  frame: []
+  mesh: []
+  sphere: []
+mounts:
+  bracket: []
+  fath_pivot: []
+  riser: []
+  disk: []
+  post: []
+sensors:
+  camera:
+    - model: intel_realsense
+      urdf_enabled: true
+      launch_enabled: true
+      parent: realsense_mount_link
+      xyz: [0.0, 0.0, 0.004]
+      rpy: [0.0, 0.0, 0.0]
+      ros_parameters:
+        intel_realsense:
+          camera_name: camera_0
+          device_type: d435
+          serial_no: "335222070279"
+          enable_color: true
+          rgb_camera.profile: 640,480,30
+          enable_depth: true
+          depth_module.profile: 640,480,30
+          pointcloud.enable: true
+  gps: []
+  imu:
+    - model: microstrain_imu
+      urdf_enabled: true
+      launch_enabled: true
+      parent: base_link
+      xyz: [0.093, 0.103, 0.1881]
+      rpy: [0.0, 0.0, -1.57]
+      ros_parameters:
+        microstrain_inertial_driver:
+          imu_frame_id: imu_1_link
+          port: /dev/microstrain_main
+          use_enu_frame: true
+  lidar2d: []
+  lidar3d: []
+

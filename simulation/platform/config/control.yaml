@@ -1,13 +1,13 @@
-j100_0849:
+j100_0842:
   controller_manager:
     ros__parameters:
       update_rate: 50
-      use_sim_time: False
+      use_sim_time: True
       joint_state_broadcaster.type: 'joint_state_broadcaster/JointStateBroadcaster'
       platform_velocity_controller.type: 'diff_drive_controller/DiffDriveController'
   platform_velocity_controller:
     ros__parameters:
-      use_sim_time: False
+      use_sim_time: True
       left_wheel_names: ['front_left_wheel_joint', 'rear_left_wheel_joint']
       right_wheel_names: ['front_right_wheel_joint', 'rear_right_wheel_joint']
       wheel_separation: 0.37559
