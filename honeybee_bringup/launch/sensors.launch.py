@@ -8,11 +8,11 @@ from launch_ros.substitutions import FindPackageShare
 def generate_launch_description():
 
     launch_file_camera = PathJoinSubstitution([
-          FindPackageShare('honeybee_bringup'), 'launch', 'realsense.launch.py'])
+          FindPackageShare('honeybee_bringup'), 'launch', 'include', 'realsense.launch.py'])
     launch_file_imu = PathJoinSubstitution([
-          FindPackageShare('honeybee_bringup'), 'launch', 'microstrain.launch.py'])
+          FindPackageShare('honeybee_bringup'), 'launch', 'include', 'microstrain.launch.py'])
     launch_file_lidar = PathJoinSubstitution([
-          FindPackageShare('honeybee_bringup'), 'launch', 'ouster.launch.py'])
+          FindPackageShare('honeybee_bringup'), 'launch', 'include', 'ouster.launch.py'])
 
     launch_camera = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([launch_file_camera]),

@@ -1,14 +1,20 @@
+import os
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
+from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import PathJoinSubstitution
+from launch.substitutions import Command, PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
+from launch.substitutions import PathJoinSubstitution, LaunchConfiguration
+from launch.conditions import IfCondition, UnlessCondition
+from launch_ros.actions import Node
+from launch_ros.descriptions import ParameterValue
+from ament_index_python.packages import get_package_share_directory
 
 
 def generate_launch_description():
 
     description_dir = get_package_share_directory('honeybee_description')
-    bringup_dir = get_package_share_directory('honeybee_bringup')
+    bringup_dir = FindPackageShare('honeybee_bringup')
     use_sim_time = LaunchConfiguration('use_sim_time')
     arg_use_sim_time = DeclareLaunchArgument(
         'use_sim_time',
@@ -40,18 +46,18 @@ def generate_launch_description():
 
     launch_sensors = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([launch_robot_sensors]),
-        launch_arguments=[('use_sim_time', use_sim_time),
+        launch_arguments=[('use_sim_time', use_sim_time)],
         condition=UnlessCondition(use_simulation)
     )
 
     launch_simulation = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([launch_robot_simulation]),
-        launch_arguments=[('use_sim_time', use_sim_time),
+        launch_arguments=[('use_sim_time', use_sim_time)],
         condition=IfCondition(use_simulation)
     )
 
     urdf = os.path.join(description_dir, 'urdf', 'honeybee_description.urdf.xacro')
-    control_config = os.path.join(bringup_dir, 'config', 'ros_control.yaml')
+    control_config = PathJoinSubstitution([bringup_dir, 'config', 'ros_control.yaml'])
     launch_robot_state_publisher_cmd = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -60,8 +66,8 @@ def generate_launch_description():
         parameters=[
             {'use_sim_time': use_sim_time,
             'robot_description': ParameterValue(
-              Command(['xacro ', str(urdf)], ' ', 'is_sim:=', use_sim_time,
-              ' ', 'gazebo_controllers:=', control_config), value_type=str)}
+              Command(['xacro ', str(urdf), ' ', 'is_sim:=', use_sim_time,
+              ' ', 'gazebo_controllers:=', control_config]), value_type=str)}
         ],
         remappings=[
             ('/tf', 'tf'),

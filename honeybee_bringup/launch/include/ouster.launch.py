@@ -21,7 +21,7 @@ from launch.substitutions import LaunchConfiguration
 from launch.actions import EmitEvent
 from launch.actions import RegisterEventHandler
 from launch_ros.events.lifecycle import ChangeState
-from launch_ros.events.lifecycle import matches_node_name
+from launch_ros.events import matches_node_name
 from launch_ros.event_handlers import OnStateTransition
 from launch.actions import LogInfo
 from launch.events import matches_action
@@ -46,6 +46,7 @@ def generate_launch_description():
                                 executable='ouster_driver',
                                 name='ouster_driver',
                                 output='screen',
+                                namespace='',
                                 emulate_tty=True,
                                 parameters=[parameter_file])
 

@@ -1,22 +1,28 @@
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, ExecuteProcess
+from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, ExecuteProcess, GroupAction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import EnvironmentVariable, FindExecutable, PathJoinSubstitution, LaunchConfiguration
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
+from launch.conditions import IfCondition, UnlessCondition
 
 
 def generate_launch_description():
 
-    imu_filter_params = FindPackageShare('honeybee_bringup'), 'config', 'imu_filter.yaml']
-    robot_localization_params = FindPackageShare('honeybee_bringup'), 'config', 'robot_localization.yaml']
-    teleop_joy_params = FindPackageShare('honeybee_bringup'), 'config', 'teleop_joy.yaml']
-    twist_mux_params = FindPackageShare('honeybee_bringup'), 'config', 'twist_mux.yaml']
-    ros_control_params = FindPackageShare('honeybee_bringup'), 'config', 'ros_control.yaml']
+    imu_filter_params = PathJoinSubstitution([
+        FindPackageShare('honeybee_bringup'), 'config', 'imu_filter.yaml'])
+    robot_localization_params = PathJoinSubstitution([
+        FindPackageShare('honeybee_bringup'), 'config', 'robot_localization.yaml'])
+    teleop_joy_params = PathJoinSubstitution([
+        FindPackageShare('honeybee_bringup'), 'config', 'teleop_joy.yaml'])
+    twist_mux_params = PathJoinSubstitution([
+        FindPackageShare('honeybee_bringup'), 'config', 'twist_mux.yaml'])
+    ros_control_params = PathJoinSubstitution([
+        FindPackageShare('honeybee_bringup'), 'config', 'ros_control.yaml'])
 
     setup_path = PathJoinSubstitution([
         FindPackageShare('honeybee_bringup'), 'config', 'include'])
- 
+
     use_sim_time = LaunchConfiguration('use_sim_time')
     arg_use_sim_time = DeclareLaunchArgument(
         'use_sim_time',
@@ -147,12 +153,12 @@ def generate_launch_description():
     )
 
     # Below should only be run on hardware (not simulation)
-    launch_diagnostics = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([PathJoinSubstitution([
-            FindPackageShare('clearpath_diagnostics'), 'launch', 'diagnostics.launch.py'])]),
-        launch_arguments=[('setup_path', setup_path)],
-        condition=UnlessCondition(use_simulation)
-    )
+    # launch_diagnostics = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource([PathJoinSubstitution([
+    #         FindPackageShare('clearpath_diagnostics'), 'launch', 'diagnostics.launch.py'])]),
+    #     launch_arguments=[('setup_path', setup_path)],
+    #     condition=UnlessCondition(use_simulation)
+    # )
 
     node_wireless_watcher = Node(
         name='wireless_watcher',
@@ -166,32 +172,32 @@ def generate_launch_description():
         condition=UnlessCondition(use_simulation)
     )
 
-    node_battery_state_estimator = Node(
-        name='battery_state_estimator',
-        executable='battery_state_estimator',
-        package='clearpath_diagnostics',
-        output='screen',
-        arguments=['-s', setup_path],
-        condition=UnlessCondition(use_simulation)
-    )
+    # node_battery_state_estimator = Node(
+    #     name='battery_state_estimator',
+    #     executable='battery_state_estimator',
+    #     package='clearpath_diagnostics',
+    #     output='screen',
+    #     arguments=['-s', setup_path],
+    #     condition=UnlessCondition(use_simulation)
+    # )
 
-    node_battery_state_control = Node(
-        name='battery_state_control',
-        executable='battery_state_control',
-        package='clearpath_diagnostics',
-        output='screen',
-        arguments=['-s', setup_path],
-        condition=UnlessCondition(use_simulation)
-    )
+    # node_battery_state_control = Node(
+    #     name='battery_state_control',
+    #     executable='battery_state_control',
+    #     package='clearpath_diagnostics',
+    #     output='screen',
+    #     arguments=['-s', setup_path],
+    #     condition=UnlessCondition(use_simulation)
+    # )
 
-    node_micro_ros_agent = Node(
-        name='micro_ros_agent',
-        executable='micro_ros_agent',
-        package='micro_ros_agent',
-        output='screen',
-        arguments=['serial', '--dev', '/dev/clearpath/j100'],
-        condition=UnlessCondition(use_simulation)
-    )
+    # node_micro_ros_agent = Node(
+    #     name='micro_ros_agent',
+    #     executable='micro_ros_agent',
+    #     package='micro_ros_agent',
+    #     output='screen',
+    #     arguments=['serial', '--dev', '/dev/clearpath/j100'],
+    #     condition=UnlessCondition(use_simulation)
+    # )
 
     node_nmea_topic_driver = Node(
         name='nmea_topic_driver',
@@ -229,12 +235,12 @@ def generate_launch_description():
     ld.add_action(node_joy)
     ld.add_action(node_teleop_twist_joy)
     ld.add_action(node_twist_mux)
-    ld.add_action(launch_diagnostics)
+    # ld.add_action(launch_diagnostics)
     ld.add_action(node_wireless_watcher)
-    ld.add_action(node_battery_state_estimator)
-    ld.add_action(node_battery_state_control)
+    # ld.add_action(node_battery_state_estimator)
+    # ld.add_action(node_battery_state_control)
     ld.add_action(node_imu_filter_node)
-    ld.add_action(node_micro_ros_agent)
+    # ld.add_action(node_micro_ros_agent)
     ld.add_action(node_nmea_topic_driver)
     ld.add_action(process_configure_mcu)
     return ld
