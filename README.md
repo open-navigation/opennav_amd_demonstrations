@@ -14,3 +14,7 @@ These demonstrations orbit around Honeybee, a Clearpath Robotics Jackal outfitte
 Clearpath specific assets
 - https://github.com/clearpathrobotics/clearpath_common
 - https://github.com/clearpathrobotics/clearpath_robot/
+
+Parent launch file for robot base `ros2 launch honeybee_bringup robot.launch.py` with options:
+- `use_simulation` whether to launch on hardware or in simulation with appropriate nodes
+- `use_sim_time` TODO properly propogated
