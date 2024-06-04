@@ -13,6 +13,7 @@
   <exec_depend>honeybee_description</exec_depend>
   <exec_depend>microstrain_inertial_driver</exec_depend>
   <exec_depend>realsense2_camera</exec_depend>
+  <exec_depend>ros2_ouster</exec_depend>
   
   <export>
     <build_type>ament_cmake</build_type>

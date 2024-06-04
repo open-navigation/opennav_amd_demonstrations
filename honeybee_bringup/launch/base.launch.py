@@ -125,39 +125,6 @@ def generate_launch_description():
             {'use_sim_time': use_sim_time}]
     )
 
-    launch_diagnostics = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([PathJoinSubstitution([
-            FindPackageShare('clearpath_diagnostics'), 'launch', 'diagnostics.launch.py'])]),
-        launch_arguments=[('setup_path', setup_path)]
-    )
-
-    node_wireless_watcher = Node(
-        name='wireless_watcher',
-        executable='wireless_watcher',
-        package='wireless_watcher',
-        output='screen',
-        parameters=
-            [{'hz': 1.0, 'dev': '',
-              'connected_topic': 'platform/wifi_connected',
-              'connection_topic': 'platform/wifi_status'}],
-    )
-
-    node_battery_state_estimator = Node(
-        name='battery_state_estimator',
-        executable='battery_state_estimator',
-        package='clearpath_diagnostics',
-        output='screen',
-        arguments=['-s', setup_path],
-    )
-
-    node_battery_state_control = Node(
-        name='battery_state_control',
-        executable='battery_state_control',
-        package='clearpath_diagnostics',
-        output='screen',
-        arguments=['-s', setup_path]
-    )
-
     node_imu_filter_node = Node(
         name='imu_filter_node',
         executable='imu_filter_madgwick_node',
@@ -171,6 +138,44 @@ def generate_launch_description():
         parameters=[imu_filter_params],
     )
 
+    # TODO not in sim
+    launch_diagnostics = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([PathJoinSubstitution([
+            FindPackageShare('clearpath_diagnostics'), 'launch', 'diagnostics.launch.py'])]),
+        launch_arguments=[('setup_path', setup_path)]
+    )
+
+    # TODO not in sim
+    node_wireless_watcher = Node(
+        name='wireless_watcher',
+        executable='wireless_watcher',
+        package='wireless_watcher',
+        output='screen',
+        parameters=
+            [{'hz': 1.0, 'dev': '',
+              'connected_topic': 'platform/wifi_connected',
+              'connection_topic': 'platform/wifi_status'}],
+    )
+
+    # TODO not in sim
+    node_battery_state_estimator = Node(
+        name='battery_state_estimator',
+        executable='battery_state_estimator',
+        package='clearpath_diagnostics',
+        output='screen',
+        arguments=['-s', setup_path],
+    )
+
+    # TODO not in sim
+    node_battery_state_control = Node(
+        name='battery_state_control',
+        executable='battery_state_control',
+        package='clearpath_diagnostics',
+        output='screen',
+        arguments=['-s', setup_path]
+    )
+
+    # TODO not in sim
     node_micro_ros_agent = Node(
         name='micro_ros_agent',
         executable='micro_ros_agent',
@@ -179,6 +184,7 @@ def generate_launch_description():
         arguments=['serial', '--dev', '/dev/clearpath/j100'],
     )
 
+    # TODO not in sim
     node_nmea_topic_driver = Node(
         name='nmea_topic_driver',
         executable='nmea_topic_driver',
@@ -192,7 +198,7 @@ def generate_launch_description():
              ('vel', 'sensors/gps_0/vel')],
     )
 
-    # Processes
+    # TODO not in sim
     process_configure_mcu = ExecuteProcess(
         shell=True,
         cmd=

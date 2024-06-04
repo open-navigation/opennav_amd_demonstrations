@@ -23,6 +23,7 @@ def generate_launch_description():
           FindPackageShare('honeybee_bringup'), 'launch', 'sensors.launch.py'])
 
     # TODO if sim, use sim launch file. If hardware, use hardware launch file
+    # TODO launch sim + bridge
     launch_base = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([launch_robot_hardware]),
         launch_arguments=[('use_sim_time', use_sim_time),

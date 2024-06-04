@@ -46,12 +46,6 @@ def generate_launch_description():
                     'true'
                 )
                 ,
-                (
-                    'namespace'
-                    ,
-                    'j100_0842'
-                )
-                ,
             ]
     )
 
