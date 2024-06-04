@@ -18,3 +18,5 @@ Clearpath specific assets
 Parent launch file for robot base `ros2 launch honeybee_bringup robot.launch.py` with options:
 - `use_simulation` whether to launch on hardware or in simulation with appropriate nodes
 - `use_sim_time` TODO properly propogated
+
+Apparently need to build a few things from source because clearpath depends on unreleased software...

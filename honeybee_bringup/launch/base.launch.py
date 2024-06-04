@@ -5,6 +5,7 @@ from launch.substitutions import EnvironmentVariable, FindExecutable, PathJoinSu
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 from launch.conditions import IfCondition, UnlessCondition
+from ament_index_python.packages import get_package_share_directory
 
 
 def generate_launch_description():
@@ -154,13 +155,29 @@ def generate_launch_description():
         parameters=[imu_filter_params, {'use_sim_time': use_sim_time}],
     )
 
-    # Below should only be run on hardware (not simulation)
-    # launch_diagnostics = IncludeLaunchDescription(
-    #     PythonLaunchDescriptionSource([PathJoinSubstitution([
-    #         FindPackageShare('clearpath_diagnostics'), 'launch', 'diagnostics.launch.py'])]),
-    #     launch_arguments={'setup_path': setup_path}.items(),
-    #     condition=UnlessCondition(use_simulation)
-    # )
+    launch_diagnostics = GroupAction([
+        Node(
+            package='diagnostic_aggregator',
+            executable='aggregator_node',
+            output='screen',
+            parameters=[PathJoinSubstitution([
+                get_package_share_directory('clearpath_diagnostics'), 'config', 'diagnostics.yaml'])],
+            remappings=[
+                ('/diagnostics', 'diagnostics'),
+                ('/diagnostics_agg', 'diagnostics_agg'),
+                ('/diagnostics_toplevel_state', 'diagnostics_toplevel_state')],
+            condition=UnlessCondition(use_simulation)),
+        Node(
+            package='clearpath_diagnostics',
+            executable='diagnostics_updater',
+            output='screen',
+            remappings=[
+                ('/diagnostics', 'diagnostics'),
+                ('/diagnostics_agg', 'diagnostics_agg'),
+                ('/diagnostics_toplevel_state', 'diagnostics_toplevel_state')],
+            arguments=['-s', setup_path],
+            condition=UnlessCondition(use_simulation))
+    ])
 
     node_wireless_watcher = Node(
         name='wireless_watcher',
@@ -242,7 +259,7 @@ def generate_launch_description():
     ld.add_action(node_joy)
     ld.add_action(node_teleop_twist_joy)
     ld.add_action(node_twist_mux)
-    # ld.add_action(launch_diagnostics)
+    ld.add_action(launch_diagnostics)
     ld.add_action(node_wireless_watcher)
     ld.add_action(node_battery_state_estimator)
     ld.add_action(node_battery_state_control)
