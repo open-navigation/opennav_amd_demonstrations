@@ -15,20 +15,14 @@ def generate_launch_description():
 
     description_dir = get_package_share_directory('honeybee_description')
     bringup_dir = FindPackageShare('honeybee_bringup')
-    use_sim_time = LaunchConfiguration('use_sim_time')
-    arg_use_sim_time = DeclareLaunchArgument(
-        'use_sim_time',
-        choices=['true', 'false'],
-        default_value='false',
-        description='Use simulation time'
-    )
 
     use_simulation = LaunchConfiguration('use_simulation')
+    use_sim_time = use_simulation
     arg_use_simulation = DeclareLaunchArgument(
         'use_simulation',
         choices=['true', 'false'],
         default_value='false',
-        description='Use simulation'
+        description='Use simulation or hardware'
     )
 
     launch_robot_hardware = PathJoinSubstitution([
@@ -73,7 +67,6 @@ def generate_launch_description():
     )
 
     ld = LaunchDescription()
-    ld.add_action(arg_use_sim_time)
     ld.add_action(arg_use_simulation)
     ld.add_action(launch_robot_state_publisher_cmd)
     ld.add_action(launch_base)

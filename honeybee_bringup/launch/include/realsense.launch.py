@@ -13,24 +13,16 @@ def generate_launch_description():
         'parameters',
         default_value=PathJoinSubstitution([
           FindPackageShare('honeybee_bringup'), 'config', 'realsense.yaml']))
-    use_sim_time = LaunchConfiguration('use_sim_time')
-    arg_use_sim_time = DeclareLaunchArgument(
-        'use_sim_time',
-        choices=['true', 'false'],
-        default_value='false',
-        description='Use simulation time'
-    )
 
     realsense2_camera_node = Node(
         package='realsense2_camera',
         name='intel_realsense',
         executable='realsense2_camera_node',
-        parameters=[parameters, {'use_sim_time': use_sim_time}],
+        parameters=[parameters],
         output='screen'
     )
 
     ld = LaunchDescription()
-    ld.add_action(arg_use_sim_time)
     ld.add_action(arg_parameters)
     ld.add_action(realsense2_camera_node)
     return ld

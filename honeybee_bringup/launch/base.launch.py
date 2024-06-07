@@ -24,20 +24,13 @@ def generate_launch_description():
     setup_path = PathJoinSubstitution([
         FindPackageShare('honeybee_bringup'), 'config', 'include'])
 
-    use_sim_time = LaunchConfiguration('use_sim_time')
-    arg_use_sim_time = DeclareLaunchArgument(
-        'use_sim_time',
-        choices=['true', 'false'],
-        default_value='false',
-        description='Use simulation time'
-    )
-
     use_simulation = LaunchConfiguration('use_simulation')
+    use_sim_time = use_simulation
     arg_use_simulation = DeclareLaunchArgument(
         'use_simulation',
         choices=['true', 'false'],
         default_value='false',
-        description='Use simulation'
+        description='Use simulation or hardware'
     )
 
     # Nodes and launch files for robot base
@@ -228,7 +221,6 @@ def generate_launch_description():
     # Create LaunchDescription
     ld = LaunchDescription()
     ld.add_action(arg_use_simulation)
-    ld.add_action(arg_use_sim_time)
     ld.add_action(node_localization)
     ld.add_action(action_control_group) 
     ld.add_action(node_joy)

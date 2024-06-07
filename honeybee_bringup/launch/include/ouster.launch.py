@@ -43,13 +43,6 @@ def generate_launch_description():
         'params_file',
         default_value=os.path.join(honeybee_dir, 'config', 'ouster.yaml'),
         description='')
-    use_sim_time = LaunchConfiguration('use_sim_time')
-    arg_use_sim_time = DeclareLaunchArgument(
-        'use_sim_time',
-        choices=['true', 'false'],
-        default_value='false',
-        description='Use simulation time'
-    )
 
     driver_node = LifecycleNode(package='ros2_ouster',
                                 executable='ouster_driver',
@@ -57,7 +50,7 @@ def generate_launch_description():
                                 output='screen',
                                 namespace='',
                                 emulate_tty=True,
-                                parameters=[parameter_file, {'use_sim_time': use_sim_time}])
+                                parameters=[parameter_file])
 
     configure_event = EmitEvent(
         event=ChangeState(
@@ -94,7 +87,6 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        arg_use_sim_time,
         params_declare,
         driver_node,
         activate_event,
