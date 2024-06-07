@@ -30,8 +30,9 @@ from launch.actions import (
 from launch.conditions import IfCondition
 from launch.event_handlers import OnShutdown
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import Command, LaunchConfiguration, PythonExpression
+from launch.substitutions import Command, LaunchConfiguration, PythonExpression, PathJoinSubstitution
 
+from launch_ros.descriptions import ParameterValue
 from launch_ros.actions import Node
 
 
@@ -39,11 +40,13 @@ def generate_launch_description():
     # Get the launch directory
     sim_dir = get_package_share_directory('honeybee_gazebo')
     desc_dir = get_package_share_directory('honeybee_description')
+    bringup_dir = get_package_share_directory('honeybee_bringup')
     cpr_dir = get_package_share_directory('clearpath_platform_description')
     realsense_dir = get_package_share_directory('realsense2_camera')
 
     world = LaunchConfiguration('world')
     headless = LaunchConfiguration('headless')
+    use_joint_state_publisher = LaunchConfiguration('use_joint_state_publisher')
 
     declare_world_cmd = DeclareLaunchArgument(
         'world',
@@ -53,6 +56,12 @@ def generate_launch_description():
 
     declare_simulator_cmd = DeclareLaunchArgument(
         'headless', default_value='False', description='Whether to execute client'
+    )
+
+    declare_jsp_cmd = DeclareLaunchArgument(
+        'use_joint_state_publisher',
+        default_value='False',
+        description='Whether to launch the joint state publisher',
     )
 
     pose = {
@@ -143,6 +152,23 @@ def generate_launch_description():
         parameters=[{'use_sim_time': True}]
     )
 
+    urdf = os.path.join(desc_dir, 'urdf', 'honeybee_description.urdf.xacro')
+    control_config = PathJoinSubstitution([bringup_dir, 'config', 'ros_control.yaml'])
+    launch_robot_state_publisher_cmd = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        name='robot_state_publisher',
+        output='screen',
+        parameters=[
+            {'use_sim_time': True,
+            'robot_description': ParameterValue(
+              Command(['xacro ', str(urdf), ' ', 'is_sim:=True',
+              ' ', 'gazebo_controllers:=', control_config]), value_type=str)}
+        ],
+        remappings=[('joint_states', 'platform/joint_states')],
+        condition=IfCondition(use_joint_state_publisher)
+    )
+
     set_env_vars_resources1 = AppendEnvironmentVariable(
         'GZ_SIM_RESOURCE_PATH',
         str(Path(os.path.join(desc_dir)).parent.resolve()))
@@ -161,6 +187,7 @@ def generate_launch_description():
 
     # Declare the launch options
     ld.add_action(declare_simulator_cmd)
+    ld.add_action(declare_jsp_cmd)
     ld.add_action(declare_world_cmd)
 
     ld.add_action(set_env_vars_resources)
@@ -178,5 +205,7 @@ def generate_launch_description():
     ld.add_action(gz_bridge)
     ld.add_action(camera_bridge_image)
     ld.add_action(camera_bridge_depth)
+
+    ld.add_action(launch_robot_state_publisher_cmd)
 
     return ld
