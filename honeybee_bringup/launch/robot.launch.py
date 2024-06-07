@@ -1,3 +1,17 @@
+# Copyright (C) 2024 Open Navigation LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import os
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
@@ -15,6 +29,7 @@ def generate_launch_description():
 
     description_dir = get_package_share_directory('honeybee_description')
     bringup_dir = FindPackageShare('honeybee_bringup')
+    sim_dir = FindPackageShare('honeybee_gazebo')
 
     use_simulation = LaunchConfiguration('use_simulation')
     use_sim_time = use_simulation
@@ -26,11 +41,11 @@ def generate_launch_description():
     )
 
     launch_robot_hardware = PathJoinSubstitution([
-          FindPackageShare('honeybee_bringup'), 'launch', 'base.launch.py'])
+          bringup_dir, 'launch', 'base.launch.py'])
     launch_robot_sensors = PathJoinSubstitution([
-          FindPackageShare('honeybee_bringup'), 'launch', 'sensors.launch.py'])
+          bringup_dir, 'launch', 'sensors.launch.py'])
     launch_robot_simulation = PathJoinSubstitution([
-          FindPackageShare('honeybee_bringup'), 'launch', 'simulation.launch.py'])
+          sim_dir, 'launch', 'simulation.launch.py'])
 
     launch_base = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([launch_robot_hardware]),
