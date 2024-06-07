@@ -26,8 +26,7 @@ def generate_launch_description():
         name='intel_realsense',
         executable='realsense2_camera_node',
         parameters=[parameters, {'use_sim_time': use_sim_time}],
-        output='screen',
-        remappings=[('/tf_static', 'tf_static'), ('/tf', 'tf')]
+        output='screen'
     )
 
     ld = LaunchDescription()

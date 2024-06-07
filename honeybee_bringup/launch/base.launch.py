@@ -55,9 +55,6 @@ def generate_launch_description():
               ('platform_velocity_controller/cmd_vel_unstamped', 'platform/cmd_vel_unstamped'),
               ('joint_states', 'platform/joint_states'),
               ('dynamic_joint_states', 'platform/dynamic_joint_states'),
-              ('/diagnostics', 'diagnostics'),
-              ('/tf', 'tf'),
-              ('/tf_static', 'tf_static'),
               ('~/robot_description', 'robot_description')
             ],
             condition=UnlessCondition(use_sim_time)
@@ -88,12 +85,7 @@ def generate_launch_description():
             name='ekf_node',
             output='screen',
             parameters=[robot_localization_params, {'use_sim_time': use_sim_time}],
-            remappings=[
-              ('odometry/filtered', 'platform/odom/filtered'),
-              ('/diagnostics', 'diagnostics'),
-              ('/tf', 'tf'),
-              ('/tf_static', 'tf_static'),
-            ]
+            remappings=[('odometry/filtered', 'platform/odom/filtered')]
         )
 
     node_joy = Node(
@@ -105,9 +97,6 @@ def generate_launch_description():
             teleop_joy_params,
             {'use_sim_time': use_sim_time}],
         remappings=[
-            ('/diagnostics', 'diagnostics'),
-            ('/tf', 'tf'),
-            ('/tf_static', 'tf_static'),
             ('joy', 'joy_teleop/joy'),
             ('joy/set_feedback', 'joy_teleop/joy/set_feedback'),
         ]
@@ -131,12 +120,7 @@ def generate_launch_description():
         package='twist_mux',
         executable='twist_mux',
         output='screen',
-        remappings={
-            ('cmd_vel_out', 'platform/cmd_vel_unstamped'),
-            ('/diagnostics', 'diagnostics'),
-            ('/tf', 'tf'),
-            ('/tf_static', 'tf_static'),
-        },
+        remappings={('cmd_vel_out', 'platform/cmd_vel_unstamped')},
         parameters=[
             twist_mux_params,
             {'use_sim_time': use_sim_time}]
@@ -150,8 +134,7 @@ def generate_launch_description():
         remappings=
             [('imu/data_raw', 'sensors/imu_0/data_raw'),
              ('imu/mag', 'sensors/imu_0/magnetic_field'),
-             ('imu/data', 'sensors/imu_0/data'),
-             ('/tf', 'tf')],
+             ('imu/data', 'sensors/imu_0/data')],
         parameters=[imu_filter_params, {'use_sim_time': use_sim_time}],
     )
 
@@ -162,19 +145,11 @@ def generate_launch_description():
             output='screen',
             parameters=[PathJoinSubstitution([
                 get_package_share_directory('clearpath_diagnostics'), 'config', 'diagnostics.yaml'])],
-            remappings=[
-                ('/diagnostics', 'diagnostics'),
-                ('/diagnostics_agg', 'diagnostics_agg'),
-                ('/diagnostics_toplevel_state', 'diagnostics_toplevel_state')],
             condition=UnlessCondition(use_simulation)),
         Node(
             package='clearpath_diagnostics',
             executable='diagnostics_updater',
             output='screen',
-            remappings=[
-                ('/diagnostics', 'diagnostics'),
-                ('/diagnostics_agg', 'diagnostics_agg'),
-                ('/diagnostics_toplevel_state', 'diagnostics_toplevel_state')],
             arguments=['-s', setup_path],
             condition=UnlessCondition(use_simulation))
     ])

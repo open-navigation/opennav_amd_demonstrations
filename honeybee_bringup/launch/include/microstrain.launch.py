@@ -30,7 +30,6 @@ def generate_launch_description():
         parameters = [parameters, {'use_sim_time': use_sim_time}],
         output='screen',
         remappings=[
-            ('/tf_static', 'tf_static'), ('/tf', 'tf'),
             ('/imu/data', 'data'), ('/moving_ang', 'moving_ang')]
         )
 

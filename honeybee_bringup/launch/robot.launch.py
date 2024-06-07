@@ -69,10 +69,7 @@ def generate_launch_description():
               Command(['xacro ', str(urdf), ' ', 'is_sim:=', use_sim_time,
               ' ', 'gazebo_controllers:=', control_config]), value_type=str)}
         ],
-        remappings=[
-            ('/tf', 'tf'),
-            ('/tf_static', 'tf_static'),
-            ('joint_states', 'platform/joint_states')]
+        remappings=[('joint_states', 'platform/joint_states')]
     )
 
     ld = LaunchDescription()
