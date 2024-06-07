@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:macro name="microstrain_imu" params="name parent_link update_rate:=100 *origin">
+    <link name="${name}_base_link"/>
+
+    <link name="${name}_link">
+      <visual>
+        <geometry>
+          <box size="0.02 0.02 0.005"/>
+        </geometry>
+        <material name="clearpath_dark_grey" />
+      </visual>
+    </link>
+
+    <joint name="${name}_base_joint" type="fixed">
+      <xacro:insert_block name="origin" />
+      <parent link="${parent_link}" />
+      <child link="${name}_base_link" />
+    </joint>
+
+    <joint name="${name}_joint" type="fixed">
+      <origin xyz="0 0 0.0025"/>
+      <parent link="${name}_base_link" />
+      <child link="${name}_link" />
+    </joint>
+
+    <gazebo reference="${name}_link">
+      <sensor type="imu" name="${name}">
+        <always_on>true</always_on>
+        <update_rate>${update_rate}</update_rate>
+        <visualize>true</visualize>
+        <ignition_frame_id>${name}_link</ignition_frame_id>
+        <topic>sensors/imu_1</topic> <!-- Steve mod: have topic point somewhere reasonable -->
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+</robot>

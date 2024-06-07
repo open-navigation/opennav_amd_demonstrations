@@ -17,6 +17,22 @@ Clearpath specific assets
 
 Parent launch file for robot base `ros2 launch honeybee_bringup robot.launch.py` with options:
 - `use_simulation` whether to launch on hardware or in simulation with appropriate nodes
-- `use_sim_time` TODO properly propogated
+- `use_sim_time` whether the node should use simulation (ROS) time or the wall clock
 
-Apparently need to build a few things from source because clearpath depends on unreleased software...
+Apparently need to build a few things from source because clearpath depends on unreleased software... Or setup using their repos:
+
+```
+wget https://packages.clearpathrobotics.com/public.key -O - | sudo apt-key add -
+sudo sh -c 'echo "deb https://packages.clearpathrobotics.com/stable/ubuntu $(lsb_release -cs) main" > /etc/apt/sources.list.d/clearpath-latest.list'
+sudo apt update
+rosdep update
+```
+
+
+## Setup robot on wifi
+
+1. Connect robot to your PC via an ethernet cable
+2. SSH into the robot (ssh admin@IP_ADDRESS) and connect it to your network of choice using `nmcli`
+3. Disconnect the to main computer from ethernet and ssh via the `.local` name of the robot PC to make sure it works
+4. Add the IP of the robot to your `/etc/host` so you can SSH into it in the future without `.local`
+

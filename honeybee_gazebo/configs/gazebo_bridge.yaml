@@ -1,0 +1,77 @@
+# Bridge clock for sim time
+- ros_topic_name: "clock"
+  gz_topic_name: "/clock"
+  ros_type_name: "rosgraph_msgs/msg/Clock"
+  gz_type_name: "gz.msgs.Clock"
+  direction: GZ_TO_ROS
+
+# Bridge TF
+- ros_topic_name: "tf"
+  gz_topic_name: "/tf"
+  ros_type_name: "tf2_msgs/msg/TFMessage"
+  gz_type_name: "gz.msgs.Pose_V"
+  direction: GZ_TO_ROS
+
+# Camera through compression handled in the ros_gz_image bridge in simulation.launch.py
+- ros_topic_name: "sensors/camera_0/camera_info"
+  gz_topic_name: "/sensors/camera_0/camera_info"
+  ros_type_name: "sensor_msgs/msg/CameraInfo"
+  gz_type_name: "gz.msgs.CameraInfo"
+  direction: GZ_TO_ROS
+
+# Pointcloud from depth camera
+- ros_topic_name: "sensors/camera_0/points"
+  gz_topic_name: "/sensors/camera_0/points"
+  ros_type_name: "sensor_msgs/msg/PointCloud2"
+  gz_type_name: "gz.msgs.PointCloudPacked"
+  direction: GZ_TO_ROS
+
+# Ouster 3D Lidar
+- ros_topic_name: "sensors/lidar_0/points"
+  gz_topic_name: "/sensors/lidar_0/points"
+  ros_type_name: "sensor_msgs/msg/PointCloud2"
+  gz_type_name: "gz.msgs.PointCloudPacked"
+  direction: GZ_TO_ROS
+
+# Microstrain IMU
+- ros_topic_name: "sensors/imu_1"
+  gz_topic_name: "/sensors/imu_1"
+  ros_type_name: "sensor_msgs/msg/Imu"
+  gz_type_name: "gz.msgs.IMU"
+  direction: GZ_TO_ROS
+
+# Built-in IMU
+- ros_topic_name: "sensors/imu_0"
+  gz_topic_name: "/sensors/imu_0"
+  ros_type_name: "sensor_msgs/msg/Imu"
+  gz_type_name: "gz.msgs.IMU"
+  direction: GZ_TO_ROS
+
+# Built-in GPS
+- ros_topic_name: "sensors/gps_0"
+  gz_topic_name: "/sensors/gps_0"
+  ros_type_name: "sensor_msgs/msg/NavSatFix"
+  gz_type_name: "gz.msgs.NavSat"
+  direction: GZ_TO_ROS
+
+# # no equivalent in TB3 - add
+# - ros_topic_name: "joint_states"
+#   gz_topic_name: "joint_states"
+#   ros_type_name: "sensor_msgs/msg/JointState"
+#   gz_type_name: "gz.msgs.Model"
+#   direction: GZ_TO_ROS
+
+# # replace odom_bridge - check gz topic name
+# # gz topic published by DiffDrive plugin
+# - ros_topic_name: "odom"
+#   gz_topic_name: "/odom"
+#   ros_type_name: "nav_msgs/msg/Odometry"
+#   gz_type_name: "gz.msgs.Odometry"
+#   direction: GZ_TO_ROS
+
+# # replace cmd_vel_bridge
+# - ros_topic_name: "cmd_vel"
+#   gz_topic_name: "/cmd_vel"
+#   ros_type_name: "geometry_msgs/msg/Twist"
+#   gz_type_name: "gz.msgs.Twist"
+#   direction: ROS_TO_GZ

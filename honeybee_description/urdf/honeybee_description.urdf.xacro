@@ -10,12 +10,12 @@
   <!-- Includes -->
   <xacro:include filename="${find_package}/urdf/includes/custom_macros.urdf.xacro" />
   <xacro:include filename="${find_package}/urdf/includes/OS0-32.urdf.xacro" />
+  <xacro:include filename="${find_package}/urdf/includes/intel_realsense.urdf.xacro"/>
+  <xacro:include filename="${find_package}/urdf/includes/microstrain_imu.urdf.xacro"/>
+  <xacro:include filename="${find_package}/urdf/includes/j100.urdf.xacro"/>
   <xacro:include filename="$(find clearpath_platform_description)/urdf/common.urdf.xacro"/>
-  <xacro:include filename="$(find clearpath_platform_description)/urdf/j100/j100.urdf.xacro"/>
   <xacro:include filename="$(find clearpath_platform_description)/urdf/j100/attachments/fender.urdf.xacro"/>
   <xacro:include filename="$(find clearpath_platform_description)/urdf/j100/attachments/top_plate.urdf.xacro"/>
-  <xacro:include filename="$(find clearpath_sensors_description)/urdf/intel_realsense.urdf.xacro"/>
-  <xacro:include filename="$(find clearpath_sensors_description)/urdf/microstrain_imu.urdf.xacro"/>
 
   <!-- Clearpath base platform -->
   <xacro:j100 wheel="default"/>
@@ -46,8 +46,8 @@
     <origin xyz="0.093 0.103 0.1881" rpy="0.0 0.0 -1.57"/>
   </xacro:microstrain_imu>
 
-  <xacro:OS0-32 parent="ouster_tower_mount_plate">
-    <origin xyz="0 0 0" rpy="0 0 0" />
+  <xacro:OS0-32 parent="ouster_tower_custom_mount"> <!-- Steve mod: for some rason _mount_plate didn't work, so removed -->
+    <origin xyz="0 0 0.125" rpy="0 0 0" />
   </xacro:OS0-32>
   <xacro:mount_plate prefix="ouster_tower" parent="ark_enclosure_top_link" pattern=".08 .08" height="0.125" radius="0.005">
     <xacro:property name="plate"     value="0 0 0" />

@@ -1,7 +1,7 @@
 ouster_driver:
   ros__parameters:
-    lidar_ip: 10.5.5.96         
-    computer_ip: 10.5.5.1    
+    lidar_ip: 192.168.131.20         
+    computer_ip: 192.168.131.1 
     lidar_mode: "1024x10"
     imu_port: 7503
     lidar_port: 7502
@@ -11,4 +11,4 @@ ouster_driver:
 
     use_system_default_qos: False
     timestamp_mode: TIME_FROM_INTERNAL_OSC
-    proc_mask: IMG|PCL|IMU|SCAN
+    proc_mask: IMG|PCL|SCAN

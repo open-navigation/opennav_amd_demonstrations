@@ -30,7 +30,8 @@
 
     <link name="${prefix}_custom_mount" />
 
-    <link name="${prefix}_mount_plate">
+    <!-- Steve: for some rason _mount_plate crashes with dart errors, so removed -->
+    <!-- <link name="${prefix}_mount_plate">
       <visual>
         <material name="cpr_grey" />
         <geometry>
@@ -44,7 +45,7 @@
         </geometry>
         <origin xyz="0 0 -${(plate_height/2)}" rpy="0 0 0" />
       </collision>
-    </link>
+    </link> -->
 
     <joint name="${prefix}_custom_mount_joint" type="fixed">
       <parent link="${parent}" />
@@ -53,11 +54,11 @@
       <!--<xacro:insert_block name="origin" />-->
     </joint>
 
-    <joint name="${prefix}_mount_plate_joint" type="fixed">
+    <!-- <joint name="${prefix}_mount_plate_joint" type="fixed">
       <parent link="${prefix}_custom_mount" />
       <child link="${prefix}_mount_plate" />
       <origin xyz="0 0 ${(height+plate_height)}" rpy="0 0 0" />
-    </joint>
+    </joint> -->
 
     <!--#################################################
                           LEG LINKS
@@ -164,28 +165,5 @@
     </xacro:if>
   
   </xacro:macro>
-
-  <xacro:if value="$(optenv MOUNT_PLATE_ENABLED 0)">
-
-    <xacro:property name="prefix"                    value="$(optenv MOUNT_PLATE_PREFIX tower)" />
-    <xacro:property name="parent"                    value="$(optenv MOUNT_PLATE_PARENT base_link)" />
-    <xacro:property name="height"                    value="$(optenv MOUNT_TOWER_HEIGHT 0)" />
-    <xacro:property name="radius"                    value="$(optenv MOUNT_LEG_RADIUS 0.003)" />
-
-    <xacro:property name="dimensions"                value="$(optenv MOUNT_PLATE_DIMENSIONS 0.140 0.140 0.00635)" />
-    <xacro:property name="pattern"                   value="$(optenv MOUNT_PLATE_PATTERN 0 0)" />
-    <xacro:property name="xyz"                       value="$(optenv MOUNT_PLATE_XYZ 0 0 0)" />
-    <xacro:property name="rpy"                       value="$(optenv MOUNT_PLATE_RPY 0 0 0)" />
-
-    <xacro:mount_plate prefix="${prefix}" parent="${parent}" height="${height}" pattern="${pattern}" radius="${radius}">
-      <xacro:property name="plate"     value="${dimensions}" lazy_eval="false" />
-      <xacro:property name="radius"    value="${radius}"     lazy_eval="false" />
-      <xacro:property name="xyz"       value="${xyz}"        lazy_eval="false" />
-      <xacro:property name="rpy"       value="${rpy}"        lazy_eval="false" />
-    </xacro:mount_plate>
-    
-  </xacro:if>
   
 </robot>
-
-

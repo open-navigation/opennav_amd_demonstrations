@@ -56,7 +56,6 @@
          <origin xyz="0 0 0.0" rpy="0 0 1.5707" />
          <geometry>
 	         <mesh filename="package://honeybee_description/meshes/os1_64.dae" />
-           <!-- <cylinder length="0.073" radius="0.04" /> -->
          </geometry>
       </visual>
     </link>
@@ -80,58 +79,41 @@
       <origin xyz="0.0 0.0 0.03618" rpy="0 0 0" />
     </joint>
 
-    <!-- Gazebo requires the ouster_gazebo_plugins package -->
     <gazebo reference="${name}">
-        <sensor type="ray" name="${name}-OS0-32">
-          <pose>0 0 0 0 0 0</pose>
-          <visualize>false</visualize>
-          <update_rate>${hz}</update_rate>
-          <ray>
-            <scan>
-              <horizontal>
-                <samples>${samples}</samples>
-                <resolution>1</resolution>
-                <min_angle>${min_angle}</min_angle>
-                <max_angle>${max_angle}</max_angle>
-              </horizontal>
-              <vertical>
-                <samples>${lasers}</samples>
-                <resolution>1</resolution>
-                <min_angle>${vfov_min}</min_angle>
-                <max_angle>${vfov_max}</max_angle>
-              </vertical>
-            </scan>
-            <range>
-              <min>${min_range}</min>
-              <max>${max_range}</max>
-              <resolution>0.03</resolution>
-            </range>
-          </ray>
-          <plugin name="gazebo_ros_laser_controller" filename="libgazebo_ros_ouster_laser.so">
-            <topicName>${topic_points}</topicName>
-            <frameName>${lidar_link}</frameName>
-            <min_range>${min_range}</min_range>
-            <max_range>${max_range}</max_range>
-            <gaussianNoise>${noise}</gaussianNoise>
-          </plugin>
-        </sensor>
+      <sensor name="${name}" type="gpu_lidar">
+        <update_rate>${hz}</update_rate>
+        <visualize>false</visualize>
+        <always_on>true</always_on>
+        <ignition_frame_id>${name}</ignition_frame_id>  <!-- Steve mod: fix frame to something actually in URDF -->
+        <topic>sensors/lidar_0</topic>  <!-- Steve mod: set topic to same as hardware -->
+        <lidar>
+          <scan>
+            <horizontal>
+              <samples>${samples}</samples>
+              <resolution>1</resolution>
+              <min_angle>${min_angle}</min_angle>
+              <max_angle>${max_angle}</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>${lasers}</samples>
+              <resolution>1</resolution>
+              <min_angle>${vfov_min}</min_angle>
+              <max_angle>${vfov_max}</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>${min_range}</min>
+            <max>${max_range}</max>
+            <resolution>0.003</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.003</stddev>
+          </noise>
+        </lidar>
+      </sensor>
     </gazebo>
-
-    <!-- IMU -->
-  <gazebo>
-    <plugin name="imu_controller" filename="libhector_gazebo_ros_imu.so">
-      <robotNamespace>/</robotNamespace>
-      <updateRate>100.0</updateRate>
-      <bodyName>${imu_link}</bodyName>
-      <topicName>${topic_imu}</topicName>
-      <accelDrift>0.005 0.005 0.005</accelDrift>
-      <accelGaussianNoise>0.005 0.005 0.005</accelGaussianNoise>
-      <rateDrift>0.005 0.005 0.005 </rateDrift>
-      <rateGaussianNoise>0.005 0.005 0.005 </rateGaussianNoise>
-      <headingDrift>0.005</headingDrift>
-      <headingGaussianNoise>0.005</headingGaussianNoise>
-    </plugin>
-  </gazebo>
 
   </xacro:macro>
 </robot>
