@@ -128,7 +128,8 @@ def generate_launch_description():
         parameters=[{
             'use_sim_time': True,
         }],
-        arguments=['/sensors/camera_0/image'])
+        arguments=['/sensors/camera_0/image'],
+        remappings=[('/sensors/camera_0/image', '/sensors/camera_0/color/image')])
 
     camera_bridge_depth = Node(
         package='ros_gz_image',
@@ -138,7 +139,8 @@ def generate_launch_description():
         parameters=[{
             'use_sim_time': True,
         }],
-        arguments=['/sensors/camera_0/depth_image'])
+        arguments=['/sensors/camera_0/depth_image'],
+        remappings=[('/sensors/camera_0/depth_image', '/sensors/camera_0/depth/image')])
 
     gz_robot = Node(
         package='ros_gz_sim',

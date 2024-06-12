@@ -34,22 +34,22 @@
   direction: GZ_TO_ROS
 
 # Microstrain IMU
-- ros_topic_name: "sensors/imu_1"
-  gz_topic_name: "/sensors/imu_1"
+- ros_topic_name: "sensors/imu_1/data"
+  gz_topic_name: "/sensors/imu_1/data"
   ros_type_name: "sensor_msgs/msg/Imu"
   gz_type_name: "gz.msgs.IMU"
   direction: GZ_TO_ROS
 
 # Built-in IMU
-- ros_topic_name: "sensors/imu_0"
-  gz_topic_name: "/sensors/imu_0"
+- ros_topic_name: "sensors/imu_0/data_raw"
+  gz_topic_name: "/sensors/imu_0/data_raw"
   ros_type_name: "sensor_msgs/msg/Imu"
   gz_type_name: "gz.msgs.IMU"
   direction: GZ_TO_ROS
 
 # Built-in GPS
-- ros_topic_name: "sensors/gps_0"
-  gz_topic_name: "/sensors/gps_0"
+- ros_topic_name: "sensors/gps_0/fix"
+  gz_topic_name: "/sensors/gps_0/fix"
   ros_type_name: "sensor_msgs/msg/NavSatFix"
   gz_type_name: "gz.msgs.NavSat"
   direction: GZ_TO_ROS

@@ -116,7 +116,7 @@
         <update_rate>50</update_rate>
         <visualize>true</visualize>
         <ignition_frame_id>imu_0_link</ignition_frame_id>
-        <topic>sensors/imu_0</topic> <!-- Steve mod: have topic point somewhere reasonable -->
+        <topic>sensors/imu_0/data_raw</topic> <!-- Steve mod: have topic point somewhere reasonable -->
       </sensor>
     </gazebo>
 
@@ -140,7 +140,7 @@
         <always_on>1</always_on>
         <update_rate>10</update_rate>
         <ignition_frame_id>gps_0_link</ignition_frame_id>
-        <topic>sensors/gps_0</topic>
+        <topic>sensors/gps_0/fix</topic>
       </sensor>
     </gazebo>
 
@@ -166,7 +166,35 @@
     </joint>
 
     <!-- Gazebo Controller -->
-    <xacro:include filename="$(find clearpath_platform_description)/urdf/generic/gazebo.urdf.xacro"/>
+    <!-- <xacro:include filename="$(find clearpath_platform_description)/urdf/generic/gazebo.urdf.xacro"/> -->
+    <xacro:if value="$(arg is_sim)">
+      <gazebo>
+        <plugin filename="libign_ros2_control-system.so" name="ign_ros2_control::IgnitionROS2ControlPlugin">
+          <parameters>$(arg gazebo_controllers)</parameters>
+          <ros>
+            <remapping>~/odom:=platform/odom</remapping>
+            <remapping>~/cmd_vel_unstamped:=platform/cmd_vel_unstamped</remapping>
+            <remapping>/tf:=tf</remapping>
+            <remapping>/tf_static:=tf_static</remapping>
+            <remapping>/dynamic_joint_states:=platform/dynamic_joint_states</remapping>
+            <remapping>/diagnostics:=diagnostics</remapping>
+            <remapping>joint_states:=platform/joint_states</remapping>
+            <namespace>$(arg namespace)</namespace>
+          </ros>
+        </plugin>
+      </gazebo>
+
+      <gazebo>
+        <plugin filename="libignition-gazebo-pose-publisher-system.so" name="ignition::gazebo::systems::PosePublisher">
+          <publish_link_pose>true</publish_link_pose>
+          <publish_nested_model_pose>true</publish_nested_model_pose>
+          <use_pose_vector_msg>true</use_pose_vector_msg>
+          <update_frequency>50</update_frequency>
+        </plugin>
+      </gazebo>
+    </xacro:if>
+
+
 
     <!-- ROS2 controls -->
     <ros2_control name="j100_hardware" type="system">

@@ -88,6 +88,14 @@ ssh-keygen -t rsa # hit enter to all prompts without input
 ssh-copy-id administrator@honeybee
 ```
 
+---
+
+Now you can ssh into the robot remotely on this network without password and using a unique robot name!
+
+```
+ssh administrator@honeybee
+```
+
 ## Setup robot hardware bringup
 
 ## Setup robot navigation bringup

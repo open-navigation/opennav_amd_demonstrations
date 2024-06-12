@@ -30,7 +30,7 @@
         <update_rate>${update_rate}</update_rate>
         <visualize>true</visualize>
         <ignition_frame_id>${name}_link</ignition_frame_id>
-        <topic>sensors/imu_1</topic> <!-- Steve mod: have topic point somewhere reasonable -->
+        <topic>sensors/imu_1/data</topic> <!-- Steve mod: have topic point somewhere reasonable -->
       </sensor>
     </gazebo>
   </xacro:macro>
