@@ -28,7 +28,7 @@ microstrain_inertial_driver:
     imu_mag_data_rate: -1
     imu_gps_corr_data_rate: -1
     imu_overrange_status_data_rate: -1
-    imu_orientation_cov: [0.01, 0.0, 0.0, 0.0, 0.01, 0.0, 0.0, 0.0, 0.01]
+    imu_orientation_cov: [0.0001, 0.0, 0.0, 0.0, 0.0001, 0.0, 0.0, 0.0, 0.0001]
     imu_linear_cov: [0.01, 0.0, 0.0, 0.0, 0.01, 0.0, 0.0, 0.0, 0.01]
     imu_angular_cov: [0.01, 0.0, 0.0, 0.0, 0.01, 0.0, 0.0, 0.0, 0.01]
     gnss1_data_rate: 2

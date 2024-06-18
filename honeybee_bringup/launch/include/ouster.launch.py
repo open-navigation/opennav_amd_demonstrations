@@ -34,11 +34,9 @@ import os
 
 
 def generate_launch_description():
-    share_dir = get_package_share_directory('ros2_ouster')
     honeybee_dir = get_package_share_directory('honeybee_bringup')
 
     # Acquire the driver param file
-    parameter_file = LaunchConfiguration('params_file')
     params_declare = DeclareLaunchArgument(
         'params_file',
         default_value=os.path.join(honeybee_dir, 'config', 'ouster.yaml'),
@@ -50,7 +48,7 @@ def generate_launch_description():
                                 output='screen',
                                 namespace='',
                                 emulate_tty=True,
-                                parameters=[parameter_file])
+                                parameters=[LaunchConfiguration('params_file')])
 
     configure_event = EmitEvent(
         event=ChangeState(
