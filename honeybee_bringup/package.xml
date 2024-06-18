@@ -17,7 +17,8 @@
   <exec_depend>nmea_navsat_driver</exec_depend>
   <exec_depend>microstrain_inertial_driver</exec_depend>
   <exec_depend>realsense2_camera</exec_depend>
-  <exec_depend>ros2_ouster</exec_depend>
+  <exec_depend>ouster_ros</exec_depend>
+  <exec_depend>pcl-ros</exec_depend>
   
   <export>
     <build_type>ament_cmake</build_type>

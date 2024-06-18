@@ -218,18 +218,19 @@ def generate_launch_description():
         condition=UnlessCondition(use_simulation)
     )
 
-    process_configure_mcu = ExecuteProcess(
-        shell=True,
-        cmd=
-            [['export ROS_DOMAIN_ID=0;'],
-             [FindExecutable(name='ros2'),
-              ' service call platform/mcu/configure',
-              ' clearpath_platform_msgs/srv/ConfigureMcu',
-              ' "{domain_id: 0,',
-              ' robot_namespace: \'\'}"'],
-            ],
-        condition=UnlessCondition(use_simulation)
-    )
+    # Defaults to main namespace
+    # process_configure_mcu = ExecuteProcess(
+    #     shell=True,
+    #     cmd=
+    #         [['export ROS_DOMAIN_ID=0;'],
+    #          [FindExecutable(name='ros2'),
+    #           ' service call platform/mcu/configure',
+    #           ' clearpath_platform_msgs/srv/ConfigureMcu',
+    #           ' "{domain_id: 0,',
+    #           ' robot_namespace: \'\'}"'],
+    #         ],
+    #     condition=UnlessCondition(use_simulation)
+    # )
 
     # Create LaunchDescription
     ld = LaunchDescription()
@@ -246,5 +247,5 @@ def generate_launch_description():
     ld.add_action(node_imu_filter_node)
     ld.add_action(node_micro_ros_agent)
     ld.add_action(node_nmea_topic_driver)
-    ld.add_action(process_configure_mcu)
+    # ld.add_action(process_configure_mcu)
     return ld
