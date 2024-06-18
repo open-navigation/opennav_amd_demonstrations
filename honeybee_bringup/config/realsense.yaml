@@ -1,4 +1,4 @@
-intel_realsense:
+sensors/camera_0:
   ros__parameters:
     # camera_name: 'camera_0'
     # serial_no: '341622073339'

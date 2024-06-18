@@ -12,11 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+
+from ament_index_python.packages import get_package_share_directory
+
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, ExecuteProcess
+from launch.actions import IncludeLaunchDescription, GroupAction, DeclareLaunchArgument, ExecuteProcess
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import EnvironmentVariable, FindExecutable, PathJoinSubstitution, LaunchConfiguration
 from launch_ros.actions import Node
+from launch_ros.actions import SetRemap
 from launch_ros.substitutions import FindPackageShare
 from launch.substitutions import LaunchConfiguration
 from launch.actions import DeclareLaunchArgument
@@ -24,21 +29,23 @@ from launch.actions import DeclareLaunchArgument
 def generate_launch_description():
     pkg_microstrain_inertial_driver = FindPackageShare('microstrain_inertial_driver')
 
-    parameters = LaunchConfiguration('parameters')
     arg_parameters = DeclareLaunchArgument(
         'parameters',
-        default_value=PathJoinSubstitution([
-          FindPackageShare('honeybee_bringup'), 'config', 'microstrain.yaml']))
+        default_value=os.path.join(
+          get_package_share_directory('honeybee_bringup'), 'config', 'microstrain.yaml'))
 
-    launch_microstrain_imu = Node(
-        package = 'microstrain_inertial_driver',
-        executable = 'microstrain_inertial_driver_node',
-        name = 'microstrain_inertial_driver',
-        parameters = [parameters],
-        output='screen',
-        remappings=[
-            ('/imu/data', 'data'), ('/moving_ang', 'moving_ang')]
+    launch_microstrain_imu = PathJoinSubstitution([
+        pkg_microstrain_inertial_driver, 'launch', 'microstrain_launch.py'])
+
+    launch_microstrain_imu = GroupAction([
+        SetRemap('imu/data', 'sensors/imu_1/data'),
+        SetRemap('/moving_ang', 'sensors/imu_1/moving_ang'),
+
+        IncludeLaunchDescription(
+          PythonLaunchDescriptionSource([launch_microstrain_imu]),
+          launch_arguments=[('params_file', LaunchConfiguration('parameters'))]
         )
+    ])
 
     ld = LaunchDescription()
     ld.add_action(arg_parameters)
