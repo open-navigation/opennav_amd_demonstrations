@@ -54,7 +54,7 @@ slam_toolbox:
     odom_frame: odom
     map_frame: map
     base_frame: base_link
-    scan_topic: /sensors/lidar_0/scan
+    scan_topic: pc2_laser
     use_map_saver: true
     mode: mapping
 

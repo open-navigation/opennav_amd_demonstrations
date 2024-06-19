@@ -127,6 +127,15 @@ def generate_launch_description():
         }.items(),
     )
 
+    pc2_to_laserscan_cmd = Node(
+        package='pointcloud_to_laserscan',
+        executable='pointcloud_to_laserscan_node',
+        name='pointcloud_to_laserscan',
+        parameters=[{'min_height': 0.2, 'max_height': 0.76, 'range_max': 20.0, 'angle_increment': 0.0061359}],
+        remappings=[('/cloud_in', '/sensors/lidar_0/points'),
+                    ('scan', '/pc2_laser')],
+    )
+
     # Create the launch description and populate
     ld = LaunchDescription()
 
@@ -140,6 +149,7 @@ def generate_launch_description():
     ld.add_action(declare_rviz_config_file_cmd)
     ld.add_action(declare_use_rviz_cmd)
     ld.add_action(declare_use_respawn_cmd)
+    ld.add_action(pc2_to_laserscan_cmd)
 
     # Add the actions to launch all of the navigation nodes
     ld.add_action(rviz_cmd)
