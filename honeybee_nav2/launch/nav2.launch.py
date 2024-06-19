@@ -40,7 +40,7 @@ def generate_launch_description():
     # Get the launch directory
     nav2_bringup_dir = get_package_share_directory('nav2_bringup')
     nav2_launch_dir = os.path.join(nav2_bringup_dir, 'launch')
-    sim_dir = get_package_share_directory('honeybee_nav2')
+    honeybee_nav_dir = get_package_share_directory('honeybee_nav2')
 
     # Create the launch configuration variables
     slam = LaunchConfiguration('slam')
@@ -73,7 +73,7 @@ def generate_launch_description():
 
     declare_params_file_cmd = DeclareLaunchArgument(
         'params_file',
-        default_value=os.path.join(nav2_bringup_dir, 'params', 'nav2_params.yaml'), # TODO
+        default_value=os.path.join(honeybee_nav_dir, 'config', 'nav2_params.yaml'),
         description='Full path to the ROS2 parameters file to use for all launched nodes',
     )
 
@@ -114,7 +114,6 @@ def generate_launch_description():
         }.items(),
     )
 
-    # TODO topic remaps in params, TF frames
     bringup_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(nav2_launch_dir, 'bringup_launch.py')),
         launch_arguments={
@@ -126,14 +125,6 @@ def generate_launch_description():
             'use_composition': use_composition,
             'use_respawn': use_respawn,
         }.items(),
-    )
-
-    temp_scan_relay = Node(
-        package='topic_tools',
-        executable='relay',
-        name='relay',
-        output='screen',
-        parameters=[{'input_topic': '/sensors/lidar_0/scan', 'output_topic': '/scan'}],
     )
 
     # Create the launch description and populate
@@ -149,7 +140,6 @@ def generate_launch_description():
     ld.add_action(declare_rviz_config_file_cmd)
     ld.add_action(declare_use_rviz_cmd)
     ld.add_action(declare_use_respawn_cmd)
-    ld.add_action(temp_scan_relay)
 
     # Add the actions to launch all of the navigation nodes
     ld.add_action(rviz_cmd)
