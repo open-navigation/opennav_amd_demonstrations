@@ -1,0 +1,11 @@
+[Unit]
+Description="Bringup robot hardware"
+After=network-online.target
+
+[Service]
+User=administrator
+Type=simple
+ExecStart=/bin/bash -c 'source ~/amd_ws/install/setup.bash; ros2 launch honeybee_bringup robot.launch.py;'
+
+[Install]
+WantedBy=multi-user.target

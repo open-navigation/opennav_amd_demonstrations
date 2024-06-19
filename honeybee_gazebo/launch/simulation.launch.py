@@ -115,7 +115,7 @@ def generate_launch_description():
         executable='parameter_bridge',
         name='bridge_ros_gz',
         parameters=[{
-            'config_file': os.path.join(sim_dir, 'configs', 'gazebo_bridge.yaml'),
+            'config_file': os.path.join(sim_dir, 'config', 'gazebo_bridge.yaml'),
             'use_sim_time': True}],
         output='screen',
     )
