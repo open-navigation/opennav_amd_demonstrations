@@ -132,7 +132,7 @@ def generate_launch_description():
         executable='pointcloud_to_laserscan_node',
         name='pointcloud_to_laserscan',
         parameters=[{'min_height': 0.2, 'max_height': 0.76,
-                     'range_max': 20.0, 'angle_increment': 0.0061359
+                     'range_max': 20.0, 'angle_increment': 0.0061359,
                      'target_frame': 'os0_sensor'}],
         remappings=[('/cloud_in', '/sensors/lidar_0/points'),
                     ('scan', '/pc2_laser')],
