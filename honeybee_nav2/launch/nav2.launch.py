@@ -114,6 +114,7 @@ def generate_launch_description():
         }.items(),
     )
 
+    # TODO topic remaps in params, TF frames
     bringup_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(nav2_launch_dir, 'bringup_launch.py')),
         launch_arguments={
@@ -125,6 +126,14 @@ def generate_launch_description():
             'use_composition': use_composition,
             'use_respawn': use_respawn,
         }.items(),
+    )
+
+    temp_scan_relay = Node(
+        package='topic_tools',
+        executable='relay',
+        name='relay',
+        output='screen',
+        parameters=[{'input_topic': '/sensors/lidar_0/scan', 'output_topic': '/scan'}],
     )
 
     # Create the launch description and populate
@@ -140,6 +149,7 @@ def generate_launch_description():
     ld.add_action(declare_rviz_config_file_cmd)
     ld.add_action(declare_use_rviz_cmd)
     ld.add_action(declare_use_respawn_cmd)
+    ld.add_action(temp_scan_relay)
 
     # Add the actions to launch all of the navigation nodes
     ld.add_action(rviz_cmd)

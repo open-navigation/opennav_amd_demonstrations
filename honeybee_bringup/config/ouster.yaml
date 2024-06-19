@@ -7,7 +7,7 @@ sensors/lidar_0/os_sensor:
     lidar_mode: '1024x10'
     timestamp_mode: 'TIME_FROM_ROS_TIME'
     udp_profile_lidar: ''
-    metadata: ''
+    metadata: '/dev/null'
     lidar_port: 0
     imu_port: 0
     use_system_default_qos: False
