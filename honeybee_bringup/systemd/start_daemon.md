@@ -6,7 +6,7 @@ Place each of the service files into `/etc/systemd/system`
 
 These services can be enabled via `systemctl enable <service>` to launch on startup (or `disable` to stop it) and manually `start`-ed for a single run (and subsiquently `stop`-ed). 
 
-Once running, you can see the output via `journalctl -u  <service>`.
+Once running, you can see the output via `journalctl -b -u  <service>` (`-b` for current boot logs only).
 
 Note: this relies on the workspace `amd_ws` in the root directory of the robot containing the necessary work.
 

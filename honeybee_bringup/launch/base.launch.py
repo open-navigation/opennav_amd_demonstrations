@@ -144,22 +144,6 @@ def generate_launch_description():
         parameters=[imu_filter_params, {'use_sim_time': use_sim_time}],
     )
 
-    launch_diagnostics = GroupAction([
-        Node(
-            package='diagnostic_aggregator',
-            executable='aggregator_node',
-            output='screen',
-            parameters=[PathJoinSubstitution([
-                get_package_share_directory('clearpath_diagnostics'), 'config', 'diagnostics.yaml'])],
-            condition=UnlessCondition(use_simulation)),
-        Node(
-            package='clearpath_diagnostics',
-            executable='diagnostics_updater',
-            output='screen',
-            arguments=['-s', setup_path],
-            condition=UnlessCondition(use_simulation))
-    ])
-
     node_wireless_watcher = Node(
         name='wireless_watcher',
         executable='wireless_watcher',
@@ -218,7 +202,7 @@ def generate_launch_description():
         condition=UnlessCondition(use_simulation)
     )
 
-    # Defaults to main namespace
+    # Defaults to main namespace, no need for empty namespace
     # process_configure_mcu = ExecuteProcess(
     #     shell=True,
     #     cmd=
@@ -232,6 +216,23 @@ def generate_launch_description():
     #     condition=UnlessCondition(use_simulation)
     # )
 
+    # Takes alot of CPU and not currently in use
+    # launch_diagnostics = GroupAction([
+    #     Node(
+    #         package='diagnostic_aggregator',
+    #         executable='aggregator_node',
+    #         output='screen',
+    #         parameters=[PathJoinSubstitution([
+    #             get_package_share_directory('clearpath_diagnostics'), 'config', 'diagnostics.yaml'])],
+    #         condition=UnlessCondition(use_simulation)),
+    #     Node(
+    #         package='clearpath_diagnostics',
+    #         executable='diagnostics_updater',
+    #         output='screen',
+    #         arguments=['-s', setup_path],
+    #         condition=UnlessCondition(use_simulation))
+    # ])
+
     # Create LaunchDescription
     ld = LaunchDescription()
     ld.add_action(arg_use_simulation)
@@ -240,12 +241,12 @@ def generate_launch_description():
     ld.add_action(node_joy)
     ld.add_action(node_teleop_twist_joy)
     ld.add_action(node_twist_mux)
-    ld.add_action(launch_diagnostics)
     ld.add_action(node_wireless_watcher)
     ld.add_action(node_battery_state_estimator)
     ld.add_action(node_battery_state_control)
     ld.add_action(node_imu_filter_node)
     ld.add_action(node_micro_ros_agent)
     ld.add_action(node_nmea_topic_driver)
+    # ld.add_action(launch_diagnostics)
     # ld.add_action(process_configure_mcu)
     return ld

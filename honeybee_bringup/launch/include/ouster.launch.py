@@ -30,6 +30,7 @@ from launch.substitutions import LaunchConfiguration, FindExecutable
 from launch.events import matches_action
 from launch_ros.events.lifecycle import ChangeState
 from launch_ros.event_handlers import OnStateTransition
+from launch_ros.actions import Node
 
 
 def generate_launch_description():
@@ -57,14 +58,6 @@ def generate_launch_description():
         parameters=[params_file]
     )
 
-    # os_image = ComposableNode(
-    #     package='ouster_ros',
-    #     plugin='ouster_ros::OusterImage',
-    #     name='os_image',
-    #     namespace='sensors',
-    #     parameters=[params_file]
-    # )
-
     os_container = ComposableNodeContainer(
         name='os_container',
         namespace='sensors/lidar_0',
@@ -73,24 +66,34 @@ def generate_launch_description():
         composable_node_descriptions=[
             os_sensor,
             os_cloud,
-            # os_image
         ],
         output='screen',
+    )
+
+    pc2_to_laserscan_cmd = Node(
+        package='pointcloud_to_laserscan',
+        executable='pointcloud_to_laserscan_node',
+        name='pointcloud_to_laserscan',
+        parameters=[{'min_height': 0.4, 'max_height': 0.61,  # 16-24 inches
+                     'range_max': 25.0, 'angle_increment': 0.01227,  # 512x10 mode
+                     'target_frame': 'os0_sensor'}],  # Invert the frame for RHR rotation direction
+        remappings=[('/cloud_in', '/sensors/lidar_0/points'),
+                    ('scan', '/sensors/lidar_0/scan')],
     )
 
     def invoke_lifecycle_cmd(node_name, verb):
         ros2_exec = FindExecutable(name='ros2')
         return ExecuteProcess(
-            cmd=[[ros2_exec, ' lifecycle set ',
-                  'sensors/lidar_0', '/', node_name, ' ', verb]],
+            cmd=[[ros2_exec, ' lifecycle set ', node_name, ' ', verb]],
             shell=True)
 
-    sensor_configure_cmd = invoke_lifecycle_cmd('os_sensor', 'configure')
-    sensor_activate_cmd = invoke_lifecycle_cmd('os_sensor', 'activate')
+    sensor_configure_cmd = invoke_lifecycle_cmd('/sensors/lidar_0/os_sensor', 'configure')
+    sensor_activate_cmd = invoke_lifecycle_cmd('/sensors/lidar_0/os_sensor', 'activate')
 
     return launch.LaunchDescription([
         params_file_arg,
         os_container,
-        sensor_configure_cmd,
-        TimerAction(period=1.0, actions=[sensor_activate_cmd])
+        TimerAction(period=10.0, actions=[sensor_configure_cmd]),
+        TimerAction(period=30.0, actions=[sensor_activate_cmd]),
+        pc2_to_laserscan_cmd
     ])
