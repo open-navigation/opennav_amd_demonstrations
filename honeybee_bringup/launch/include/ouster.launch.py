@@ -74,7 +74,7 @@ def generate_launch_description():
         package='pointcloud_to_laserscan',
         executable='pointcloud_to_laserscan_node',
         name='pointcloud_to_laserscan',
-        parameters=[{'min_height': -0.127, 'max_height': 0.127,  # +/- 5 inches in sensor frame 
+        parameters=[{'min_height': -0.2032, 'max_height': 0.127,  # -8 to +5 inches in sensor frame 
                      'range_max': 25.0, 'angle_increment': 0.01227,  # 512x10 mode
                      'target_frame': 'os0_sensor', 'scan_time': 0.10}],  # Invert the frame for RHR rotation direction
         remappings=[('/cloud_in', '/sensors/lidar_0/points'),

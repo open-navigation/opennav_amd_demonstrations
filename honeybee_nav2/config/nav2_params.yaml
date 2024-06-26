@@ -194,12 +194,12 @@ local_costmap:
         mark_threshold: 0
         observation_sources: lidar depth_cam
         lidar:
-          topic: /sensors/lidar_0/points
-          min_obstacle_height: 0.1524
+          topic: /sensors/lidar_0/scan
+          min_obstacle_height: 0.254
           max_obstacle_height: 0.8
           clearing: True
           marking: True
-          data_type: "PointCloud2"
+          data_type: "LaserScan"
           raytrace_max_range: 5.65  # max diagonal of 4m costmap
           raytrace_min_range: 0.0
           obstacle_max_range: 4.0   # 4m costmap range maximum
@@ -301,12 +301,12 @@ global_costmap:
         mark_threshold: 0
         observation_sources: lidar depth_cam
         lidar:
-          topic: /sensors/lidar_0/points
-          min_obstacle_height: 0.1524
+          topic: /sensors/lidar_0/scan
+          min_obstacle_height: 0.254
           max_obstacle_height: 0.8
           clearing: True
           marking: True
-          data_type: "PointCloud2"
+          data_type: "LaserScan"
           raytrace_max_range: 11.0
           raytrace_min_range: 0.0
           obstacle_max_range: 10.0
