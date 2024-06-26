@@ -46,6 +46,7 @@ def generate_launch_description():
     map_yaml_file = LaunchConfiguration('map')
     use_sim_time = LaunchConfiguration('use_sim_time')
     params_file = LaunchConfiguration('params_file')
+    local_nav = LaunchConfiguration('local_nav')
 
     # Declare the launch arguments
     declare_slam_cmd = DeclareLaunchArgument(
@@ -70,6 +71,12 @@ def generate_launch_description():
         description='Full path to the ROS2 parameters file to use for all launched nodes',
     )
 
+    declare_local_nav_cmd = DeclareLaunchArgument(
+        'local_nav',
+        default_value='False',
+        description='Whether to disable all localization and use odom only',
+    )
+
     bringup_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(launch_dir, 'bringup.launch.py')),
         launch_arguments={
@@ -77,6 +84,7 @@ def generate_launch_description():
             'map': map_yaml_file,
             'use_sim_time': use_sim_time,
             'params_file': params_file,
+            'local_nav': local_nav
         }.items(),
     )
 
@@ -88,5 +96,6 @@ def generate_launch_description():
     ld.add_action(declare_map_yaml_cmd)
     ld.add_action(declare_use_sim_time_cmd)
     ld.add_action(declare_params_file_cmd)
+    ld.add_action(declare_local_nav_cmd)
     ld.add_action(bringup_cmd)
     return ld

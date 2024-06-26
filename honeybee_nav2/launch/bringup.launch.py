@@ -41,6 +41,7 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time')
     params_file = LaunchConfiguration('params_file')
     log_level = LaunchConfiguration('log_level')
+    local_nav = LaunchConfiguration('local_nav')
 
     # Create our own temporary YAML files that include substitutions
     param_substitutions = {
@@ -77,6 +78,12 @@ def generate_launch_description():
         default_value=os.path.join(honeybee_nav_dir, 'config', 'nav2_params.yaml'),
         description='Full path to the ROS2 parameters file to use for all launched nodes')
 
+    declare_local_nav_cmd = DeclareLaunchArgument(
+        'local_nav',
+        default_value='False',
+        description='Whether to disable all localization and use odom only',
+    )
+
     declare_log_level_cmd = DeclareLaunchArgument(
         'log_level', default_value='info',
         description='log level')
@@ -93,16 +100,25 @@ def generate_launch_description():
 
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(os.path.join(honeybee_launch_dir, 'slam_toolbox.launch.py')),
-            condition=IfCondition(slam),
+            condition=IfCondition(PythonExpression([slam, ' and not ', local_nav])),
             launch_arguments={'use_sim_time': use_sim_time}.items()),
 
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(os.path.join(honeybee_launch_dir, 'amcl.launch.py')),
-            condition=IfCondition(PythonExpression(['not ', slam])),
+            condition=IfCondition(PythonExpression(['not ', slam, ' and not ', local_nav])),
             launch_arguments={'map': map_yaml_file,
                               'use_sim_time': use_sim_time,
                               'params_file': params_file,
                               'container_name': 'nav2_container'}.items()),
+
+        # if local_nav, map->odom is unity static transform
+        Node(
+            package="tf2_ros", 
+            executable="static_transform_publisher",
+            arguments=["0.0", "0.0", "0.0", "0", "0", "0", "map", "odom"],
+            parameters=[{'use_sim_time': use_sim_time}],
+            condition=IfCondition(local_nav)
+        ),
 
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(os.path.join(nav2_launch_dir, 'navigation_launch.py')),
@@ -124,6 +140,7 @@ def generate_launch_description():
     ld.add_action(declare_use_sim_time_cmd)
     ld.add_action(declare_params_file_cmd)
     ld.add_action(declare_log_level_cmd)
+    ld.add_action(declare_local_nav_cmd)
 
     # Add the actions to launch all of the navigation nodes
     ld.add_action(bringup_cmd_group)

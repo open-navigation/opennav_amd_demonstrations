@@ -81,19 +81,16 @@ def generate_launch_description():
                     ('scan', '/sensors/lidar_0/scan')],
     )
 
-    def invoke_lifecycle_cmd(node_name, verb):
-        ros2_exec = FindExecutable(name='ros2')
-        return ExecuteProcess(
-            cmd=[[ros2_exec, ' lifecycle set ', node_name, ' ', verb]],
-            shell=True)
-
-    sensor_configure_cmd = invoke_lifecycle_cmd('/sensors/lidar_0/os_sensor', 'configure')
-    sensor_activate_cmd = invoke_lifecycle_cmd('/sensors/lidar_0/os_sensor', 'activate')
+    # Bringup since Configure is flaky in the driver, we need a retry mechanism
+    activation_watchdog_cmd = Node(
+        package='honeybee_watchdogs',
+        executable='ouster_activation_watchdog',
+        name='ouster_activation_watchdog'
+    )
 
     return launch.LaunchDescription([
         params_file_arg,
         os_container,
-        TimerAction(period=10.0, actions=[sensor_configure_cmd]),
-        TimerAction(period=30.0, actions=[sensor_activate_cmd]),
-        pc2_to_laserscan_cmd
+        pc2_to_laserscan_cmd,
+        activation_watchdog_cmd
     ])

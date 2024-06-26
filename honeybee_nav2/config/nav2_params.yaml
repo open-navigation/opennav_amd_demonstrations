@@ -282,6 +282,10 @@ global_costmap:
       use_sim_time: True
       update_frequency: 1.0
       publish_frequency: 1.0
+      width: 40
+      height: 40
+      origin_x: -20.0
+      origin_y: -20.0
       global_frame: map
       robot_base_frame: base_link
       footprint: "[ [0.254, 0.2159], [0.254, -0.2159], [-0.254, -0.2159], [-0.254, 0.2159] ]"
