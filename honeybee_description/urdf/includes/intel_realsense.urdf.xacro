@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
   <xacro:macro name="intel_realsense" params="name parent_link *origin
-                                              update_rate:=30.0 image_height:=480 image_width:=640">
+                                              update_rate:=6.0 image_height:=240 image_width:=424">
 
     <xacro:macro name="sensor_d435"
                  params="parent *origin name:=camera
