@@ -6,6 +6,7 @@
   <xacro:property name="find_package" value="$(find ${package})" />
   <xacro:property name="meshes"             value="${package}/meshes/" />
   <xacro:property name="realsense_mount"    value="realsense_fixed_mount.STL" />
+  <xacro:arg      name="is_sim"       default="false"/>
 
   <!-- Includes -->
   <xacro:include filename="${find_package}/urdf/includes/custom_macros.urdf.xacro" />
@@ -46,7 +47,7 @@
     <origin xyz="0.093 0.103 0.1881" rpy="0.0 0.0 -1.57"/>
   </xacro:microstrain_imu>
 
-  <xacro:OS0-32 parent="ouster_tower_custom_mount"> <!-- Steve mod: for some rason _mount_plate didn't work, so removed -->
+  <xacro:OS0-32 parent="ouster_tower_custom_mount" is_sim="$(arg is_sim)"> <!-- Steve mod: for some rason _mount_plate didn't work, so removed -->
     <origin xyz="0 0 0.125" rpy="0 0 0" />
   </xacro:OS0-32>
   <xacro:mount_plate prefix="ouster_tower" parent="ark_enclosure_top_link" pattern=".08 .08" height="0.125" radius="0.005">

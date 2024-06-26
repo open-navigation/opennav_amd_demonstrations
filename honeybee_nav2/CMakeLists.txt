@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.8)
-project(honeybee_gazebo)
+project(honeybee_nav2)
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
 
 install(
-  DIRECTORY config launch worlds
+  DIRECTORY config launch
   DESTINATION share/${PROJECT_NAME}
 )
 

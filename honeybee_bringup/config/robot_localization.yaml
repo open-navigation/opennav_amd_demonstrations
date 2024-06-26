@@ -8,16 +8,17 @@ ekf_node:
     use_sim_time: False
     frequency: 50.0
     odom0: 'platform/odom'
-    odom0_config: [True, True, False, False, False, True, True, True, False, False, False, True, False, False, False]
+    odom0_config: [False, False, False, False, False, False, True, True, False, False, False, False, False, False, False]
     odom0_differential: False
     odom0_queue_size: 10
-    imu0: 'sensors/imu_0/data'
-    imu0_config: [False, False, False, False, False, False, False, False, False, False, False, True, True, False, False]
+    # Steve mod: remove built in IMU, use fancy IMU instead
+    # imu0: 'sensors/imu_0/data'
+    # imu0_config: [False, False, False, False, False, False, False, False, False, False, False, True, True, False, False]
+    # imu0_differential: False
+    # imu0_queue_size: 10
+    # imu0_remove_gravitational_acceleration: True
+    imu0: 'sensors/imu_1/data'
+    imu0_config: [False, False, False, False, False, False, False, False, False, False, False, True, False, False, False]
     imu0_differential: False
     imu0_queue_size: 10
     imu0_remove_gravitational_acceleration: True
-    imu1: 'sensors/imu_1/data'
-    imu1_config: [False, False, False, False, False, False, False, False, False, False, False, True, True, False, False]
-    imu1_differential: False
-    imu1_queue_size: 10
-    imu1_remove_gravitational_acceleration: True

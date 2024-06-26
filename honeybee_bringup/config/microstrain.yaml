@@ -7,6 +7,7 @@ microstrain_inertial_driver:
     diagnostics: False
     set_baud: False
     imu_frame_id: 'imu_1_link'
+    frame_id: 'imu_1_link' # Steve mod: incorrect integration, didn't set frame publish properly
     gnss1_frame_id: 'gnss1_antenna_wgs84'
     gnss2_frame_id: 'gnss2_antenna_wgs84'
     filter_frame_id: 'sensor_wgs84'
@@ -28,9 +29,9 @@ microstrain_inertial_driver:
     imu_mag_data_rate: -1
     imu_gps_corr_data_rate: -1
     imu_overrange_status_data_rate: -1
-    imu_orientation_cov: [0.0001, 0.0, 0.0, 0.0, 0.0001, 0.0, 0.0, 0.0, 0.0001]
+    imu_orientation_cov: [1.0e-6, 0.0, 0.0, 0.0, 1.0e-6, 0.0, 0.0, 0.0, 1.0e-6]
     imu_linear_cov: [0.01, 0.0, 0.0, 0.0, 0.01, 0.0, 0.0, 0.0, 0.01]
-    imu_angular_cov: [0.01, 0.0, 0.0, 0.0, 0.01, 0.0, 0.0, 0.0, 0.01]
+    imu_angular_cov: [1.0e-6, 0.0, 0.0, 0.0, 1.0e-6, 0.0, 0.0, 0.0, 1.0e-6]
     gnss1_data_rate: 2
     gnss1_nav_sat_fix_data_rate: -1
     gnss1_odom_data_rate: -1

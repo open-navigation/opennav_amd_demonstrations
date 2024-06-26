@@ -4,10 +4,10 @@ sensors/lidar_0/os_sensor:
     udp_dest: '192.168.131.1'
     mtp_dest: ''
     mtp_main: false
-    lidar_mode: '1024x10'
+    lidar_mode: '512x10'  # TODO 1024x10 once not on the i3?
     timestamp_mode: 'TIME_FROM_ROS_TIME'
     udp_profile_lidar: ''
-    metadata: ''
+    metadata: '/dev/null'
     lidar_port: 0
     imu_port: 0
     use_system_default_qos: False
@@ -20,7 +20,6 @@ sensors/lidar_0/os_cloud:
     point_cloud_frame: os0_lidar
     timestamp_mode: 'TIME_FROM_ROS_TIME'  # this value needs to match os_sensor/timestamp_mode
     ptp_utc_tai_offset: -37.0 # UTC/TAI offset in seconds to apply when using TIME_FROM_PTP_1588
-    proc_mask: PCL|SCAN # pick IMU, PCL, SCAN or any combination of the three options
+    proc_mask: PCL # pick IMU, PCL, SCAN or any combination of the three options
     use_system_default_qos: False # needs to match the value defined for os_sensor node
-    scan_ring: 16
     point_type: xyz
