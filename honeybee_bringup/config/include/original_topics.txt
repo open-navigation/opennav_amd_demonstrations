@@ -60,3 +60,5 @@
 /j100_0849/twist_marker_server/update
 /parameter_events
 /rosout
+
+OS-0-32-U3: firmware rev: v2.5.2

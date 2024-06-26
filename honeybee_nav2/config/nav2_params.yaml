@@ -120,8 +120,8 @@ controller_server:
     general_goal_checker:
       stateful: True
       plugin: "nav2_controller::SimpleGoalChecker"
-      xy_goal_tolerance: 0.25
-      yaw_goal_tolerance: 0.25
+      xy_goal_tolerance: 0.3
+      yaw_goal_tolerance: 0.5
 
     # Controller parameters
     FollowPath:
@@ -136,13 +136,13 @@ controller_server:
       min_speed_theta: 0.0
       acc_lim_x: 3.5
       acc_lim_y: 0.0
-      acc_lim_theta: 10.0
+      acc_lim_theta: 20.0
       decel_lim_x: -3.5
       decel_lim_y: 0.0
-      decel_lim_theta: -10.0
-      vx_samples: 100 #TODO
+      decel_lim_theta: -20.0
+      vx_samples: 60
       vy_samples: 1
-      vtheta_samples: 30 #TODO
+      vtheta_samples: 20
       sim_time: 1.7
       linear_granularity: 0.05
       angular_granularity: 0.025
@@ -172,16 +172,16 @@ local_costmap:
       global_frame: odom
       robot_base_frame: base_link
       rolling_window: true
-      width: 4 # TODO
+      width: 4
       height: 4
       resolution: 0.05
       footprint: "[ [0.254, 0.2159], [0.254, -0.2159], [-0.254, -0.2159], [-0.254, 0.2159] ]"
-      footprint_padding: 0.05
+      footprint_padding: 0.1
       plugins: ["voxel_layer", "inflation_layer"] #TODO STVL 3d lidar?
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.55
+        inflation_radius: 2.0
       voxel_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True
@@ -229,7 +229,7 @@ global_costmap:
       global_frame: map
       robot_base_frame: base_link
       footprint: "[ [0.254, 0.2159], [0.254, -0.2159], [-0.254, -0.2159], [-0.254, 0.2159] ]"
-      footprint_padding: 0.05
+      footprint_padding: 0.1
       resolution: 0.05
       track_unknown_space: true
       plugins: ["static_layer", "voxel_layer", "inflation_layer"]
@@ -272,7 +272,7 @@ global_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.55
+        inflation_radius: 2.0
       always_send_full_costmap: True
 
 planner_server:
@@ -340,8 +340,8 @@ velocity_smoother:
     feedback: "OPEN_LOOP"
     max_velocity: [0.5, 0.0, 1.4]
     min_velocity: [-0.5, 0.0, -1.4]
-    max_accel: [3.5, 0.0, 10.0]
-    max_decel: [-3.5, 0.0, -10.0]
+    max_accel: [3.5, 0.0, 20.0]
+    max_decel: [-3.5, 0.0, -20.0]
     odom_topic: "/platform/odom/filtered"
     odom_duration: 0.1
     deadband_velocity: [0.0, 0.0, 0.0]

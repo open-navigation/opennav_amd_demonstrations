@@ -9,9 +9,9 @@ sensors/camera_0:
     json_file_path: ''
     log_level: 'info'
     output: 'screen'
-    depth_module.profile: '640,480,30'
+    depth_module.depth_profile: '424,240,6' #Steve mod: reduce resolution & fps
     enable_depth: True
-    rgb_camera.profile: '640,480,30'
+    rgb_camera.color_profile: '424,240,6' #Steve mod: reduce resolution & fps
     rgb_camera.enable_auto_exposure: True
     enable_color: True
     enable_infra1: False
@@ -27,7 +27,7 @@ sensors/camera_0:
     enable_pose: True
     pose_fps: 200
     pointcloud.enable: True
-    pointcloud.stream_filter: 2
+    pointcloud.stream_filter: 0 #Steve mod: remove color info
     pointcloud.stream_index_filter: 0
     enable_sync: False
     align_depth.enable: False
@@ -39,7 +39,8 @@ sensors/camera_0:
     pointcloud.ordered_pc: False
     tf_publish_rate: 0.0
     diagnostics_period: 0.0
-    decimation_filter.enable: False
+    decimation_filter.enable: True
+    decimation_filter.filter_magnitude: 6 #Steve mod: reduce size
     rosbag_filename: ''
     depth_module.exposure.1: 7500
     depth_module.gain.1: 16
