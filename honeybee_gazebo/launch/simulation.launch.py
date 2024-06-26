@@ -171,6 +171,16 @@ def generate_launch_description():
         condition=IfCondition(use_joint_state_publisher)
     )
 
+    pc2_to_laserscan_cmd = Node(
+        package='pointcloud_to_laserscan',
+        executable='pointcloud_to_laserscan_node',
+        name='pointcloud_to_laserscan',
+        parameters=[{'range_max': 25.0, 'angle_increment': 0.01227,  # 512x10 mode
+                     'target_frame': 'os0_sensor', 'scan_time': 0.10}],  # Invert the frame for RHR rotation direction
+        remappings=[('/cloud_in', '/sensors/lidar_0/points'),
+                    ('scan', '/sensors/lidar_0/scan')],
+    )
+
     set_env_vars_resources1 = AppendEnvironmentVariable(
         'GZ_SIM_RESOURCE_PATH',
         str(Path(os.path.join(desc_dir)).parent.resolve()))
@@ -209,5 +219,6 @@ def generate_launch_description():
     ld.add_action(camera_bridge_depth)
 
     ld.add_action(launch_robot_state_publisher_cmd)
+    ld.add_action(pc2_to_laserscan_cmd)
 
     return ld
