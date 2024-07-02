@@ -4,7 +4,7 @@ sensors/lidar_0/os_sensor:
     udp_dest: '192.168.131.1'
     mtp_dest: ''
     mtp_main: false
-    lidar_mode: '512x10'  # TODO 1024x10 once not on the i3?
+    lidar_mode: '512x10'
     timestamp_mode: 'TIME_FROM_ROS_TIME'
     udp_profile_lidar: ''
     metadata: '/dev/null'
