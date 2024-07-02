@@ -70,6 +70,12 @@ Then, apply with `sudo netplan apply --debug` and ensure no meaningful errors ap
 ssh administrator@cpr-j100-0842.local
 ```
 
+If this does not work, you can use nmap to find all the devices connected to your wireless and manually find the right device.
+
+```
+nmap -sP 192.168.1.*/24
+```
+
 Log back out.
 
 5. Add the IP of the robot to your `/etc/host` so you can SSH into it in the future without `.local`

@@ -10,7 +10,7 @@ One way to do this is via X forwarding on ssh. For example:
 
 ```
 ssh username@robot -XC
-rviz2
+rviz2 # source amd_ws/install/setup.bash && ros2 launch honeybee_nav2 rviz.launch.py
 ```
 
 You can see an rviz window pop up on your screen!

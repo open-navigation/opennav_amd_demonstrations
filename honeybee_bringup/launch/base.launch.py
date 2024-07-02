@@ -132,6 +132,12 @@ def generate_launch_description():
             {'use_sim_time': use_sim_time}]
     )
 
+    node_teleop_estop = Node(
+        package='honeybee_watchdogs',
+        executable='joystick_estop',
+        output='screen',
+    )
+
     node_imu_filter_node = Node(
         name='imu_filter_node',
         executable='imu_filter_madgwick_node',
@@ -241,6 +247,7 @@ def generate_launch_description():
     ld.add_action(node_joy)
     ld.add_action(node_teleop_twist_joy)
     ld.add_action(node_twist_mux)
+    ld.add_action(node_teleop_estop)
     ld.add_action(node_wireless_watcher)
     ld.add_action(node_battery_state_estimator)
     ld.add_action(node_battery_state_control)
