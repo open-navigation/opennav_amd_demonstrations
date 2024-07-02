@@ -37,7 +37,7 @@ def generate_launch_description():
         default_value='false',
         description='Use simulation (Gazebo) clock if true')
 
-    declare_use_sim_time_cmd = DeclareLaunchArgument(
+    declare_slam_cmd = DeclareLaunchArgument(
         'slam',
         default_value='False',
         description='Use simulation (Gazebo) clock if true')
@@ -49,7 +49,9 @@ def generate_launch_description():
         arguments = [
             '-configuration_directory', os.path.join(honeybee_nav_dir, 'config'),
             '-configuration_basename', 'cartographer_slam.lua'],
-        remappings = [('points', '/sensors/lidar_0/points')],
+        remappings = [('/points2', '/sensors/lidar_0/points'),
+                      ('/imu', '/sensors/imu_1/data'),
+                      ('/odom', '/platform/odom/filtered')],
         output = 'screen',
         condition=IfCondition(slam)
     )
@@ -62,7 +64,9 @@ def generate_launch_description():
             '-configuration_directory', os.path.join(honeybee_nav_dir, 'config'),
             '-configuration_basename', 'cartographer_localization.lua',
             '-load_state_filename', 'PATH/TO/SLAM/TODO'], #TODO
-        remappings = [('points', '/sensors/lidar_0/points')],
+        remappings = [('/points2', '/sensors/lidar_0/points'),
+                      ('/imu', '/sensors/imu_1/data'),
+                      ('/odom', '/platform/odom/filtered')],
         output = 'screen',
         condition=IfCondition(PythonExpression(['not ', slam]))
     )
@@ -78,6 +82,7 @@ def generate_launch_description():
     # Create the launch description and populate
     ld = LaunchDescription()
     ld.add_action(declare_use_sim_time_cmd)
+    ld.add_action(declare_slam_cmd)
     ld.add_action(slam_cartographer_node)
     ld.add_action(localization_cartographer_node)
     ld.add_action(cartographer_occupancy_grid_node)
