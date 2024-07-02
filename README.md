@@ -100,6 +100,11 @@ ssh administrator@honeybee
 
 See MD file
 
+Note the following IPs for the internal network:
+- Robot base: 192.168.131.1
+- AMD Computer: 192.168.131.10
+- Ouster Lidar: 192.168.131.20
+
 ## Setup robot navigation bringup
 
 To run on the hardware standalone without an existing map, use the `slam` option to use the lidar to generate a map live. Else, specifying the path to your `map:=/path/to/map.yaml` if you'd like to initialize in an existing map: 
@@ -118,3 +123,10 @@ ros2 launch honeybee_nav2 nav2.launch.py use_sim_time:=True slam:=True
 
 The demonstrations build upon the above and either launch the simulation to perform the task or launch the real robot as shown in the videos! The demonstrations use Nav2 in various configurations, thus it is not brought up with the robot hardware on boot-up like the robot, sensors, and joystick (though it easily could be with the provided `nav2_bringup.service` systemd service for a particular application).
 
+
+
+Mappings for joystick:
+- Left joy for teleop with left (L1) rocker for deadman
+- Right rocker (R1) for "fast" mode deadman
+- Circle is estop to override all and stop robot, likely requiring a reboot
+- PS button hold 3s to poweroff the AMD backpack computer

@@ -25,6 +25,10 @@ setup(
     entry_points={
         'console_scripts': [
             'ouster_activation_watchdog = honeybee_watchdogs.ouster_activation_watchdog:main',
+            'power_off_backpack = honeybee_watchdogs.power_off_backpack:main',
+            'capture_system_metrics = honeybee_watchdogs.capture_system_metrics:main',
+            'record_rosbag_data = honeybee_watchdogs.record_rosbag_data:main',
+            'joystick_estop = honeybee_watchdogs.joystick_estop:main',
         ],
     },
 )
