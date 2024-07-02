@@ -22,3 +22,5 @@ ekf_node:
     imu0_differential: False
     imu0_queue_size: 10
     imu0_remove_gravitational_acceleration: True
+
+# For 3D: IMU include roll, pitch; two_d_mode: false; odom0 Z-vel; odom1 of odometry source (optional)

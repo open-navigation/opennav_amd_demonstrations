@@ -59,7 +59,15 @@ If you want the robot computers to be able to SSH into each other without passwo
 
 TODO: a guide for setting up multi-robot communication over ethernet might be good.
 
-Now that you have the computers able to connect over the internal wired network, now we need to configure ROS 2 to use this internal network **rather than** the wireless network which is set by default. This is so that you get high speed wired transport of the data between the computers rather than communicating over the external wireless router. We'll need to configure the DDS vendors to do this.
+Now that you have the computers able to connect over the internal wired network, now we need to configure ROS 2 to use this internal network **rather than** the wireless network. This is so that you get high speed wired transport of the data between the computers rather than communicating over the external wireless router. 
+
+This has 2 options:
+- Set the wired connection to be higher priority to send data through
+- Disable wireless transport altogether for on-board communication only, which may be preferable for security and network performance reasons with many robots.
+
+We may need to configure the DDS vendors to do this. By default, if your wired connection is a higher priority than the wireless, DDS will prefer that route and you're all set. You can find your priorities via `ip route show`, in which the lowest value is of the highest priority. If no priority level is shown for a connection, its priority is `0`.
+
+If you want to disable wireless use, see below:
 
 If using Fast-DDS, save a file containing the following and add `export FASTDDS_DEFAULT_PROFILES_FILE=/path/to/fastdds.xml` to your `~/.bashrc` file so that each time a terminal opens, it uses this configuration automatically without your need to set it each time:
 
@@ -74,7 +82,7 @@ If using Fast-DDS, save a file containing the following and add `export FASTDDS_
         <type>UDPv4</type>
 
         <!-- Add the allowlist config for ROS 2 versions Jazzy and later -->
-        <!-- Modify for your interface of choice! eno, enx, etc-->
+        <!-- Modify for your interface of choice! eno, enx, br0, etc-->
         <!-- <interfaces>
           <allowlist>
             <interface name="wlp59s0"/>
@@ -82,11 +90,12 @@ If using Fast-DDS, save a file containing the following and add `export FASTDDS_
         </interfaces> -->
 
         <!-- Equivalent whitelist config for ROS 2 versions prior to Jazzy -->
-        <!-- Modify for your interface of choice! eno, enx, etc-->
-        <interfaceWhiteList>
-          <interface>wlp59s0</interface>
-          <!-- <address>192.168.131.1/10/20</address> for all addresses -->
-        </interfaceWhiteList>
+        <!-- Modify for your wired IP addresses! 10.2.0.1, etc-->
+        <!-- <interfaceWhiteList>
+          <address>10.2.0.1</address>
+          <address>10.2.0.10</address>
+          <address>10.2.0.20</address>
+        </interfaceWhiteList> -->
        
       </transport_descriptor>
 
