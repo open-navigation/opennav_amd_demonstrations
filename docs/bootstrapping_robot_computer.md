@@ -39,7 +39,7 @@ It is necessary to setup your networking to access the computer remotely once in
 We won't belabor this point.
 
 - While plugged into a monitor, setup wifi using the Network Manager GUI client
-- If you are doing this without a monitor, use the `nmcli` tool instead.
+- If you are doing this without a monitor, use the `nmcli` tool instead. For example `sudo nmcli device wifi connect MyWifiNetwork password MyPassword`
 
 ## Wired
 
@@ -59,7 +59,7 @@ If you want the robot computers to be able to SSH into each other without passwo
 
 TODO: a guide for setting up multi-robot communication over ethernet might be good.
 
-Now that you have the computers able to connect over the internal wired network, now we need to configure ROS 2 to use this internal network **rather than** the wireless network. This is so that you get high speed wired transport of the data between the computers rather than communicating over the external wireless router. 
+Now that you have the computers able to connect over the internal wired network, now we may need to configure ROS 2 to use this internal network **rather than** the wireless network. This is so that you get high speed wired transport of the data between the computers rather than communicating over the external wireless router. 
 
 This has 2 options:
 - Set the wired connection to be higher priority to send data through
@@ -69,7 +69,7 @@ We may need to configure the DDS vendors to do this. By default, if your wired c
 
 If you want to disable wireless use, see below:
 
-If using Fast-DDS, save a file containing the following and add `export FASTDDS_DEFAULT_PROFILES_FILE=/path/to/fastdds.xml` to your `~/.bashrc` file so that each time a terminal opens, it uses this configuration automatically without your need to set it each time:
+If using Fast-DDS, save a file containing the following and add `export FASTDDS_DEFAULT_PROFILES_FILE=/path/to/fastdds.xml` (TODO or `FASTRTPS_DEFAULT_PROFILES_FILE`?) to your `~/.bashrc` file so that each time a terminal opens, it uses this configuration automatically without your need to set it each time:
 
 ``` xml
 <?xml version="1.0" encoding="UTF-8" ?>
@@ -81,20 +81,18 @@ If using Fast-DDS, save a file containing the following and add `export FASTDDS_
         <transport_id>udpv4_transport</transport_id>
         <type>UDPv4</type>
 
-        <!-- Add the allowlist config for ROS 2 versions Jazzy and later -->
-        <!-- Modify for your interface of choice! eno, enx, br0, etc-->
+        <!-- For ROS 2 versions Jazzy and later -->
+        <!-- Modify fowithr your interface(s) of choice! eno, enx, br0, etc-->
         <!-- <interfaces>
           <allowlist>
             <interface name="wlp59s0"/>
           </allowlist>
         </interfaces> -->
 
-        <!-- Equivalent whitelist config for ROS 2 versions prior to Jazzy -->
-        <!-- Modify for your wired IP addresses! 10.2.0.1, etc-->
+        <!-- For ROS 2 versions prior to Jazzy -->
+        <!-- Modify with the wired IP address on this computer! 10.2.0.1, etc -->
         <!-- <interfaceWhiteList>
           <address>10.2.0.1</address>
-          <address>10.2.0.10</address>
-          <address>10.2.0.20</address>
         </interfaceWhiteList> -->
        
       </transport_descriptor>
@@ -106,7 +104,7 @@ If using Fast-DDS, save a file containing the following and add `export FASTDDS_
         </transport_descriptor>
     </transport_descriptors>
 
-    <participant profile_name="participant_with_allowlist">
+    <participant profile_name="participant_with_allowlist" is_default_profile="true">
       <rtps>
         <useBuiltinTransports>false</useBuiltinTransports>
         <userTransports>
