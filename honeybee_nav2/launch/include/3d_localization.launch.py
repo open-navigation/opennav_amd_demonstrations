@@ -38,7 +38,7 @@ def generate_launch_description():
 
     params_file_cmd = DeclareLaunchArgument(
         'params_file',
-        default_value=os.path.join(honeybee_nav_dir, 'config', 'lidarslam.yaml')
+        default_value=os.path.join(honeybee_nav_dir, 'config', '3d_localization.yaml')
     )
 
     declare_use_sim_time_cmd = DeclareLaunchArgument(
@@ -51,7 +51,6 @@ def generate_launch_description():
         default_value='False',
         description='Use simulation (Gazebo) clock if true')
 
-    #TODO localization option
     lidar_localization_cmd = LifecycleNode(
         name='lidar_localization',
         package='lidar_localization_ros2',
@@ -60,7 +59,9 @@ def generate_launch_description():
         parameters=[params_file],
         remappings=[('/velodyne_points','/sensors/lidar_0/points'),
                     ('/odom', '/platform/odom/filtered')],
-        output='screen')
+        output='screen',
+        condition=IfCondition(PythonExpression(['not ', slam])),
+    )
 
 
     to_inactive = launch.actions.EmitEvent(
@@ -68,6 +69,7 @@ def generate_launch_description():
             lifecycle_node_matcher=launch.events.matches_action(lidar_localization_cmd),
             transition_id=lifecycle_msgs.msg.Transition.TRANSITION_CONFIGURE,
         )
+        condition=condition=IfCondition(PythonExpression(['not ', slam])),
     )
 
     from_unconfigured_to_inactive = launch.actions.RegisterEventHandler(
@@ -81,7 +83,8 @@ def generate_launch_description():
                     transition_id=lifecycle_msgs.msg.Transition.TRANSITION_CONFIGURE,
                 )),
             ],
-        )
+        ),
+        condition=IfCondition(PythonExpression(['not ', slam])),
     )
 
     from_inactive_to_active = launch.actions.RegisterEventHandler(
@@ -96,32 +99,34 @@ def generate_launch_description():
                     transition_id=lifecycle_msgs.msg.Transition.TRANSITION_ACTIVATE,
                 )),
             ],
-        )
+        ),
+        condition=IfCondition(PythonExpression(['not ', slam])),
     )
 
-    # TODO SLAM option
-    # scan_matcher_cmd = Node(
-    #     package='scanmatcher',
-    #     executable='scanmatcher_node',
-    #     parameters=[params_file],
-    #     remappings=[('/input_cloud','/sensors/lidar_0/points')],
-    #     output='screen'
-    # )
+    scan_matcher_cmd = Node(
+        package='scanmatcher',
+        executable='scanmatcher_node',
+        parameters=[params_file],
+        remappings=[('/input_cloud','/sensors/lidar_0/points')],
+        output='screen',
+        condition=IfCondition(slam),
+    )
 
-    # graph_slam_cmd = Node(
-    #     package='graph_based_slam',
-    #     executable='graph_based_slam_node',
-    #     parameters=[params_file],
-    #     output='screen'
-    # )
+    graph_slam_cmd = Node(
+        package='graph_based_slam',
+        executable='graph_based_slam_node',
+        parameters=[params_file],
+        output='screen'
+        condition=IfCondition(slam),
+    )
 
     # Create the launch description and populate
     ld = LaunchDescription()
     ld.add_action(declare_use_sim_time_cmd)
     ld.add_action(params_file_cmd)
     ld.add_action(declare_slam_cmd)
-    # ld.add_action(scan_matcher_cmd)
-    # ld.add_action(graph_slam_cmd)
+    ld.add_action(scan_matcher_cmd)
+    ld.add_action(graph_slam_cmd)
     ld.add_action(lidar_localization_cmd)
     ld.add_action(to_inactive)
     ld.add_action(from_unconfigured_to_inactive)

@@ -54,7 +54,7 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time')
     params_file = LaunchConfiguration('params_file')
     local_nav = LaunchConfiguration('local_nav')
-    indoor_localization = LaunchConfiguration('indoor_localization')
+    localization_type = LaunchConfiguration('localization_type')
 
     # Create our own temporary YAML files that include substitutions
     param_substitutions = {
@@ -79,7 +79,7 @@ def generate_launch_description():
 
     declare_map_yaml_cmd = DeclareLaunchArgument(
         'map',
-        default_value=os.path.join(get_package_share_directory('nav2_bringup'), 'maps', 'turtlebot3_world.yaml'),  # TODO
+        default_value=os.path.join(get_package_share_directory('nav2_bringup'), 'maps', 'turtlebot3_world.yaml'),
         description='Full path to map file to load',
     )
 
@@ -101,10 +101,10 @@ def generate_launch_description():
         description='Whether to disable all localization and use odom only',
     )
 
-    declare_indoor_localization_cmd = DeclareLaunchArgument(
-        'indoor_localization',
+    declare_localization_type_cmd = DeclareLaunchArgument(
+        'localization_type',
         default_value='True',
-        description='Whether to use indoor (2D) or outdoor (3D) localization',
+        description='Whether to use indoor (2D), outdoor (3D), or GPS (GPS) localization',
     )
 
     # Specify the actions
@@ -125,7 +125,7 @@ def generate_launch_description():
                               'use_sim_time': use_sim_time,
                               'params_file': params_file,
                               'local_nav': local_nav,
-                              'indoor_localization': indoor_localization,
+                              'localization_type': localization_type,
                               'container_name': 'nav2_container'}.items()),
 
         IncludeLaunchDescription(
@@ -146,6 +146,6 @@ def generate_launch_description():
     ld.add_action(declare_use_sim_time_cmd)
     ld.add_action(declare_params_file_cmd)
     ld.add_action(declare_local_nav_cmd)
-    ld.add_action(declare_indoor_localization_cmd)
+    ld.add_action(declare_localization_type_cmd)
     ld.add_action(bringup_cmd_group)
     return ld
