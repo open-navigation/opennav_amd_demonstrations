@@ -12,6 +12,7 @@
   <depend>navigation2</depend>
   <depend>nav2_bringup</depend>
   <depend>spatio_temporal_voxel_layer</depend>
+  <depend>cartographer_ros</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

@@ -8,8 +8,7 @@
 
 - Software deployment and sync (docker)
 - VPN for internet communication // operations software (online)
-- Setting up field routers, Visualize / command remotely in field (offline)
-- ROSBagging / sharding / deleting uploaded log / bag files
+- ROSBagging / sharding / deleting uploaded log / bag files. how to record and play.
 - Weak internet access? --> external antennas. Wifi handoffs
 
 - Cloud? Upload, download, visualize, tooling, communication, etc
