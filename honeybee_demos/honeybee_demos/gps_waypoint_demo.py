@@ -46,7 +46,8 @@ datum = [37.80046733333333, -122.45829418, 0.0]
 # Can use absolute GPS (Iron and newer) or cartesian (all distros) relative to datum's origin.
 inspection_targets_gps = []
 inspection_targets_cartesian = [
-    [0.0, 0.0, 0.0],
+    [0.0, 0.0, 0.0],  # start point
+    [0.0, 0.0, 0.0],  # corners
     [0.0, 0.0, 0.0],
     [0.0, 0.0, 0.0],
     [0.0, 0.0, 0.0]]  #TODO
@@ -62,6 +63,7 @@ class GPSWaypointDemo(Node):
     def __init__(self):
         super().__init__('gps_waypoint_demo')
         self.stop = False
+        self.looped_once = False
         self.demo_thread = None
         self.lock = Lock()
 
@@ -168,10 +170,17 @@ class GPSWaypointDemo(Node):
                 print('GPS Waypoint demo loop has an invalid return status!')
 
             # Check if a stop is requested or no looping is necessary
+            # Remove first point otherwise as redundant
             with self.lock():
-              if self.stop or not self.loop:
-                  print('Exiting GPS Waypoint demo. Stop was requested or looping was not enabled.')
-                  return
+                if self.stop or not self.loop:
+                    print('Exiting GPS Waypoint demo. Stop was requested or looping was not enabled.')
+                    return
+                elif not self.looped_once:
+                    self.looped_once = True
+                    if self.use_gps_coords:
+                        inspection_targets_gps.pop(0)
+                    else:
+                        inspection_targets_cartesian.pop(0)
 
     def _wpsToPoses(self, wps):
         poses = []
