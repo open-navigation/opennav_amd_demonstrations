@@ -23,15 +23,60 @@ from ament_index_python.packages import get_package_share_directory
 
 
 def generate_launch_description():
+    honeybee_nav2 = FindPackageShare('honeybee_nav2')
+    use_sim_time = LaunchConfiguration('use_sim_time')
+    arg_use_sim_time = DeclareLaunchArgument(
+        'use_sim_time',
+        default_value='false',
+        description='Use simulation or hardware'
+    )
 
-    # Demo script
-    # Nav2 with appropriate param file / launch configurations
-    # Capture system metrics
-    # power off 
-    # Record rosbag
+    # Nav2
+    nav2_cmd = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            PathJoinSubstitution([
+                honeybee_nav2, 'launch', 'nav2.launch.py'])]),
+        launch_arguments={'use_sim_time': use_sim_time,
+                          'localization_type': 'GPS'}.items(),
+    )
+
+    # Autonomy demo
+    demo_script_cmd = Node(
+        package='honeybee_demos',
+        executable='gps_waypoint_demo',
+        parameters=[{'use_sim_time': use_sim_time}],
+        output='screen',
+    )
+
+    # Data capture
+    rosbag_record_cmd = Node(
+        package='honeybee_watchdogs',
+        executable='record_rosbag_data',
+        parameters=[{'use_sim_time': use_sim_time}],
+        output='screen',
+    )
+
+    capture_metrics_cmd = Node(
+        package='honeybee_watchdogs',
+        executable='capture_system_metrics',
+        parameters=[{'use_sim_time': use_sim_time}],
+        output='screen',
+    )
+
+    # Clean poweroff for backpack computer
+    power_off_cmd = Node(
+        package='honeybee_watchdogs',
+        executable='power_off_backpack',
+        parameters=[{'use_sim_time': use_sim_time}],
+        output='screen',
+    )
 
     # Create LaunchDescription
     ld = LaunchDescription()
-    ld.add_action()
-
+    ld.add_action(arg_use_sim_time)
+    ld.add_action(demo_script_cmd)
+    ld.add_action(rosbag_record_cmd)
+    ld.add_action(power_off_cmd)
+    ld.add_action(capture_metrics_cmd)
+    ld.add_action(nav2_cmd)
     return ld

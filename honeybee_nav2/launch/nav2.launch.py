@@ -103,7 +103,7 @@ def generate_launch_description():
 
     declare_localization_type_cmd = DeclareLaunchArgument(
         'localization_type',
-        default_value='True',
+        default_value='2D',
         description='Whether to use indoor (2D), outdoor (3D), or GPS (GPS) localization',
     )
 
