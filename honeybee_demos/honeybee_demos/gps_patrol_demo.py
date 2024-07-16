@@ -46,20 +46,16 @@ datum = [37.80046733333333, -122.45829418, 0.0]
 # Can use absolute GPS (Iron and newer) or cartesian (all distros) relative to datum's origin.
 inspection_targets_gps = []
 inspection_targets_cartesian = [
-    [0.0, 0.0, 0.0],  # start point
-    [0.0, 0.0, 0.0],  # corners
+    [0.0, 0.0, 0.0],  # start point (home)
+    [0.0, 0.0, 0.0],  # x, y, yaw
+    [0.0, 0.0, 0.0],  # Each quadrant
     [0.0, 0.0, 0.0],
-    [0.0, 0.0, 0.0],
-    [0.0, 0.0, 0.0]]  #TODO
-
-# TODO navigation confoiguration: speed, costmap size, processing outdoor, etc. set tolerance to high (3-5m) for GPS. Nav through poses?
-# WPF stop for a few seconds
-# TODO static set size, rolling size, map use
+    [0.0, 0.0, 0.0]]  #TODO populate
 
 """
-A high-speed GPS waypoint navigation task 
+A high-speed GPS patrol navigation task 
 """
-class GPSWaypointDemo(Node):
+class GPSPatrolDemo(Node):
     def __init__(self):
         super().__init__('gps_waypoint_demo')
         self.stop = False
@@ -73,8 +69,10 @@ class GPSWaypointDemo(Node):
         self.getParameters()
         self.setDatum() # TODO check this
 
-        self.joy_sub = self.create_subscription(Joy, 'joy_teleop/joy', self.joyCallback, 10)
-        self.batt_sub = self.create_subscription(BatteryState, 'platform/mcu/status/power', self.batteryCallback, 10) # TODO check this
+        self.joy_sub = self.create_subscription(
+            Joy, 'joy_teleop/joy', self.joyCallback, 10)
+        self.batt_sub = self.create_subscription(
+            BatteryState, 'platform/mcu/status/power', self.batteryCallback, 10) # TODO check this
         print('GPS Waypoint Demo node started.')
 
     def waitUntilActive(self):
@@ -225,7 +223,7 @@ class GPSWaypointDemo(Node):
 
 def main():
     rclpy.init()
-    node = GPSWaypointDemo()
+    node = GPSPatrolDemo()
     rclpy.spin(node)
     exit(0)
 

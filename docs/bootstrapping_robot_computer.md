@@ -9,6 +9,7 @@ Optional, but some useful tools to have around and setup SSH for remote access o
 ```
 sudo apt install htop nmap net-tools openssh-client openssh-server
 sudo systemctl enable --now ssh
+sudo systemctl start ssh
 ```
 
 1. Setup the robot computer to boot on power up

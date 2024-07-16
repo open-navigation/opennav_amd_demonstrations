@@ -24,7 +24,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'gps_waypoint_demo = honeybee_demos.gps_waypoint_demo:main',
+            'gps_patrol_demo = honeybee_demos.gps_patrol_demo:main',
         ],
     },
 )

@@ -57,9 +57,11 @@ def generate_launch_description():
     localization_type = LaunchConfiguration('localization_type')
 
     # Create our own temporary YAML files that include substitutions
+    bt_xml = os.path.join(honeybee_nav_dir, 'behavior_trees', 'honeybee_bt.xml')
     param_substitutions = {
         'use_sim_time': use_sim_time,
-        'yaml_filename': map_yaml_file}
+        'yaml_filename': map_yaml_file,
+        'default_nav_to_pose_bt_xml': bt_xml}
 
     configured_params = ParameterFile(
         RewrittenYaml(
@@ -91,7 +93,7 @@ def generate_launch_description():
 
     declare_params_file_cmd = DeclareLaunchArgument(
         'params_file',
-        default_value=os.path.join(honeybee_nav_dir, 'config', 'nav2_params.yaml'),
+        default_value=os.path.join(honeybee_nav_dir, 'config', 'nav2_indoor_params.yaml'),
         description='Full path to the ROS2 parameters file to use for all launched nodes',
     )
 

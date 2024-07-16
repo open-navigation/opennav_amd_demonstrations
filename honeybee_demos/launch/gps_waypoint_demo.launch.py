@@ -31,19 +31,22 @@ def generate_launch_description():
         description='Use simulation or hardware'
     )
 
+    param_file = os.path.join(honeybee_nav2, 'config', 'nav2_gps_params.yaml')
+
     # Nav2
     nav2_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             PathJoinSubstitution([
                 honeybee_nav2, 'launch', 'nav2.launch.py'])]),
         launch_arguments={'use_sim_time': use_sim_time,
-                          'localization_type': 'GPS'}.items(),
+                          'localization_type': 'GPS',
+                          'params_file': param_file}.items(),
     )
 
     # Autonomy demo
     demo_script_cmd = Node(
         package='honeybee_demos',
-        executable='gps_waypoint_demo',
+        executable='gps_patrol_demo',
         parameters=[{'use_sim_time': use_sim_time}],
         output='screen',
     )
