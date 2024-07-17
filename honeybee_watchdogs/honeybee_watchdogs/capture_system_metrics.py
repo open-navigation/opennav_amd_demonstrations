@@ -53,8 +53,8 @@ A script to capture system metrics for later analysis
 class CaptureSystemMetrics(Node):
     def __init__(self):
         super().__init__('capture_system_metrics')
-        self.declare_parameter('filepath', '/home/administrator/experiment_files')
-        self.filepath = self.get_parameter('filepath').value
+        self.declare_parameter('filepath', '~/experiment_files')
+        self.filepath = os.path.expanduser(self.get_parameter('filepath').value)
         if not os.path.exists(self.filepath):
             os.makedirs(self.filepath)
         self.filename = self.filepath + f'/system_metrics_{int(time.time())}.txt'
