@@ -28,8 +28,8 @@ A script to use rosbag to record data for data set creation and analysis of expe
 class RecordRosbagData(Node):
     def __init__(self):
         super().__init__('record_rosbag_data')
-        self.declare_parameter('filepath', '/home/administrator/experiment_files')
-        self.filepath = self.get_parameter('filepath').value
+        self.declare_parameter('filepath', '~/experiment_files')
+        self.filepath = os.path.expanduser(self.get_parameter('filepath').value)
         if not os.path.exists(self.filepath):
             os.makedirs(self.filepath)
         self.filename = self.filepath + f'/rosbag_{int(time.time())}'
