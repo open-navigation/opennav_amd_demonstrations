@@ -2,6 +2,9 @@
 
 This package contains a series of real-world applicable demos used to capture data for benchmarking the Ryzen AI compute hardware and Honeybee robot's performance. They are also great entry points for robotics applications to show how to setup a robot system, configure Nav2 for a variety of common advanced situations, and design a simple POC autonomy script for research, startups, or prototypers!
 
+![ALT TEXT](./images/opennav_amd_ggb.png)
+
+
 ## Demo 1: High-Speed, Outdoor GPS Navigation
 
 The goal of this demonstration is to show the AMD Ryzen AI compute in action running Nav2 at full speed - 2m/s - outdoors. This is performed on the Presidio main parade lawn in San Francisco, CA because it is a beautiful, generally empty (during weekdays), wide open space in which we can let robots loose at high speeds safely.

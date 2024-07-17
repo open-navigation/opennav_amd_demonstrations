@@ -82,8 +82,6 @@ class GPSPatrolDemo(Node):
             Joy, 'joy_teleop/joy', self.joyCallback, 10)
         self.batt_sub = self.create_subscription(
             BatteryState, 'platform/bms/state', self.batteryCallback, self.batt_qos)
-        # self.rosbag_record_start_srv = self.create_client(Empty, 'record_rosbag_data/start_recording')
-        # self.rosbag_record_stop_srv = self.create_client(Empty, 'record_rosbag_data/stop_recording')
         print('GPS Waypoint Demo node started.')
 
     def waitUntilActive(self):
@@ -134,17 +132,11 @@ class GPSPatrolDemo(Node):
     def joyCallback(self, msg):
         if msg.buttons[self.exit_button] == 1:
             print('Stop request detected, stopping GPS navigation demo at end of this loop!')
-            # srv = Empty.Request()
-            # future = self.rosbag_record_stop_srv.call_async(srv)
-            # rclpy.spin_until_future_complete(self, future)
             with self.lock:
                 self.stop = True
 
         if msg.buttons[self.start_button] == 1 and self.demo_thread is None:
             print('Start request detected, starting GPS navigation demo!')
-            # srv = Empty.Request()
-            # future = self.rosbag_record_start_srv.call_async(srv)
-            # rclpy.spin_until_future_complete(self, future)
             self.demo_thread = Thread(target=self.runDemo)
             self.demo_thread.daemon = True
             self.demo_thread.start()

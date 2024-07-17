@@ -28,7 +28,7 @@ if [ ! -d "$LOCAL_DIR" ]; then
 fi
 
 # Copy the contents of the local directory to the remote directory, overwriting the existing contents
-scp -r "$LOCAL_DIR" "$REMOTE_USER@$REMOTE_IP:$REMOTE_DIR"
+rsync "$LOCAL_DIR" "$REMOTE_USER@$REMOTE_IP:$REMOTE_DIR"
 
 # Check if the scp command was successful
 if [ $? -eq 0 ]; then

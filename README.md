@@ -1,30 +1,47 @@
 # Open Navigation - AMD Ryzen AI Demonstrations
 
-A project for demonstrations using AMD's Ryzen AI CPU and acceleration technologies with Nav2, ROS 2, and the robotics industry.
+This contains demonstrations and analysis using AMD's powerful Ryzen AI CPU and acceleration technologies with Nav2, ROS 2, and the open-source robotics community's technologies. These demononstrations show complete & tuned reference applications to perform **indoor 2D-based**, **urban 3D-based**, and **outdoor GPS-based navigation** and how AMD's compute technologies are well up to the task with plenty of compute time remaining for advanced AI, business logic and application layers, and other computationally demanding tasks with a low power footprint.
 
-These demonstrations orbit around Honeybee, a Clearpath Robotics Jackal outfitted with:
-- AMD Ryzen Zen4 CPU
-- Ouster OS0-32 lidar
-- Realsense D435i depth camera
-- Microstrain GX-25
+These demonstrations orbit around Honeybee, a [Clearpath Robotics Jackal](https://clearpathrobotics.com/jackal-small-unmanned-ground-vehicle/) outfitted with:
+- AMD Ryzen Zen4 CPU using a [Miniforum UM790 Pro](https://store.minisforum.com/products/minisforum-um790-pro)
+- [Ouster OS0-32](https://ouster.com/products/hardware/os0-lidar-sensor) lidar
+- [Realsense D435i](https://www.intelrealsense.com/depth-camera-d435i/) depth camera
+- [Microstrain GX-25](https://www.microstrain.com/inertial-sensors/3dm-gx5-25)
 
-TODO update with sim/hardware
-![Honeybee](./honeybee_description/docs/ona01_jackal.png)
+![ALT TEXT](./honeybee_demos/images/opennav_amd_ggb.png)
 
+This project contains a typical layout for a ROS-based mobile robot:
+- `honeybee_description` contains the robot's description, meshes, and frame transformations (URDF)
+- `honeybee_gazebo` contains the robot's simulation in modern Gazebo (not Gazebo Classic) with the full sensor suite
+- `honeybee_bringup` contains the bringup scripts to launch the robot's base and sensors on the physical hardware and/or simulation
+- `honeybee_watchdogs` contains a set of watchdogs for hardware use, such as checking on the state of lifecycle activations and recording background datasets
+- `honeybee_nav2` contains the navigation configurations for the various demonstrations
+- `honeybee_demos` contains the demo scripts, launch files, and so forth to perform the applications. These would be notionally replaced by business logic for a refined, deployed application.
+- `scripts` contain developer scripts used by Open Navigation to perform the demonstrations which have potential useful value to the community
+- Bonus: `docs` contains a number of developer guides for bootstrapping new computers for robots, network setup with ROS 2, setting up field experimental networks, how to visualize data remotely, and so on.
+
+
+## Launching Robot, Nav2, and Demos
+
+The robot can be launched using `ros2 launch honeybee_bringup robot.launch.py` with the `use_simulation` launch configuration option to specify whether using the physical robot (default) or simulated robot (`use_simulation:=True`). This will bringup the full robot system and/or simulation with sensors.
+
+The navigation system can be launched using `ros2 launch honeyee_nav2 nav2.launch.py` with a number of launch options, such as the localization type to use (3D, 2D, GPS, Local Navigation), simulation status, parameters, SLAM, and so forth.
+
+The demonstrations can be launched using their respective launch files in `honeybee_demos` and utilize Nav2 configured for the particular application, the annotated autonomy scripts developed for the demonstrations, and appropriate watchdogs for data recording and system handling.
+
+See launch files for a full set of launch configurations and options!
+
+---
+
+## Build 
+
+TODO --> in another page linked
+
+You need to build a few things from source because clearpath depends on unreleased software... Or setup using their repos:
 
 Clearpath specific assets
 - https://github.com/clearpathrobotics/clearpath_common
 - https://github.com/clearpathrobotics/clearpath_robot/
-
-Parent launch file for robot base `ros2 launch honeybee_bringup robot.launch.py` with options:
-- `use_simulation` whether to launch on hardware or in simulation with appropriate nodes
-
-
-## Build 
-
-TODO
-
-You need to build a few things from source because clearpath depends on unreleased software... Or setup using their repos:
 
 ```
 wget https://packages.clearpathrobotics.com/public.key -O - | sudo apt-key add -
@@ -111,19 +128,6 @@ Note the following IPs for the internal network:
 - AMD Computer: 192.168.131.10
 - Ouster Lidar: 192.168.131.20
 
-## Setup robot navigation bringup
-
-To run on the hardware standalone without an existing map, use the `slam` option to use the lidar to generate a map live. Else, specifying the path to your `map:=/path/to/map.yaml` if you'd like to initialize in an existing map: 
-
-```
-ros2 launch honeybee_nav2 nav2.launch.py slam:=True
-```
-
-To run in simulation, you may do the same but with the addition field `use_sim_time` to set simulation time for the servers appropriately:
-
-```
-ros2 launch honeybee_nav2 nav2.launch.py use_sim_time:=True slam:=True
-```
 
 ## Perform Demonstrations
 
