@@ -1,0 +1,39 @@
+#!/bin/bash
+# Copies developer changes to the robot's PC workspace to apply offline
+
+# Check if the number of arguments is correct
+if [ "$#" -ne 2 ] && [ "$#" -ne 3 ] && [ "$#" -ne 4 ]; then
+  echo "Usage: $0 <remote_IP> <remote_user> [<local_directory>] [<remote_directory>]"
+  exit 1
+fi
+
+# Assign arguments to variables
+REMOTE_IP=$1
+REMOTE_USER=$2
+LOCAL_DIR="/home/steve/Documents/amd_ws/src/opennav_AMD_demos"
+REMOTE_DIR="/home/$REMOTE_USER/amd_ws/src"
+
+if [ "$#" -eq 3 ]; then
+  LOCAL_DIR=$3
+fi
+
+if [ "$#" -eq 4 ]; then
+  REMOTE_DIR=$4
+fi
+
+# Check if the local directory exists
+if [ ! -d "$LOCAL_DIR" ]; then
+    echo "Error: Local directory $LOCAL_DIR does not exist."
+    exit 1
+fi
+
+# Copy the contents of the local directory to the remote directory, overwriting the existing contents
+scp -r "$LOCAL_DIR" "$REMOTE_USER@$REMOTE_IP:$REMOTE_DIR"
+
+# Check if the scp command was successful
+if [ $? -eq 0 ]; then
+    echo "Successfully copied the contents of $LOCAL_DIR to $REMOTE_USER@$REMOTE_IP:$REMOTE_DIR."
+else
+    echo "Error: Failed to copy the contents of $LOCAL_DIR to $REMOTE_USER@$REMOTE_IP:$REMOTE_DIR."
+    exit 1
+fi

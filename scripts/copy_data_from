@@ -1,15 +1,17 @@
 #!/bin/bash
+# Copies experiment data from the robot PC to developer PC
 
-if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 <remote_ip_address>"
+if [ "$#" -ne 2 ]; then
+    echo "Usage: $0 <remote_ip_address> <remote_username>"
     exit 1
 fi
 
 REMOTE_IP=$1
-REMOTE_DIR="/home/administrator/experiment_files/*"
+REMOTE_USER=$2
+REMOTE_DIR="/home/$REMOTE_USER/experiment_files/*"
 LOCAL_DIR="$HOME/experiment_files/"
 
-scp -r "administrator@$REMOTE_IP:$REMOTE_DIR" "$LOCAL_DIR"
+scp -r "$REMOTE_USER@$REMOTE_IP:$REMOTE_DIR" "$LOCAL_DIR"
 
 if [ $? -eq 0 ]; then
     echo "Files copied successfully."
