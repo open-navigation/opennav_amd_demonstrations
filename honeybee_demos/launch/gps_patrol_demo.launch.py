@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os 
+
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, ExecuteProcess, GroupAction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -23,7 +25,7 @@ from ament_index_python.packages import get_package_share_directory
 
 
 def generate_launch_description():
-    honeybee_nav2 = FindPackageShare('honeybee_nav2')
+    honeybee_nav2 = get_package_share_directory('honeybee_nav2')
     use_sim_time = LaunchConfiguration('use_sim_time')
     arg_use_sim_time = DeclareLaunchArgument(
         'use_sim_time',

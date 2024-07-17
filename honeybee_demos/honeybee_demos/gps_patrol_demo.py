@@ -20,11 +20,15 @@ import numpy as np
 
 import rclpy
 from rclpy.node import Node
+from rclpy.duration import Duration
 from geometry_msgs.msg import PoseStamped
 from sensor_msgs.msg import Joy, BatteryState
 from robot_localization.srv import SetDatum
 from geographic_msgs.msg import GeoPose
 from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
+from rclpy.qos import QoSProfile, QoSReliabilityPolicy
+from rclpy.qos import QoSDurabilityPolicy, QoSHistoryPolicy
+from std_srvs.srv import Empty
 
 ###################################################################################################
 # For a deployed production application, these would be stored on the robot to run on some
@@ -50,7 +54,7 @@ inspection_targets_cartesian = [
     [0.0, 0.0, 0.0],  # x, y, yaw
     [0.0, 0.0, 0.0],  # Each quadrant
     [0.0, 0.0, 0.0],
-    [0.0, 0.0, 0.0]]  #TODO populate
+    [0.0, 0.0, 0.0]]
 
 """
 A high-speed GPS patrol navigation task 
@@ -67,12 +71,19 @@ class GPSPatrolDemo(Node):
         self.waitUntilActive()
 
         self.getParameters()
-        self.setDatum() # TODO check this
+        self.setRLDatum()
 
+        self.batt_qos = QoSProfile(
+            durability=QoSDurabilityPolicy.VOLATILE,
+            reliability=QoSReliabilityPolicy.BEST_EFFORT,
+            history=QoSHistoryPolicy.KEEP_LAST,
+            depth=1)
         self.joy_sub = self.create_subscription(
             Joy, 'joy_teleop/joy', self.joyCallback, 10)
         self.batt_sub = self.create_subscription(
-            BatteryState, 'platform/mcu/status/power', self.batteryCallback, 10) # TODO check this
+            BatteryState, 'platform/bms/state', self.batteryCallback, self.batt_qos)
+        # self.rosbag_record_start_srv = self.create_client(Empty, 'record_rosbag_data/start_recording')
+        # self.rosbag_record_stop_srv = self.create_client(Empty, 'record_rosbag_data/stop_recording')
         print('GPS Waypoint Demo node started.')
 
     def waitUntilActive(self):
@@ -90,27 +101,29 @@ class GPSPatrolDemo(Node):
         self.use_gps_coords = self.get_parameter('use_gps_coords').value
 
         # Get demo buttons (square=3, X=0 on PS4)
-        self.declare_parameter('start_button', 3)
+        self.declare_parameter('start_button', 2)
         self.declare_parameter('exit_button', 0)
         self.start_button = self.get_parameter('start_button').value
         self.exit_button = self.get_parameter('exit_button').value
 
         # Get minimum battery to exit demo and return to base
-        self.declare_parameter('min_battery_lvl', 0.25)
+        self.declare_parameter('min_battery_lvl', 0.20)
         self.min_battery_lvl = self.get_parameter('min_battery_lvl').value
 
-    def setDatum(self):
+    def setRLDatum(self):
         global datum
-        self.datum_srv = self.create_client(SetDatum, '/set_datum')
+        self.datum_srv = self.create_client(SetDatum, '/datum')
         quaternion = self._quaternion_from_euler(0.0, 0.0, datum[2])
         if self.datum_srv.wait_for_service(timeout_sec=10.0):
-            datum = SetDatum.Request()
-            datum.geo_pose.position.latitude = datum[0]
-            datum.geo_pose.position.longitude = datum[1]
-            datum.geo_pose.orientation.z = quaternion[2]
-            datum.geo_pose.orientation.w = quaternion[3]
+            rl_datum = SetDatum.Request()
+            rl_datum.geo_pose.position.latitude = datum[0]
+            rl_datum.geo_pose.position.longitude = datum[1]
+            rl_datum.geo_pose.orientation.z = quaternion[2]
+            rl_datum.geo_pose.orientation.w = quaternion[3]
             try:
-              reponse = self.datum_srv.call(datum)
+              future = self.datum_srv.call_async(rl_datum)
+              rclpy.spin_until_future_complete(self, future)
+              print('Successfully set datum')
             except Exception as e:
               print('Failed to set datum!')
               exit(1)
@@ -121,23 +134,30 @@ class GPSPatrolDemo(Node):
     def joyCallback(self, msg):
         if msg.buttons[self.exit_button] == 1:
             print('Stop request detected, stopping GPS navigation demo at end of this loop!')
+            # srv = Empty.Request()
+            # future = self.rosbag_record_stop_srv.call_async(srv)
+            # rclpy.spin_until_future_complete(self, future)
             with self.lock:
                 self.stop = True
 
         if msg.buttons[self.start_button] == 1 and self.demo_thread is None:
             print('Start request detected, starting GPS navigation demo!')
+            # srv = Empty.Request()
+            # future = self.rosbag_record_start_srv.call_async(srv)
+            # rclpy.spin_until_future_complete(self, future)
             self.demo_thread = Thread(target=self.runDemo)
             self.demo_thread.daemon = True
             self.demo_thread.start()
 
     def batteryCallback(self, msg):
-      if msg.percentage < self.min_battery_lvl:
-          with self.lock:
-              self.stop = True
+        if msg.percentage < self.min_battery_lvl:
+            with self.lock:
+                self.stop = True
 
     def runDemo(self):
         while rclpy.ok():
             # Start navigation
+            nav_start = self.navigator.get_clock().now()
             if self.use_gps_coords:
                 self.navigator.followGPSWaypoints(self._wpsToGeoPoses(inspection_targets_gps))
             else:
@@ -145,19 +165,18 @@ class GPSPatrolDemo(Node):
 
             # Track ongoing progress
             i = 0
-            while not navigator.isTaskComplete() or not rclpy.ok():
+            while not self.navigator.isTaskComplete() or not rclpy.ok():
                 i = i + 1
-                feedback = navigator.getFeedback()
+                feedback = self.navigator.getFeedback()
                 if feedback and i % 10 == 0:
-                    print('Executing current waypoint: '
-                        + str(feedback.current_waypoint + 1) + '/' + str(len(goal_poses)))
+                    print('Executing current waypoint: ' + str(feedback.current_waypoint))
 
                     # Some navigation timeout to demo cancellation
-                    if navigator.get_clock().now() - nav_start > Duration(seconds=1200.0):
-                        navigator.cancelTask()
+                    if self.navigator.get_clock().now() - nav_start > Duration(seconds=1200.0):
+                        self.navigator.cancelTask()
 
             # Log a result of the loop
-            result = navigator.getResult()
+            result = self.navigator.getResult()
             if result == TaskResult.SUCCEEDED:
                 print('GPS Waypoint demo loop succeeded!')
             elif result == TaskResult.CANCELED:
@@ -224,7 +243,9 @@ class GPSPatrolDemo(Node):
 def main():
     rclpy.init()
     node = GPSPatrolDemo()
-    rclpy.spin(node)
+    executor = rclpy.executors.SingleThreadedExecutor()
+    executor.add_node(node)
+    executor.spin()
     exit(0)
 
 

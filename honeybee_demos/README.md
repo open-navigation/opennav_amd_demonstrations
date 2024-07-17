@@ -34,6 +34,14 @@ TODO metrics / marketing / etc
 
 TODO data set available 
 
+If reproducing, these are the joystick mappings used on the PS4:
+- Estop is 'O'
+- Reactivate Estop is Triangle for 5 seconds
+- Start demo is Square
+- Stop demo is X
+- Poweroff backpack is holding PS button for 5 seconds
+- Teleop continues to be L1 for slow, R1 for fast deadman with the left stick
+
 
 
 ## Demo 2: Outdoor, Urban 3D Inspection

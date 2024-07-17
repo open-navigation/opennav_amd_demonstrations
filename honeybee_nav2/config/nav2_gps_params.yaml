@@ -87,7 +87,7 @@ controller_server:
 
     # Controller parameters
     FollowPath:
-      plugin: "nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController"
+      plugin: "nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController" # TODO
       desired_linear_vel: 2.0
       lookahead_dist: 2.2
       min_lookahead_dist: 1.0

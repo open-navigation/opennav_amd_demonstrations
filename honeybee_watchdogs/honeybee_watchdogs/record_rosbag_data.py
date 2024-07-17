@@ -19,6 +19,7 @@ import os
 import subprocess
 import time
 from std_srvs.srv import Empty
+from sensor_msgs.msg import Joy
 
 
 """
@@ -38,16 +39,30 @@ class RecordRosbagData(Node):
             'ros2', 'bag', 'record',
             '/tf', '/tf_static', '/robot_description', '/platform/odom', '/platform/odom/filtered',
             '/platform/joint_states', '/platform/cmd_vel_unstamped', '/platform/bms/state',
-            '/joy_teleop/joy', '/cmd_vel', '/joy_teleop/cmd_vel', '/sensors/lidar_0/scan',
-            '/sensors/lidar_0/points', '/sensors/imu_1/data', '/sensors/gps_0/fix',
-            '/sensors/camera_0/points', '/sensors/camera_0/color/image',
+            '/joy_teleop/joy', '/cmd_vel', '/joy_teleop/cmd_vel', '/joy_teleop/emergency_stop',
+            '/sensors/lidar_0/scan', '/sensors/lidar_0/points', '/sensors/imu_1/data',
+            '/sensors/gps_0/fix', '/sensors/camera_0/points', '/sensors/camera_0/color/image',
+            '/platform/dynamic_joint_states',
             '--max-bag-size', '3000000000',
             '-s', 'mcap',
             '-o', self.filename]
-        
+
+        # Get demo buttons (square=3, X=0 on PS4)
+        self.declare_parameter('start_button', 2)
+        self.declare_parameter('exit_button', 0)
+        self.start_button = self.get_parameter('start_button').value
+        self.exit_button = self.get_parameter('exit_button').value
+
         self.start_srv = self.create_service(Empty, '~/start_recording', self.startService)
         self.stop_srv = self.create_service(Empty, '~/stop_recording', self.stopService)
+        self.joy_sub = self.create_subscription(
+            Joy, 'joy_teleop/joy', self.joyCallback, 10)
         print ('record_rosbag_data is up and ready to record data.')
+
+        self.declare_parameter('start_on_bringup', False)
+        self.start_on_bringup = self.get_parameter('start_on_bringup').value
+        if self.start_on_bringup:
+            self.startService(None, None)
 
     def startService(self, request, response):
         if self.process is not None:
@@ -71,6 +86,13 @@ class RecordRosbagData(Node):
         self.process = None
         print (f'Stopped recording rosbag data.')
         return response
+
+    def joyCallback(self, msg):
+        # Use same start/stop as with demo for recording passively
+        if msg.buttons[self.exit_button] == 1:
+            self.stopService(None, None)
+        if msg.buttons[self.start_button] == 1:
+            self.startService(None, None)
 
 
 def main():
