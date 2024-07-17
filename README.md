@@ -4,8 +4,8 @@ This contains demonstrations and analysis using AMD's powerful Ryzen AI CPU and 
 
 These demonstrations orbit around Honeybee, a [Clearpath Robotics Jackal](https://clearpathrobotics.com/jackal-small-unmanned-ground-vehicle/) outfitted with:
 - AMD Ryzen Zen4 CPU using a [Miniforum UM790 Pro](https://store.minisforum.com/products/minisforum-um790-pro)
-- [Ouster OS0-32](https://ouster.com/products/hardware/os0-lidar-sensor) lidar
-- [Realsense D435i](https://www.intelrealsense.com/depth-camera-d435i/) depth camera
+- [Ouster OS0-32](https://ouster.com/products/hardware/os0-lidar-sensor)
+- [Realsense D435i](https://www.intelrealsense.com/depth-camera-d435i/)
 - [Microstrain GX-25](https://www.microstrain.com/inertial-sensors/3dm-gx5-25)
 
 ![ALT TEXT](./honeybee_demos/images/opennav_amd_ggb.png)
@@ -18,7 +18,8 @@ This project contains a typical layout for a ROS-based mobile robot:
 - `honeybee_nav2` contains the navigation configurations for the various demonstrations
 - `honeybee_demos` contains the demo scripts, launch files, and so forth to perform the applications. These would be notionally replaced by business logic for a refined, deployed application.
 - `scripts` contain developer scripts used by Open Navigation to perform the demonstrations which have potential useful value to the community
-- Bonus: `docs` contains a number of developer guides for bootstrapping new computers for robots, network setup with ROS 2, setting up field experimental networks, how to visualize data remotely, and so on.
+
+Bonus: `docs` contains a number of developer guides for bootstrapping new computers for robots, network setup with ROS 2, setting up field experimental networks, how to visualize data remotely, and so on.
 
 
 ## Launching Robot, Nav2, and Demos
@@ -30,6 +31,18 @@ The navigation system can be launched using `ros2 launch honeyee_nav2 nav2.launc
 The demonstrations can be launched using their respective launch files in `honeybee_demos` and utilize Nav2 configured for the particular application, the annotated autonomy scripts developed for the demonstrations, and appropriate watchdogs for data recording and system handling.
 
 See launch files for a full set of launch configurations and options!
+
+---
+
+SHORT VIDEOS/GIF HERE of the experiments (ground, drone, urban, park, indoor, rviz) -- show in action
+
+ANALYSIS HERE on performance (charts/graphs: CPU )
+
+---
+
+## Datasets 
+
+TODO where are they, how you can use, etc
 
 ---
 
@@ -52,6 +65,8 @@ rosdep update
 
 
 ## Setup robot Networking, WiFi, Developer Communications
+
+TODO -> another page linked from docs
 
 1. Set a wireless connection with profile named "Jackal" which is a manual IPv4 connection with:
 
@@ -119,24 +134,24 @@ Now you can ssh into the robot remotely on this network without password and usi
 ssh administrator@honeybee
 ```
 
-## Setup robot hardware bringup
+## Details on Robot
 
 See MD file
 
+TODO diagram of setup might be nice
 Note the following IPs for the internal network:
 - Robot base: 192.168.131.1
 - AMD Computer: 192.168.131.10
 - Ouster Lidar: 192.168.131.20
 
-
-## Perform Demonstrations
-
-The demonstrations build upon the above and either launch the simulation to perform the task or launch the real robot as shown in the videos! The demonstrations use Nav2 in various configurations, thus it is not brought up with the robot hardware on boot-up like the robot, sensors, and joystick (though it easily could be with the provided `nav2_bringup.service` systemd service for a particular application).
-
-
-
+TODO diagram
 Mappings for joystick:
 - Left joy for teleop with left (L1) rocker for deadman
 - Right rocker (R1) for "fast" mode deadman
 - Circle is estop to override all and stop robot, likely requiring a reboot
 - PS button hold 3s to poweroff the AMD backpack computer
+
+Assumes the workspace in root `amd_ws` for scripts and systemd daemons, but can be configured with addtl arguments / changed easily. Not tied into any scripts.
+
+Assumes data to be recorded by watchdogs into a `experiment_files` directory, which the copy/delete data scripts use
+
