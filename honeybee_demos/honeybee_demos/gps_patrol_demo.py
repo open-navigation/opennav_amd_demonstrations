@@ -41,6 +41,12 @@ from std_srvs.srv import Empty
 # a park, open field, lake, or similar locations.
 
 # This can also be reproduced by another robot at the Persidio parade lawn without modification!
+
+# 1. Go to the location and put the robot somewhere in the middle of the lawn.
+# 2. Echo the GPS fix and record the latitude and longitude as the `datum` below.
+# 3. Launch RL, drive to waypoints, and record the NavSat odom as the waypoints
+#    or determine via math/GUI relative to datum.
+#    or use GPS fix instead of cartesian, for ROS 2 Iron and newer
 ###################################################################################################
 
 # Datum to create consistent cartesian reference frame. We picked a measurement near the start.
@@ -50,11 +56,9 @@ datum = [37.80046733333333, -122.45829418, 0.0]
 # Can use absolute GPS (Iron and newer) or cartesian (all distros) relative to datum's origin.
 inspection_targets_gps = []
 inspection_targets_cartesian = [
-    [0.0, 0.0, 0.0],  # start point (home)
-    [0.0, 0.0, 0.0],  # x, y, yaw
-    [0.0, 0.0, 0.0],  # Each quadrant
-    [0.0, 0.0, 0.0],
-    [0.0, 0.0, 0.0]]
+    [-15.0, 11.7, 0.0],  # start point (home)
+    [2.2, 36.4, 0.0]]  # x, y, yaw
+    #[0.0, 0.0, 0.0]
 
 """
 A high-speed GPS patrol navigation task 
@@ -151,8 +155,14 @@ class GPSPatrolDemo(Node):
             # Start navigation
             nav_start = self.navigator.get_clock().now()
             if self.use_gps_coords:
-                self.navigator.followGPSWaypoints(self._wpsToGeoPoses(inspection_targets_gps))
+                wps = self._wpsToGeoPoses(inspection_targets_gps)
+                if self.looped_once:
+                    wps.pop(0)
+                self.navigator.followGPSWaypoints(wps)
             else:
+                wps = self._wpsToPoses(inspection_targets_cartesian)
+                if self.looped_once:
+                    wps.pop(0)
                 self.navigator.followWaypoints(self._wpsToPoses(inspection_targets_cartesian))
 
             # Track ongoing progress
@@ -179,17 +189,12 @@ class GPSPatrolDemo(Node):
                 print('GPS Waypoint demo loop has an invalid return status!')
 
             # Check if a stop is requested or no looping is necessary
-            # Remove first point otherwise as redundant
-            with self.lock():
+            with self.lock:
                 if self.stop or not self.loop:
                     print('Exiting GPS Waypoint demo. Stop was requested or looping was not enabled.')
                     return
-                elif not self.looped_once:
-                    self.looped_once = True
-                    if self.use_gps_coords:
-                        inspection_targets_gps.pop(0)
-                    else:
-                        inspection_targets_cartesian.pop(0)
+
+            self.looped_once = True
 
     def _wpsToPoses(self, wps):
         poses = []

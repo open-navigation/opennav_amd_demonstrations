@@ -1,6 +1,6 @@
 # Open Navigation - AMD Ryzen AI Demonstrations
 
-This contains demonstrations and analysis using AMD's powerful Ryzen AI CPU and acceleration technologies with Nav2, ROS 2, and the open-source robotics community's technologies. These demononstrations show complete & tuned reference applications to perform **indoor 2D-based**, **urban 3D-based**, and **outdoor GPS-based navigation** and how AMD's compute technologies are well up to the task with plenty of compute time remaining for advanced AI, business logic and application layers, and other computationally demanding tasks with a low power footprint.
+This contains demonstrations and analysis using AMD's powerful Ryzen AI CPU and acceleration technologies with Nav2, ROS 2 Humble, and the open-source robotics community's technologies. These demononstrations show complete & tuned reference applications to perform **indoor 2D-based**, **urban 3D-based**, and **outdoor GPS-based navigation** and how AMD's compute technologies are well up to the task with plenty of compute time remaining for advanced AI, business logic and application layers, and other computationally demanding tasks with a low power footprint.
 
 These demonstrations orbit around Honeybee, a [Clearpath Robotics Jackal](https://clearpathrobotics.com/jackal-small-unmanned-ground-vehicle/) outfitted with:
 - AMD Ryzen Zen4 CPU using a [Miniforum UM790 Pro](https://store.minisforum.com/products/minisforum-um790-pro)

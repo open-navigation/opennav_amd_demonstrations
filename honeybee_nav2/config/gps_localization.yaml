@@ -5,7 +5,7 @@ ekf_node_map:
     sensor_timeout: 0.1
     two_d_mode: True
     publish_tf: True
-    transform_time_offset: 0.0
+    transform_time_offset: 1.0
     transform_timeout: 0.0
     print_diagnostics: true
     debug: false
@@ -35,7 +35,7 @@ ekf_node_map:
     imu0_differential: False
     imu0_queue_size: 10
     imu0_remove_gravitational_acceleration: True
-    imu0_relative: True
+    imu0_relative: False
     imu0_differential: False
 
     process_noise_covariance: [1.0,   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,

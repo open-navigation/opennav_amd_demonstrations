@@ -7,6 +7,10 @@ repositories:
     type: git
     url: https://github.com/clearpathrobotics/clearpath_robot.git
     version: 0.2.11
+  SteveMacenski/nonpersistent_voxel_layer:
+    type: git
+    url: https://github.com/SteveMacenski/nonpersistent_voxel_layer
+    version: humble
   rsasaki0109/lidarslam_ros2:
     type: git
     url: https://github.com/rsasaki0109/lidarslam_ros2.git

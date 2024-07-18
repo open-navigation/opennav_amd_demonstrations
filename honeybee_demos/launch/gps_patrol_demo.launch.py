@@ -34,6 +34,7 @@ def generate_launch_description():
     )
 
     param_file = os.path.join(honeybee_nav2, 'config', 'nav2_gps_params.yaml')
+    bt_xml = os.path.join(honeybee_nav2, 'behavior_trees', 'honeybee_gps_bt.xml')
 
     # Nav2
     nav2_cmd = IncludeLaunchDescription(
@@ -42,7 +43,8 @@ def generate_launch_description():
                 honeybee_nav2, 'launch', 'nav2.launch.py'])]),
         launch_arguments={'use_sim_time': use_sim_time,
                           'localization_type': 'GPS',
-                          'params_file': param_file}.items(),
+                          'params_file': param_file,
+                          'nav2pose_bt_xml': bt_xml}.items(),
     )
 
     # Autonomy demo
