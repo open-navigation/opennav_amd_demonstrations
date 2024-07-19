@@ -187,11 +187,11 @@ local_costmap:
         publish_voxel_map: False
         observation_sources: lidar depth_cam
         lidar:
-          topic: /sensors/lidar_0/scan
+          topic: /sensors/lidar_0/segmented_points
           min_obstacle_height: 0.254
           max_obstacle_height: 0.8
           marking: True
-          data_type: "LaserScan"
+          data_type: "PointCloud2"
           obstacle_max_range: 8.0
           obstacle_min_range: 0.3
         depth_cam:
@@ -245,11 +245,11 @@ global_costmap:
         publish_voxel_map: False
         observation_sources: lidar depth_cam
         lidar:
-          topic: /sensors/lidar_0/scan
+          topic: /sensors/lidar_0/segmented_points
           min_obstacle_height: 0.254
           max_obstacle_height: 0.8
           marking: True
-          data_type: "LaserScan"
+          data_type: "PointCloud2"
           obstacle_max_range: 11.0
           obstacle_min_range: 0.3
         depth_cam:

@@ -13,7 +13,11 @@ For this demonstration, we use the cheap built-in non-RTK corrected, single ante
 
 For more information, options, and a tutorial on GPS Navigation with Nav2, [see the Nav2 GPS Waypoint Navigation tutorial](https://docs.nav2.org/tutorials/docs/navigation2_with_gps.html).
 
-We set the datum for `robot_localization` to be an arbitrarily selected position on the park in order to (1) ground the localization system near the origin for convenience and (2) such that this application can be repeated using the same waypoints grounded to a consistent coordinate system, as would be necessary for a deployed application. We use the `nav2_waypoint_follower` package to follow waypoints in the cartesian frame setup, though can also be done with direct GPS points as well in ROS 2 Iron and newer.
+### Technical Summary
+
+We set the datum for `robot_localization` to be an arbitrarily selected position on the park in order to ground the localization system near the origin for convenience and such that this application can be repeated using the same waypoints grounded to a consistent coordinate system, as would be necessary for a deployed application. 
+
+We use the `nav2_waypoint_follower` package to follow waypoints in the cartesian frame setup, though can also be done with direct GPS points as well in ROS 2 Iron and newer.
 
 A few important notes on this demonstration's configuration:
 - The controller is configured to run at the robot's full speed, 2 m/s. This speed should be used by professionals under supervision if there is any chance of collision with other people or objects. These are dangerous speeds and require attention.
@@ -58,15 +62,14 @@ TODO Remark on algorithms used and why
 A few important notes on the configuration:
 - Since this is using 3D SLAM, we need to convert the 3D map into a 2D occupancy grid-like thing for sizing the static layer in the global costmap for global planning in the map
 - The positioning tolerances & perception modules are set back to normal since we don't have noisy GPS localization and now using 3D lidar SLAM & localization, still outdoors.
-- Since we're navigating in relatively non-flat 3D spaces, we use a node to segment the ground out from the pointclouds for use in collision avoidance rather than directly feeding them in. It is easy to drop in your own ground segmentation algorithm or AI model as you see fit for a particular application. 
+- Since we're navigating in non-flat, outdoor 3D spaces, we use a node to segment the ground out from the pointclouds for use in collision avoidance rather than directly feeding them in with the 3D terrain variations.
 
 
 ## Demo 3: Standard Indoor 
 
-TODO Remark on algorithms used and why: navfn since indoor and dont need full SE2 (also good ex for circular robot or with low compute) & MPPI for dynamic behaivior
-
 A few important notes on the configuration:
-- We move slower in this demonstration - 0.5 m/s - due to being indoors around people and expensive equipment for safety
+- We move slower in this demonstration - 0.5 m/s - due to being indoors around people for safety
 - We use the standard Nav2 localization and SLAM integrations - AMCL and SLAM Toolbox for positioning. We also use largely the standard defaults from Nav2 with the exception of robot specifics like footprint and controller tuning.
-- Since we're navigating in a 2D environment, we can use PointCloud to Laserscan to ignore the ground points (which can be noisy on shiny surface). We still use the 3D nature of the lidar by considering a large band from the top of the robot (plus some margin) to a few cm off the ground. This uses the 3D lidar's entire useful data, but reduces computation and noisy points without need for explicit PointCloud filtering.
-
+- Since we're navigating in a 2D environment, we can use PointCloud to Laserscan to ignore the ground points (which can be noisy on shiny surface). We still use the 3D nature of the lidar by considering a large band from the top of the robot (plus some margin) to a few cm off the ground. This uses the 3D lidar's entire useful data, but reduces computation and noisy points without need for explicit PointCloud filtering or use of the ground segmentation node (less points of potential failure with glass / shiny floors).
+- We treat this robot as a large point for global planning as an example with NavFn (oppposed to feasible planners for SE2 footprint checking in other demonstrations). This is a good working example for circular robots or computers with low compute. 
+- We use MPPI in this demonstration for highly dynamic behavior in the dynamic human-filled environment
