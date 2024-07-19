@@ -9,17 +9,19 @@ This package contains a series of real-world applicable demos based on ROS 2 Hum
 
 The goal of this demonstration is to show the AMD Ryzen AI compute in action running Nav2 at full speed - 2m/s - outdoors. This is performed on the Presidio main parade lawn in San Francisco, CA because it is a beautiful, generally empty (during weekdays), wide open space in which we can let robots loose at high speeds safely.
 
-For this demonstration, we use the cheap built-in non-RTK corrected, single antenna GPS to localize the robot to show how to work with Nav2 outdoor with highly noisy GPS localization. For a refined application, we recommend using an RTK corrected, dual antenna GPS sensor to improve accuracy of localization, positioning tolerances, and allow for persistence of perception data without major jumps. There are many affordable RTK GPS sensors on the market (for example [\[1\]](https://www.digikey.com/en/products/detail/u-blox/ANN-MB-01/9817929?utm_), [\[2\]](https://holybro.com/products/h-rtk-unicore-um982))
+For this demonstration, we use the cheap built-in non-RTK corrected, single antenna GPS to localize the robot to show how to work with Nav2 outdoor with noisy GPS localization. For a refined application, we recommend using an RTK corrected, dual antenna GPS sensor to improve accuracy of localization, positioning tolerances, and allow for persistence of perception data without major jumps. There are many affordable RTK GPS sensors on the market (for example [\[1\]](https://www.digikey.com/en/products/detail/u-blox/ANN-MB-01/9817929?utm_), [\[2\]](https://holybro.com/products/h-rtk-unicore-um982))
 
 For more information, options, and a tutorial on GPS Navigation with Nav2, [see the Nav2 GPS Waypoint Navigation tutorial](https://docs.nav2.org/tutorials/docs/navigation2_with_gps.html).
 
 We set the datum for `robot_localization` to be an arbitrarily selected position on the park in order to (1) ground the localization system near the origin for convenience and (2) such that this application can be repeated using the same waypoints grounded to a consistent coordinate system, as would be necessary for a deployed application. We use the `nav2_waypoint_follower` package to follow waypoints in the cartesian frame setup, though can also be done with direct GPS points as well in ROS 2 Iron and newer.
 
-A few important notes on the configuration:
+A few important notes on this demonstration's configuration:
 - The controller is configured to run at the robot's full speed, 2 m/s. This speed should be used by professionals under supervision if there is any chance of collision with other people or objects. These are dangerous speeds and require attention.
+- The planner uses the Smac Planner Hybrid-A* so we can set a conservative maximum turning radius while operating at those speeds so the robot doesn't attempt to flip over due to its own centripetal force.
+- This demonstration uses a BT that will not replan until its hit its goal or the controller fails to compute trajectories to minimize the impact on localization jumps while the robot is moving
 - The global costmap is set to a rolling, static size rather than being set by a map's size or static full field area. This is likely the best configuration for GPS Navigation when not using a map, just ensure that it is sufficiently large to encompass any two sequential viapoints. 
-- The positioning tolerances are set comparatively high due to a noisy non-RTK corrected GPS. Additionally, the perception modules are configured as non-persistent so that the major jumps in localization don't cause series issues in planning for the world model. Both of these can be walked back when using RTK for typical uses of Nav2 with GPS localization. 
-- Since we're navigating in non-flat, outdoor 3D spaces, we use a node to segment the ground out from the pointclouds for use in collision avoidance rather than directly feeding them in. It is easy to drop in your own ground segmentation algorithm or AI model as you see fit for a particular application. 
+- The positioning tolerances are set comparatively high due to a noisy non-RTK corrected GPS. Additionally, the perception modules are configured as non-persistent so that the major jumps in localization don't cause series issues in planning for the world model - and we use a 3D lidar with 360 deg coverage. Both of these can be walked back when using RTK for typical uses of Nav2 with GPS localization. 
+- Since we're navigating in non-flat, outdoor 3D spaces, we use a node to segment the ground out from the pointclouds for use in collision avoidance rather than directly feeding them in with the 3D terrain variations.
 
 An example loop of the main parade ground with GPS data can be seen below:
 
@@ -50,6 +52,7 @@ If reproducing, these are the joystick mappings used on the PS4:
 
 ## Demo 2: Outdoor, Urban 3D Inspection
 
+TODO Remark on algorithms used and why
 
 
 A few important notes on the configuration:
@@ -59,6 +62,8 @@ A few important notes on the configuration:
 
 
 ## Demo 3: Standard Indoor 
+
+TODO Remark on algorithms used and why: navfn since indoor and dont need full SE2 (also good ex for circular robot or with low compute) & MPPI for dynamic behaivior
 
 A few important notes on the configuration:
 - We move slower in this demonstration - 0.5 m/s - due to being indoors around people and expensive equipment for safety

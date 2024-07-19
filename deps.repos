@@ -27,3 +27,7 @@ repositories:
     type: git
     url: https://github.com/ouster-lidar/ouster-ros.git
     version: ros2 # 2a0ef50f1dbe3f512321e809d6ca87391ce38f6e
+  url-kaist/patchwork-plusplus
+    type: git
+    url: https://github.com/url-kaist/patchwork-plusplus
+    version: master

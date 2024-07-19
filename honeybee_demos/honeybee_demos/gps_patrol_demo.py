@@ -17,6 +17,7 @@ import os
 import copy
 from threading import Thread, Lock
 import numpy as np
+import time
 
 import rclpy
 from rclpy.node import Node
@@ -56,9 +57,11 @@ datum = [37.80046733333333, -122.45829418, 0.0]
 # Can use absolute GPS (Iron and newer) or cartesian (all distros) relative to datum's origin.
 inspection_targets_gps = []
 inspection_targets_cartesian = [
-    [-15.0, 11.7, 0.0],  # start point (home)
-    [2.2, 36.4, 0.0]]  # x, y, yaw
-    #[0.0, 0.0, 0.0]
+    [-32.0, -14.0, 0.0],  # start point (home)
+    [-15.0, 11.7, 0.0],  # x, y, yaw
+    [2.2, 36.4, 0.0],
+    [-15.0, 11.7, 0.0]]
+    # [17.0, 61.0, 0.0]  # Keep down in the (2, 36) direction
 
 """
 A high-speed GPS patrol navigation task 
@@ -73,7 +76,7 @@ class GPSPatrolDemo(Node):
 
         self.navigator = BasicNavigator()
         self.waitUntilActive()
-
+        time.sleep(2.0)
         self.getParameters()
         self.setRLDatum()
 
@@ -198,10 +201,8 @@ class GPSPatrolDemo(Node):
 
     def _wpsToPoses(self, wps):
         poses = []
-        stamp = self.get_clock().now().to_msg()
         for wp in wps:
             pose = PoseStamped()
-            pose.header.stamp = stamp
             pose.header.frame_id = 'map'
             pose.pose.position.x = wp[0]
             pose.pose.position.y = wp[1]
@@ -216,7 +217,6 @@ class GPSPatrolDemo(Node):
 
     def _wpsToGeoPoses(self, wps):
         poses = []
-        stamp = self.get_clock().now().to_msg()
         for wp in wps:
             pose = GeoPose()
             pose.pose.position.latitude = wp[0]

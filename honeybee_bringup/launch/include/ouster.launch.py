@@ -70,6 +70,7 @@ def generate_launch_description():
         output='screen',
     )
 
+    # Obtain a laser scan representative of the entire useful band the robot might experience
     pc2_to_laserscan_cmd = Node(
         package='pointcloud_to_laserscan',
         executable='pointcloud_to_laserscan_node',
@@ -79,6 +80,20 @@ def generate_launch_description():
                      'target_frame': 'os0_sensor', 'scan_time': 0.10}],  # Invert the frame for RHR rotation direction
         remappings=[('/cloud_in', '/sensors/lidar_0/points'),
                     ('scan', '/sensors/lidar_0/scan')],
+    )
+
+    # Obtain segmented pointclouds for ground and non-ground points
+    patchworkpp_cmd = Node(
+        package="patchworkpp",
+        executable="patchworkpp_node",
+        name="patchworkpp_node",
+        output="screen",
+        remappings=[
+			("pointcloud_topic", '/sensors/lidar_0/points'),
+			("/patchworkpp/nonground", '/sensors/lidar_0/segmented_points'),
+			("/patchworkpp/ground", '/sensors/lidar_0/ground_points')
+		],
+        parameters=[params_file],
     )
 
     # Bringup since Configure is flaky in the driver, we need a retry mechanism
@@ -92,5 +107,6 @@ def generate_launch_description():
         params_file_arg,
         os_container,
         pc2_to_laserscan_cmd,
-        activation_watchdog_cmd
+        activation_watchdog_cmd,
+        patchworkpp_cmd
     ])

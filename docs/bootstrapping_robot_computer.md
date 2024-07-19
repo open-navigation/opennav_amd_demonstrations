@@ -7,7 +7,7 @@ The following is a simple tutorial for setting up a new computer as a robot syst
 Optional, but some useful tools to have around and setup SSH for remote access over wifi or wired connections
 
 ```
-sudo apt install htop nmap net-tools openssh-client openssh-server
+sudo apt install htop nmap net-tools openssh-client openssh-server tmux
 sudo systemctl enable --now ssh
 sudo systemctl start ssh
 ```

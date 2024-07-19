@@ -90,18 +90,18 @@ controller_server:
       plugin: "dwb_core::DWBLocalPlanner"
       min_vel_x: 0.0
       min_vel_y: 0.0
-      max_vel_x: 0.5
+      max_vel_x: 2.0
       max_vel_y: 0.0
-      max_vel_theta: 1.4
+      max_vel_theta: 3.0
       min_speed_xy: 0.0
-      max_speed_xy: 0.5
+      max_speed_xy: 2.0
       min_speed_theta: 0.0
       acc_lim_x: 3.5
       acc_lim_y: 0.0
-      acc_lim_theta: 20.0
+      acc_lim_theta: 10.0
       decel_lim_x: -3.5
       decel_lim_y: 0.0
-      decel_lim_theta: -20.0
+      decel_lim_theta: -10.0
       vx_samples: 60
       vy_samples: 1
       vtheta_samples: 20
@@ -134,7 +134,7 @@ controller_server:
       # lookahead_time: 1.5   # 2.0
       # rotate_to_heading_angular_vel: 1.8  # 2.0
       # transform_tolerance: 0.1  # 0.5
-      # use_velocity_scaled_lookahead_dist: true
+      # use_velocity_scaled_lookahead_dist: false
       # min_approach_linear_velocity: 0.25
       # approach_velocity_scaling_dist: 1.5
       # use_collision_detection: true
@@ -165,6 +165,7 @@ local_costmap:
       resolution: 0.05
       footprint: "[ [0.254, 0.2159], [0.254, -0.2159], [-0.254, -0.2159], [-0.254, 0.2159] ]"
       footprint_padding: 0.1
+      track_unknown_space: false
       plugins: ["nonpersisting_voxel_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
@@ -209,10 +210,10 @@ global_costmap:
       use_sim_time: True
       update_frequency: 1.0
       publish_frequency: 1.0
-      width: 120  # large size for setting global costmap     # TODO
-      height: 120  # large size for setting global costmap     # TODO
-      origin_x: -60.0
-      origin_y: -60.0
+      width: 100
+      height: 100
+      origin_x: -50.0
+      origin_y: -50.0
       global_frame: odom
       robot_base_frame: base_link
       rolling_window: true
@@ -221,7 +222,7 @@ global_costmap:
       # robot_radius: 0.333
       footprint_padding: 0.1
       resolution: 0.05
-      track_unknown_space: true
+      track_unknown_space: false
       plugins: ["nonpersisting_voxel_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
@@ -272,7 +273,6 @@ planner_server:
       use_astar: false
       allow_unknown: true
 
-      # TODO get working
       # plugin: "nav2_smac_planner/SmacPlannerHybrid"
       # downsample_costmap: false 
       # downsampling_factor: 1 
@@ -363,8 +363,8 @@ velocity_smoother:
     feedback: "OPEN_LOOP"
     max_velocity: [2.0, 0.0, 4.0]
     min_velocity: [-2.0, 0.0, -4.0]
-    max_accel: [3.5, 0.0, 20.0]           # TODO accel
-    max_decel: [-3.5, 0.0, -20.0]         # TODO accel
+    max_accel: [3.5, 0.0, 10.0]
+    max_decel: [-3.5, 0.0, -10.0]
     odom_topic: "/platform/odom/filtered"
     odom_duration: 0.1
     deadband_velocity: [0.0, 0.0, 0.0]
