@@ -9,7 +9,9 @@ This package contains a series of real-world applicable demos based on ROS 2 Hum
 
 The goal of this demonstration is to show the AMD Ryzen AI compute in action running Nav2 at full speed - 2m/s - outdoors. This is performed on the Presidio main parade lawn in San Francisco, CA because it is a beautiful, generally empty (during weekdays), wide open space in which we can let robots loose at high speeds safely.
 
-TODO image of this experiment
+[![ALT TEXT](./images/demo1.JPG)](https://www.youtube.com/watch?v=1G8xNuwNM8w)
+
+Note: Click on the image above to see the GPS Patrol demo in action on YouTube! 
 
 For this demonstration, we use the cheap built-in non-RTK corrected, single antenna GPS to localize the robot to show how to work with Nav2 outdoor with noisy GPS localization. For a refined application, we recommend using an RTK corrected, dual antenna GPS sensor to improve accuracy of localization, positioning tolerances, and allow for persistence of perception data without major jumps. There are many affordable RTK GPS sensors on the market (for example [\[1\]](https://www.digikey.com/en/products/detail/u-blox/ANN-MB-01/9817929?utm_), [\[2\]](https://holybro.com/products/h-rtk-unicore-um982))
 
@@ -19,7 +21,7 @@ For more information, options, and a tutorial on GPS Navigation with Nav2, [see 
 
 We set the datum for `robot_localization` to be an arbitrarily selected position on the park in order to ground the localization system near the origin for convenience and such that this application can be repeated using the same waypoints grounded to a consistent coordinate system, as would be necessary for a deployed application. 
 
-We use the `nav2_waypoint_follower` package to follow waypoints in the cartesian frame setup, though can also be done with direct GPS points as well in ROS 2 Iron and newer.
+We use the `nav2_waypoint_follower` package to follow waypoints in the cartesian frame setup, though can also be done with direct GPS points as well in ROS 2 Iron and newer. We pause a few seconds at each waypoint to capture some patrol data.
 
 A few important notes on this demonstration's configuration:
 - Since we're navigating in non-flat, outdoor 3D spaces, we use a node to segment the ground out from the pointclouds for use in planning/control rather than directly feeding them in with the 3D terrain variations.
@@ -51,15 +53,15 @@ ros2 launch honeybee_nav2 gps_localization.launch.py use_sim_time:=True
 
 ### Notes about operations
 
-Especially with a noisy GPS, its good to let the robot sit with the filter running for a little while before starting up the demo for the filter to converge to its location. I've noticed driving around a little bit to help with that process and converge the orientation from the IMU data.
+With the GPS, its good to let the robot sit with the filter running for a little while before starting up the demo for the filter to converge to its location solidly before starting. I've noticed driving around a little bit to help with that process and converge the orientation from the IMU data.
 
-If reproducing, these are the joystick mappings used on the PS4:
+If reproducing, these are the joystick mappings used on the PS4 and all the watchdogs / demo scripts:
 - Estop is 'O'
 - Reactivate Estop is Triangle for 5 seconds
-- Start demo is Square
-- Stop demo is X
+- Start demo is Square and start rosbag record
+- Stop demo is X and stop rosbag record
 - Poweroff backpack is holding PS button for 5 seconds
-- Teleop continues to be L1 for slow, R1 for fast deadman with the left stick
+- Teleop continues to be L1 for slow, R1 for fast, deadman with the left stick
 
 
 ## Demo 2: Outdoor, Urban 3D Inspection
