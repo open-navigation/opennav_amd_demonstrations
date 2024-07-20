@@ -43,6 +43,7 @@ from nav2_common.launch import RewrittenYaml, ReplaceString
 def generate_launch_description():
     # Get the launch directory
     bringup_dir = get_package_share_directory('nav2_bringup')
+    bt_navigator_dir = get_package_share_directory('nav2_bt_navigator')
     nav2_launch_dir = os.path.join(bringup_dir, 'launch')
     honeybee_nav_dir = get_package_share_directory('honeybee_nav2')
     launch_dir = os.path.join(honeybee_nav_dir, 'launch')
@@ -53,13 +54,14 @@ def generate_launch_description():
     map_yaml_file = LaunchConfiguration('map')
     use_sim_time = LaunchConfiguration('use_sim_time')
     params_file = LaunchConfiguration('params_file')
-    local_nav = LaunchConfiguration('local_nav')
     localization_type = LaunchConfiguration('localization_type')
+    nav2pose_bt_xml = LaunchConfiguration('nav2pose_bt_xml')
 
     # Create our own temporary YAML files that include substitutions
     param_substitutions = {
         'use_sim_time': use_sim_time,
-        'yaml_filename': map_yaml_file}
+        'yaml_filename': map_yaml_file,
+        'default_nav_to_pose_bt_xml': nav2pose_bt_xml}
 
     configured_params = ParameterFile(
         RewrittenYaml(
@@ -91,20 +93,20 @@ def generate_launch_description():
 
     declare_params_file_cmd = DeclareLaunchArgument(
         'params_file',
-        default_value=os.path.join(honeybee_nav_dir, 'config', 'nav2_params.yaml'),
+        default_value=os.path.join(honeybee_nav_dir, 'config', 'nav2_indoor_params.yaml'),
         description='Full path to the ROS2 parameters file to use for all launched nodes',
-    )
-
-    declare_local_nav_cmd = DeclareLaunchArgument(
-        'local_nav',
-        default_value='False',
-        description='Whether to disable all localization and use odom only',
     )
 
     declare_localization_type_cmd = DeclareLaunchArgument(
         'localization_type',
-        default_value='True',
+        default_value='2D',
         description='Whether to use indoor (2D), outdoor (3D), or GPS (GPS) localization',
+    )
+
+    declare_bt_xml_cmd =  DeclareLaunchArgument(
+        'nav2pose_bt_xml',
+        default_value=os.path.join(bt_navigator_dir, 'behavior_trees', 'navigate_to_pose_w_replanning_and_recovery.xml'),
+        description='Which navigate to pose BT to use',
     )
 
     # Specify the actions
@@ -124,16 +126,16 @@ def generate_launch_description():
                               'slam': slam,
                               'use_sim_time': use_sim_time,
                               'params_file': params_file,
-                              'local_nav': local_nav,
                               'localization_type': localization_type,
                               'container_name': 'nav2_container'}.items()),
 
         IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(os.path.join(nav2_launch_dir, 'navigation_launch.py')),
+            PythonLaunchDescriptionSource(os.path.join(honeybee_launch_dir, 'include', 'navigation.launch.py')),
             launch_arguments={'use_sim_time': use_sim_time,
                               'params_file': params_file,
                               'use_composition': 'True',
-                              'container_name': 'nav2_container'}.items()),
+                              'container_name': 'nav2_container',
+                              'nav2pose_bt_xml': nav2pose_bt_xml}.items()),
     ])
 
     # Create the launch description and populate
@@ -142,10 +144,10 @@ def generate_launch_description():
     # Declare the launch options
     ld.add_action(stdout_linebuf_envvar)
     ld.add_action(declare_slam_cmd)
+    ld.add_action(declare_bt_xml_cmd)
     ld.add_action(declare_map_yaml_cmd)
     ld.add_action(declare_use_sim_time_cmd)
     ld.add_action(declare_params_file_cmd)
-    ld.add_action(declare_local_nav_cmd)
     ld.add_action(declare_localization_type_cmd)
     ld.add_action(bringup_cmd_group)
     return ld

@@ -1,14 +1,16 @@
 #!/bin/bash
+# Deletes experiment data from the robot PC for space management
 
-if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 <remote_ip_address>"
+if [ "$#" -ne 2 ]; then
+    echo "Usage: $0 <remote_ip_address> <remote_username>"
     exit 1
 fi
 
 REMOTE_IP=$1
-REMOTE_DIR="/home/administrator/experiment_files"
+REMOTE_USER=$2
+REMOTE_DIR="/home/$REMOTE_USER/experiment_files"
 
-ssh "administrator@$REMOTE_IP" "rm -r $REMOTE_DIR"
+ssh "$REMOTE_USER@$REMOTE_IP" "rm -r $REMOTE_DIR"
 
 if [ $? -eq 0 ]; then
     echo "All files in $REMOTE_DIR on $REMOTE_IP have been deleted successfully."

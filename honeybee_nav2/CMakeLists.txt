@@ -5,7 +5,7 @@ project(honeybee_nav2)
 find_package(ament_cmake REQUIRED)
 
 install(
-  DIRECTORY config launch
+  DIRECTORY config launch behavior_trees
   DESTINATION share/${PROJECT_NAME}
 )
 

@@ -53,8 +53,8 @@ A script to capture system metrics for later analysis
 class CaptureSystemMetrics(Node):
     def __init__(self):
         super().__init__('capture_system_metrics')
-        self.declare_parameter('filepath', '/home/administrator/experiment_files')
-        self.filepath = self.get_parameter('filepath').value
+        self.declare_parameter('filepath', '~/experiment_files')
+        self.filepath = os.path.expanduser(self.get_parameter('filepath').value)
         if not os.path.exists(self.filepath):
             os.makedirs(self.filepath)
         self.filename = self.filepath + f'/system_metrics_{int(time.time())}.txt'
@@ -67,7 +67,7 @@ class CaptureSystemMetrics(Node):
         self.timer = self.create_timer(1.0, self.callback)
         self.odom_sub = self.create_subscription(
             Odometry, '/platform/odom/filtered', self.odom_callback, 10)
-        qos_profile = QoSProfile(reliability=QoSReliabilityPolicy.BEST_EFFORT, history=QoSHistoryPolicy.KEEP_LAST, depth=10 )
+        qos_profile = QoSProfile(reliability=QoSReliabilityPolicy.BEST_EFFORT, history=QoSHistoryPolicy.KEEP_LAST, depth=10)
         self.batt_sub = self.create_subscription(
             BatteryState, '/platform/bms/state', self.battery_callback, qos_profile)
 
@@ -120,9 +120,9 @@ class CaptureSystemMetrics(Node):
         topics = topics[:-1]
 
         # Get Robot Info: sensor rates
-
         data = f'Time: {curr_time}, CPU: {cpu_percent}, Memory: {memory_percent}, Swap: {swap_memory_percent}, Disk: {disk_percent}, Signal: {signal}, NetError: {network_issues}, Speed: {self.speed}, Distance: {self.distance}, Battery: {self.battery_level}, Topics: {topics} \n'
-        print(data)
+        # print(data)
+        print(f'Logging system metrics to file: {self.filename}')
         with open(self.filename, 'a+') as f:
             f.write(data)
 

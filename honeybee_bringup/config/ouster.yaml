@@ -23,3 +23,20 @@ sensors/lidar_0/os_cloud:
     proc_mask: PCL # pick IMU, PCL, SCAN or any combination of the three options
     use_system_default_qos: False # needs to match the value defined for os_sensor node
     point_type: xyzi
+
+patchworkpp_node:
+  ros__parameters:
+    base_frame: 'os0_lidar'
+    use_sim_time: false
+    sensor_height: 0.495  # sensor height off ground
+    num_iter: 3  # Number of iterations for ground plane estimation using PCA.
+    num_lpr: 20  # Maximum number of points to be selected as lowest points representative.
+    num_min_pts: 0  # Minimum number of points to be estimated as ground plane in each patch.
+    max_range: 20.0  # max_range of ground estimation area
+    min_range: 0.0  # min_range of ground estimation area
+    th_dist: 0.125  # threshold for thickness of ground.
+    th_seeds: 0.3  # threshold for lowest point representatives using in initial seeds selection of ground points.
+    th_seeds_v: 0.25  # threshold for lowest point representatives using in initial seeds selection of vertical structural points.
+    th_dist_v: 0.1  # threshold for thickness of vertical structure.
+    uprightness_thr: 0.101  # threshold of uprightness using in Ground Likelihood Estimation(GLE).
+    verbose: True  # verbose output

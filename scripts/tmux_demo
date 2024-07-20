@@ -1,0 +1,16 @@
+#!/bin/bash
+# This script will create a new tmux session if one does not already exist
+# Use Control+b, d to detach from the session and leave it open and running
+# Use Control+d to close the session
+
+# Name of the tmux session
+SESSION_NAME="honeybee_demo"
+
+# Check if any tmux sessions are already running
+if tmux ls 2>/dev/null | grep -q "^$SESSION_NAME:"; then
+  # Session exists, attach to it
+  tmux attach-session -t $SESSION_NAME
+else
+  # No session found, create a new one
+  tmux new-session -s $SESSION_NAME
+fi

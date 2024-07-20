@@ -68,8 +68,8 @@ def generate_launch_description():
         event=launch_ros.events.lifecycle.ChangeState(
             lifecycle_node_matcher=launch.events.matches_action(lidar_localization_cmd),
             transition_id=lifecycle_msgs.msg.Transition.TRANSITION_CONFIGURE,
-        )
-        condition=condition=IfCondition(PythonExpression(['not ', slam])),
+        ),
+        condition=IfCondition(PythonExpression(['not ', slam])),
     )
 
     from_unconfigured_to_inactive = launch.actions.RegisterEventHandler(
@@ -116,7 +116,7 @@ def generate_launch_description():
         package='graph_based_slam',
         executable='graph_based_slam_node',
         parameters=[params_file],
-        output='screen'
+        output='screen',
         condition=IfCondition(slam),
     )
 
