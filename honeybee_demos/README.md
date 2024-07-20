@@ -38,8 +38,6 @@ The raw data from the robot during an approximately ~5 minute patrol loop includ
 
 An example loop of the full length of the parade lawn with noisy GPS data can be seen below for illustration purposes. We can still navigate effectively, however we need to be realistic about the limits on positional accuracies possible. GPS without RTK can obtain about 3-5m accuracy, but will jump:
 
-![ALT TEXT](./images/gps.png)
-
 <img src="./images/gps.png" width="480">
 
 This can be reproduced with the [provided rosbag of odometry, GPS data for state estimation](https://drive.google.com/file/d/1sAm1_xIj3lyX5AkacrWUED3nsdiD7rKJ/view?usp=sharing).
