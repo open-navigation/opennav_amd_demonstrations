@@ -28,7 +28,7 @@ A few important notes on this demonstration's configuration:
 
 ### Metrics
 
-TODO metrics / marketing / etc - 'so much compute left over while navigating at 2m/s, 3d lidar processing, autonomy, etc. Super powerful machine, love the opportunity this presents in a 80W package'.
+TODO metrics / marketing / etc - 'so much compute left over while navigating at 2m/s, 3d lidar processing, autonomy, etc. Super powerful machine, love the opportunity this presents in a 80W package'. Or... consoliate into the README so its up front for all 3 demos combined concisely?
 
 ### Dataset
 

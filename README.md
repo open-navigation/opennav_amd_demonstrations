@@ -17,12 +17,14 @@ This project contains a typical layout for a ROS-based mobile robot:
 - `honeybee_watchdogs` contains a set of watchdogs for hardware use, such as checking on the state of lifecycle activations and recording background datasets
 - `honeybee_nav2` contains the navigation configurations for the various demonstrations
 - `honeybee_demos` contains the demo scripts, launch files, and so forth to perform the applications. These would be notionally replaced by business logic for a refined, deployed application.
-- `scripts` contain developer scripts used by Open Navigation to perform the demonstrations which have potential useful value to the community
+- `scripts` contain developer scripts used by Open Navigation to perform the demonstrations which have potential useful value to the community in getting started
 
-Bonus: `docs` contains a number of developer guides for bootstrapping new computers for robots, network setup with ROS 2, setting up field experimental networks, how to visualize data remotely, and so on.
+Bonus: `docs` contains a number of developer guides for bootstrapping new computers for robots, network setup with ROS 2, setting up field experimental networks, how to visualize data remotely, make software run on startup, and so on.
 
-TODO hyperlink back to demos for desciptions, images, etc. Have some gif here though first (that marketing think?)
+**[See the `honeybee_demos` package for detailed demonstration descriptions, videos, and datasets](./honeybee_demos/README.md)**
 
+TODO Have the marketing gif here
+(ground, drone, urban, park, indoor, rviz)
 
 ## Launching Robot, Nav2, and Demos
 
@@ -36,17 +38,7 @@ See launch files for a full set of launch configurations and options!
 
 ---
 
-SHORT VIDEOS/GIF HERE of the experiments (ground, drone, urban, park, indoor, rviz) -- show in action
-
-See `honeybee_demos` for more details about each experiment and videos!
-
 ANALYSIS HERE on performance (charts/graphs: CPU )
-
----
-
-## Datasets 
-
-TODO where are they, how you can use, etc
 
 ---
 
