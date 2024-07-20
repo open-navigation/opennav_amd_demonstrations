@@ -21,6 +21,8 @@ This project contains a typical layout for a ROS-based mobile robot:
 
 Bonus: `docs` contains a number of developer guides for bootstrapping new computers for robots, network setup with ROS 2, setting up field experimental networks, how to visualize data remotely, and so on.
 
+TODO hyperlink back to demos for desciptions, images, etc. Have some gif here though first (that marketing think?)
+
 
 ## Launching Robot, Nav2, and Demos
 

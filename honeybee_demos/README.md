@@ -6,7 +6,7 @@ This package contains a series of real-world applicable demos based on ROS 2 Hum
 
 The goal of this demonstration is to show the AMD Ryzen AI compute in action running Nav2 at full speed - 2m/s - outdoors. This is performed on the Presidio main parade lawn in San Francisco, CA because it is a beautiful, generally empty (during weekdays), wide open space in which we can let robots loose at high speeds safely.
 
-[![ALT TEXT](./images/demo1.JPG)](https://www.youtube.com/watch?v=1G8xNuwNM8w)
+[![ALT TEXT](./images/demo1.JPG)](https://www.youtube.com/watch?v=255o4IS3rHg)
 
 Note: Click on the image above to see the GPS Patrol demo in action on YouTube! 
 
