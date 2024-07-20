@@ -54,7 +54,6 @@ def generate_launch_description():
     map_yaml_file = LaunchConfiguration('map')
     use_sim_time = LaunchConfiguration('use_sim_time')
     params_file = LaunchConfiguration('params_file')
-    local_nav = LaunchConfiguration('local_nav')
     localization_type = LaunchConfiguration('localization_type')
     nav2pose_bt_xml = LaunchConfiguration('nav2pose_bt_xml')
 
@@ -98,12 +97,6 @@ def generate_launch_description():
         description='Full path to the ROS2 parameters file to use for all launched nodes',
     )
 
-    declare_local_nav_cmd = DeclareLaunchArgument(
-        'local_nav',
-        default_value='False',
-        description='Whether to disable all localization and use odom only',
-    )
-
     declare_localization_type_cmd = DeclareLaunchArgument(
         'localization_type',
         default_value='2D',
@@ -133,7 +126,6 @@ def generate_launch_description():
                               'slam': slam,
                               'use_sim_time': use_sim_time,
                               'params_file': params_file,
-                              'local_nav': local_nav,
                               'localization_type': localization_type,
                               'container_name': 'nav2_container'}.items()),
 
@@ -156,7 +148,6 @@ def generate_launch_description():
     ld.add_action(declare_map_yaml_cmd)
     ld.add_action(declare_use_sim_time_cmd)
     ld.add_action(declare_params_file_cmd)
-    ld.add_action(declare_local_nav_cmd)
     ld.add_action(declare_localization_type_cmd)
     ld.add_action(bringup_cmd_group)
     return ld

@@ -36,6 +36,8 @@ See launch files for a full set of launch configurations and options!
 
 SHORT VIDEOS/GIF HERE of the experiments (ground, drone, urban, park, indoor, rviz) -- show in action
 
+See `honeybee_demos` for more details about each experiment and videos!
+
 ANALYSIS HERE on performance (charts/graphs: CPU )
 
 ---
@@ -145,11 +147,14 @@ Note the following IPs for the internal network:
 - Ouster Lidar: 192.168.131.20
 
 TODO diagram
-Mappings for joystick:
+Mappings for joystick used by the robot base, demonstration watchdogs, and autonomy scripts:
+- Estop is 'O'
+- Reactivate Estop is Triangle for 5 seconds
+- Start demo is Square and start rosbag record
+- Stop demo is X and stop rosbag record
+- Poweroff backpack is holding PS button for 5 seconds
 - Left joy for teleop with left (L1) rocker for deadman
 - Right rocker (R1) for "fast" mode deadman
-- Circle is estop to override all and stop robot, likely requiring a reboot
-- PS button hold 3s to poweroff the AMD backpack computer
 
 Assumes the workspace in root `amd_ws` for scripts and systemd daemons, but can be configured with addtl arguments / changed easily. Not tied into any scripts.
 

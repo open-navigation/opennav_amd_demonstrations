@@ -122,33 +122,6 @@ controller_server:
       RotateToGoal.slowing_factor: 5.0
       RotateToGoal.lookahead_time: -1.0
 
-      # TODO tune velocity
-      # plugin: "nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController"
-      # desired_linear_vel: 0.5  # 2.0
-      # lookahead_dist: 0.6  # 2.0
-      # min_lookahead_dist: 0.3  # 1.5
-      # max_lookahead_dist: 0.9  # 3.0
-      # lookahead_time: 1.5   # 2.0
-      # rotate_to_heading_angular_vel: 1.8  # 2.0
-      # transform_tolerance: 0.1  # 0.5
-      # use_velocity_scaled_lookahead_dist: false
-      # min_approach_linear_velocity: 0.25
-      # approach_velocity_scaling_dist: 1.5
-      # use_collision_detection: true
-      # max_allowed_time_to_collision_up_to_carrot: 2.0
-      # use_regulated_linear_velocity_scaling: true
-      # use_fixed_curvature_lookahead: false
-      # curvature_lookahead_dist: 0.25
-      # use_cost_regulated_linear_velocity_scaling: false
-      # regulated_linear_scaling_min_radius: 0.9
-      # regulated_linear_scaling_min_speed: 0.25
-      # use_rotate_to_heading: true
-      # allow_reversing: false
-      # rotate_to_heading_min_angle: 0.785
-      # max_angular_accel: 4.0
-      # max_robot_pose_search_dist: 10.0
-      # inflation_cost_scaling_factor: 3.0
-
 local_costmap:
   local_costmap:
     ros__parameters:
@@ -172,7 +145,7 @@ local_costmap:
       nonpersisting_voxel_layer:
         plugin: "nav2_costmap_2d/NonPersistentVoxelLayer"
         enabled:              true
-        track_unknown_space:  true # TODO RPP issue?
+        track_unknown_space:  true
         max_obstacle_height:  2.0
         unknown_threshold:    15
         mark_threshold:       0

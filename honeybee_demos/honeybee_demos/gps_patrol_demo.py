@@ -61,7 +61,6 @@ inspection_targets_cartesian = [
     [-15.0, 11.7, 0.0],  # x, y, yaw
     [2.2, 36.4, 0.0],
     [-15.0, 11.7, 0.0]]
-    # [17.0, 61.0, 0.0]  # Keep down in the (2, 36) direction
 
 """
 A high-speed GPS patrol navigation task 
