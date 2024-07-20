@@ -34,7 +34,7 @@ TODO metrics / marketing / etc - 'so much compute left over while navigating at 
 
 The raw data from the robot during an approximately ~5 minute patrol loop including odometry, TF, commands, sensor data, and so forth can be [downloaded in this link.](https://drive.google.com/file/d/110dgsD_lPXHl7Hn6XcIk0RsIgyCl47Ws/view?usp=sharing)
 
-![ALT TEXT](./images/demo1_dataset.png)
+![ALT TEXT](./images/demo1_dataset.gif)
 
 An example loop of the full length of the parade lawn with noisy GPS data can be seen below for illustration purposes. We can still navigate effectively, however we need to be realistic about the limits on positional accuracies possible. GPS without RTK can obtain about 3-5m accuracy, but will jump:
 
