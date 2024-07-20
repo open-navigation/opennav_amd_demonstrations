@@ -40,6 +40,8 @@ An example loop of the full length of the parade lawn with noisy GPS data can be
 
 ![ALT TEXT](./images/gps.png)
 
+<img src="./images/gps.png" width="480">
+
 This can be reproduced with the [provided rosbag of odometry, GPS data for state estimation](https://drive.google.com/file/d/1sAm1_xIj3lyX5AkacrWUED3nsdiD7rKJ/view?usp=sharing).
 
 
