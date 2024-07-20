@@ -8,7 +8,7 @@ The goal of this demonstration is to show the AMD Ryzen AI compute in action run
 
 [![ALT TEXT](./images/demo1.JPG)](https://www.youtube.com/watch?v=255o4IS3rHg)
 
-Note: Click on the image above to see the GPS Patrol demo in action on YouTube! 
+**Note: Click on the image above to see the GPS Patrol demo in action on YouTube!**
 
 For more information, options, and a tutorial on GPS Navigation with Nav2, [see the Nav2 GPS Waypoint Navigation tutorial](https://docs.nav2.org/tutorials/docs/navigation2_with_gps.html).
 
