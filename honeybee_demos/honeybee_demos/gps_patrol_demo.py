@@ -46,14 +46,14 @@ from std_srvs.srv import Empty
 # 1. Go to the location and put the robot somewhere in the middle of the lawn.
 # 2. Echo the GPS fix and record the latitude and longitude as the `datum` below.
 # 3. Launch RL, drive to waypoints, and record the NavSat odom as the waypoints
-#    or determine via math/GUI relative to datum.
+#    or determine via math/GUI relative to datum
 #    or use GPS fix instead of cartesian, for ROS 2 Iron and newer
 ###################################################################################################
 
 # Datum to create consistent cartesian reference frame. We picked a measurement near the start.
 datum = [37.80046733333333, -122.45829418, 0.0]
 
-# Mission waypoints to be visited in order.
+# Mission waypoints to be visited in order on a patrol loop.
 # Can use absolute GPS (Iron and newer) or cartesian (all distros) relative to datum's origin.
 inspection_targets_gps = []
 inspection_targets_cartesian = [
@@ -63,7 +63,7 @@ inspection_targets_cartesian = [
     [-15.0, 11.7, 0.0]]
 
 """
-A high-speed GPS patrol navigation task 
+A high-speed GPS patrol loop navigation task 
 """
 class GPSPatrolDemo(Node):
     def __init__(self):
