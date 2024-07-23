@@ -15,6 +15,7 @@
 
 import os
 import copy
+import random
 from threading import Thread, Lock
 import numpy as np
 import time
@@ -60,27 +61,27 @@ alameda_city_hall = [600.0, 0.0, 0.0]
 humble_sea_brewing = [700.0, 0.0, 0.0]
 alameda_fire_station = [800.0, 0.0, 0.0]
 
-# Convert RPY into Quaternion
-def rpyToQuad(self, roll, pitch, yaw):
-    qx = np.sin(roll/2) * np.cos(pitch/2) * np.cos(yaw/2) - np.cos(roll/2) * np.sin(pitch/2) * np.sin(yaw/2)
-    qy = np.cos(roll/2) * np.sin(pitch/2) * np.cos(yaw/2) + np.sin(roll/2) * np.cos(pitch/2) * np.sin(yaw/2)
-    qz = np.cos(roll/2) * np.cos(pitch/2) * np.sin(yaw/2) - np.sin(roll/2) * np.sin(pitch/2) * np.cos(yaw/2)
-    qw = np.cos(roll/2) * np.cos(pitch/2) * np.cos(yaw/2) + np.sin(roll/2) * np.sin(pitch/2) * np.sin(yaw/2)
-    return [qx, qy, qz, qw]
+# # Convert RPY into Quaternion
+# def rpyToQuad(self, roll, pitch, yaw):
+#     qx = np.sin(roll/2) * np.cos(pitch/2) * np.cos(yaw/2) - np.cos(roll/2) * np.sin(pitch/2) * np.sin(yaw/2)
+#     qy = np.cos(roll/2) * np.sin(pitch/2) * np.cos(yaw/2) + np.sin(roll/2) * np.cos(pitch/2) * np.sin(yaw/2)
+#     qz = np.cos(roll/2) * np.cos(pitch/2) * np.sin(yaw/2) - np.sin(roll/2) * np.sin(pitch/2) * np.cos(yaw/2)
+#     qw = np.cos(roll/2) * np.cos(pitch/2) * np.cos(yaw/2) + np.sin(roll/2) * np.sin(pitch/2) * np.sin(yaw/2)
+#     return [qx, qy, qz, qw]
 
-# Convert the annotated waypoints to PoseStamped
-def wpsToPoses(self, wps):
-    poses = []
-    for wp in wps:
-        pose = PoseStamped()
-        pose.header.frame_id = 'map'
-        pose.pose.position.x = wp[0]
-        pose.pose.position.y = wp[1]
-        quaternion = rpyToQuad(0.0, 0.0, wp[2])
-        pose.pose.orientation.z = quaternion[2]
-        pose.pose.orientation.w = quaternion[3]
-        poses.append(pose)
-    return poses
+# # Convert the annotated waypoints to PoseStamped
+# def wpsToPoses(self, wps):
+#     poses = []
+#     for wp in wps:
+#         pose = PoseStamped()
+#         pose.header.frame_id = 'map'
+#         pose.pose.position.x = wp[0]
+#         pose.pose.position.y = wp[1]
+#         quaternion = rpyToQuad(0.0, 0.0, wp[2])
+#         pose.pose.orientation.z = quaternion[2]
+#         pose.pose.orientation.w = quaternion[3]
+#         poses.append(pose)
+#     return poses
 
 
 # Route graph node for the urban navigation demo
@@ -89,7 +90,10 @@ class RouteNode():
         self.name = name
         self.position = position
         self.neighbors = []
-    
+        self.previous_node = None
+        self.shortest_path_from_start = 1.0e99
+        self.is_visited = False
+
     def addNeighbor(self, neighbor):
         self.neighbors.append(neighbor)
     
@@ -102,12 +106,17 @@ class RouteNode():
     def getName(self):
         return self.name
 
+    def getCost(self, neighbor):
+        return math.sqrt((neighbor.position[0] - self.position[0]) ** 2 + (neighbor.position[1] - self.position[1]) ** 2)
 
-# Route planner for the urban navigation demo
-class RoutePlanner():
-    def __init__():
-        nodes = self.populateGraph()
-    
+    def isVisited(self):
+        return self.is_visited
+
+# Route graph of nodes for urban navigation demo
+class RouteGraph():
+    def __init__(self):
+        self.nodes = self.populateGraph()
+
     def populateGraph(self):
         nodes = []
         midway_and_lexington_node = RouteNode('midway_and_lexington', midway_and_lexington)
@@ -164,31 +173,68 @@ class RoutePlanner():
         alameda_fire_station_node.addNeighbor(ranger_and_lexington_node)
         nodes.append(alameda_fire_station_node)
         return nodes
+
+
+# Route planner for the urban navigation demo
+class RoutePlanner():
+    def __init__(self):
+        self.graph = RouteGraph()
   
-    def getRoute(self, end, start = None):
-        queue = [] # TODO data structures
-        goal_node = end
+    def getRoute(self, end_id, start_id = None):
+        # Get the starting node, if necessary
+        if start_id is None:
+            start_id = self.getClosestNode(self.navigator.getRobotPose()).getName()
+        
+        # Find the start node in the graph
+        source = None
+        for node in self.graph.nodes:
+            if node.getName() == start_id:
+                source = node
+                source.shortest_path_from_start = 0
 
-        # Get the starting node
-        if start is None:
-            closest_node = self.getClosestNode(self.navigator.getRobotPose())
-            queue.push(closest_node)
-        else:
-            for node in self.nodes:
-                if node.getName() == start:
-                    queue.push(node)
+        # Make an unvisited list
+        current_node = source
+        unvisited_nodes = copy.deepcopy(self.graph.nodes)
 
-        # TODO Perform a breadth-first search to find the route
-        # while len(queue) > 0:
-        #     current_node = queue.pop(0)
-        #     if current_node.getName() == goal_node:
-        #         break
-        #     for neighbor in current_node.getNeighbors():
-        #         queue.append(neighbor)
+        # Perform Dikstra's algorithm to find the shortest path
+        while len(unvisited_nodes) != 0:
+            # Find next shortest path node in a reusable, OOP way (inefficient for large graphs)
+            unvisited_nodes.sort(key=lambda x: x.shortest_path_from_start)
+            candidate_node = None
+            for node in unvisited_nodes:
+                if not node.isVisited():
+                    candidate_node = node
+                    break
 
+            # All nodes visited, find path to the goal
+            if candidate_node is None:
+                for node in unvisited_nodes:
+                    if node.getName() == end_id:
+                        if node.previous_node is None:
+                            print('No path found to the goal node!')
+                            return None
+                        else:
+                            shortest_path = []
+                            current_node = node
+                            while current_node is not None:
+                                shortest_path.append(current_node)
+                                current_node = current_node.previous_node
+                            shortest_path.reverse()
+                            return shortest_path
+
+            # Search all neighbors
+            for neighbor in candidate_node.getNeighbors():
+                candidate_dist = candidate_node.shortest_path_from_start + candidate_node.getCost(neighbor)
+                if candidate_dist < neighbor.shortest_path_from_start:
+                    neighbor.shortest_path_from_start = candidate_dist
+                    neighbor.previous_node = candidate_node
+
+            candidate_node.is_visited = True
+    
+        return None
 
     def getClosestNode(self, position):
-        closest_distance = 1e20
+        closest_distance = 1.0e99
         closest_node = None
         for node in self.nodes:
             distance = math.sqrt((node.position[0] - position[0]) ** 2 + (node.position[1] - position[1]) ** 2)
@@ -313,7 +359,7 @@ class UrbanNavigationDemo(Node):
                 goal = random.choice(self.route_planner.nodes)
 
             # Compute a route to the goal on the graph, then find its dense path
-            route = self.route_planner.getRoute(goal.getName())
+            route = self.route_planner.getRoute(goal.getName()) #TODO, start_id='tower_and_saratoga')
             route_plan = self.route_planner.routeToPlan(route)
             if math.sqrt((route[0].position[0] - curr_pose.pose.position.x[0]) ** 2 + (route[0].position[1] - curr_pose.pose.position.x[1]) ** 2) > 1.0:
                 init_plan = self.route_planner.planToRouteStart(curr_pose, route[0])
@@ -347,7 +393,7 @@ class UrbanNavigationDemo(Node):
 
             # Check if a stop is requested or no looping is necessary
             with self.lock:
-                if self.stop
+                if self.stop:
                     print('Exiting Urban navigation demo. Stop was requested.')
                     return
 

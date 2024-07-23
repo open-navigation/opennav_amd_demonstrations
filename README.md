@@ -42,6 +42,12 @@ ANALYSIS HERE on performance (charts/graphs: CPU )
 
 ---
 
+## Demonstrations
+
+TODO show gifs of the 3 that hyperlink to the youtube or code or demos package
+
+---
+
 ## Build 
 
 TODO --> in another page linked
