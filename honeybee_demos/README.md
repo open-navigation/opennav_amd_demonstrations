@@ -64,8 +64,7 @@ TODO video
 
 **Note: Click on the image above to see the GPS Patrol demo in action on YouTube!**
 
-<img src="./images/urban_layout_rotated.jpg" width="480">
-<img src="./images/demo2_godview.gif" width="480">
+<img src="./images/urban_layout_rotated.jpg" width="480"> <img src="./images/demo2_godview.gif" width="480">
 
 
 #### Technical Summary
