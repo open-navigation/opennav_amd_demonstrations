@@ -12,7 +12,7 @@ The goal of this demonstration is to show the AMD Ryzen AI compute in action run
 
 For more information, options, and a tutorial on GPS Navigation with Nav2, [see the Nav2 GPS Waypoint Navigation tutorial](https://docs.nav2.org/tutorials/docs/navigation2_with_gps.html).
 
-### Technical Summary
+#### Technical Summary
 
 We set the datum for `robot_localization` to be an arbitrarily selected position on the park in order to ground the localization system near the origin for convenience and such that this application can be repeated using the same waypoints grounded to a consistent coordinate system, as would be necessary for a deployed application. The experiment was performed over multiple days and this works well.
 
@@ -26,11 +26,11 @@ A few important notes on this demonstration's configuration:
 - This demonstration uses a BT that will not replan until its hit its goal or the controller fails to compute trajectories to minimize the impact of ~1-3m localization jumps on robot motion. This prevents 'drunken' behavior due to non-corrected GPS data's noise.
 - The positioning tolerances are set comparatively high at 3m due to the noisy non-RTK corrected GPS. Additionally, the perception modules are configured as non-persistent so that the major jumps in localization don't cause series issues in planning for the world model - we use a 3D lidar, so we have good real-time 360 deg coverage. Both of these could be walked back when using RTK for typical uses of Nav2 with GPS localization. 
 
-### Metrics
+#### Metrics
 
 TODO metrics / marketing / etc - 'so much compute left over while navigating at 2m/s, 3d lidar processing, autonomy, etc. Super powerful machine, love the opportunity this presents in a 80W package'. Or... consoliate into the README so its up front for all 3 demos combined concisely?
 
-### Dataset
+#### Dataset
 
 The raw data from the robot during an approximately ~5 minute patrol loop including odometry, TF, commands, sensor data, and so forth can be [downloaded in this link.](https://drive.google.com/file/d/110dgsD_lPXHl7Hn6XcIk0RsIgyCl47Ws/view?usp=sharing)
 
@@ -48,7 +48,7 @@ ros2 bag play initial_gps_loop_rosbag.db3 --clock 20
 ros2 launch honeybee_nav2 gps_localization.launch.py use_sim_time:=True
 ```
 
-### Notes on GPS
+#### Notes on GPS
 
 For this demonstration, we use the cheap built-in non-RTK corrected, single antenna GPS to localize the robot to show how to work with Nav2 outdoor with noisy GPS localization. For a refined application, we recommend using an RTK corrected, dual antenna GPS sensor to improve accuracy of localization, positioning tolerances, and allow for persistence of perception data without major jumps. There are many affordable RTK GPS sensors on the market, [for example](https://holybro.com/products/h-rtk-unicore-um982).
 
@@ -59,15 +59,18 @@ With the GPS, its good to let the robot sit with the filter running for a little
 
 The goal of this demonstration is to show the AMD Ryzen AI compute in action running Nav2 using 3D SLAM and localization in an urban setting. This is performed on Alameda, an island in the San Francisco bay, because it has a large urban area formerly hosting a Naval Air Station which is perfect for experimentation without through-traffic. This demonstration maps and localizes the robot within a few city blocks on Alameda and routes the robot along the roadways to go from one building to another representing an urban-navigation use-case.
 
-# TODO image and video
+TODO video
 
-### Technical Summary
+![ALT TEXT](./images/urban_layout.png)
+
+
+#### Technical Summary
 
 We use (TODO 3D SLAM/LOCALIZATION USED) for 3D localization and SLAM using the Ouster 3D lidar. The OS-0 has a lower range than its OS-1 and OS-2 counterparts (in exchange for a wide vertical FOV), thus this demonstration is performed in an area where buildings and structures can be effectively seen within the limited ~30 meter effective range.
 
 The space can be mapped either autonomously using Nav2 or using a manually controlled data collection run. After the space is mapped, we can use localization to obtain the position of the robot relative to the 3D map generated. This also allows us to annotate the map for navigable space, define points of interest for navigation, or other application-specific needs.
 
-TODO on planner/controller configurations
+TODO on planner/controller configurations: 2m/s too on roadways (max)
 
 A few important notes on this demonstration's configuration:
 - Since we're navigating in non-flat, urban 3D spaces, we use a node to segment the ground out from the pointclouds for use in planning/control rather than directly feeding them in with the 3D terrain variations.
@@ -76,18 +79,18 @@ A few important notes on this demonstration's configuration:
 - In this demonstration, we use a navigation route graph of the streets and blocks for long-term planning in place of freespace planning on the roadways (i.e. like an AV might). This may be replaced in another application with freespace planning and semantic segmentation to determine navigable spaces live during execution instead and provide more freedom for freespace planning off of roadways.
 
 
-### Metrics
+#### Metrics
 
 TODO metrics / marketing / etc - 'so much compute left over while navigating urban with 3D slam/localization, 3d lidar processing, autonomy, etc. Super powerful machine, love the opportunity this presents in a 80W package'. Or... consoliate into the README so its up front for all 3 demos combined concisely?
 
-### Dataset
+#### Dataset
 
 TODO full dataset from actual run + 3D slam hand-driven only dataset
 TODO the google maps overlay of the annotated intersections / waypoints (or just 3D map instead, no google?)
 
-### Notes on 3D SLAM
+#### Notes on 3D Mapping, Planning
 
-For this demonstration, several 3D SLAM and localization solutions were analyzed. Unfortunately, relatively few were robust enough for use and the 3D SLAM selected was the best performing for this robot platform, its sensors, and configuration. While we found good success with this method, it is easy to swap in another solution that you prefer as long as it provides the pointcloud map and TF transformations from `map` -> `odom` per REP-105.
+For this demonstration, several 3D SLAM and localization solutions were analyzed. Unfortunately, relatively few were robust enough for use and the 3D SLAM selected was the best performing for this robot platform, its sensors, and configuration. While we found 'good enough' success with this method, it is easy to swap in another solution that you prefer as long as it provides the pointcloud map and TF transformations from `map` -> `odom` per REP-105. The OS-0 was particularly challenging to work with outdoors due to its relatively lower range and density.
 
 Planning in Urban spaces can be done 2 primay ways:
 - Using freespace algorithms like the NavFn or Smac Planners which allow for planning in all non-occupied spaces constrained by some behavioral constraints like inflation, keepouts, or higher cost regions

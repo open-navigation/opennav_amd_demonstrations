@@ -24,12 +24,15 @@ import math
 import rclpy
 from rclpy.node import Node
 from rclpy.duration import Duration
-from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import PoseStamped, PoseArray, Pose
 from nav_msgs.msg import Path
 from sensor_msgs.msg import Joy, BatteryState
 from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
 from rclpy.qos import QoSProfile, QoSReliabilityPolicy
 from rclpy.qos import QoSDurabilityPolicy, QoSHistoryPolicy
+from tf2_ros import TransformException
+from tf2_ros.buffer import Buffer
+from tf2_ros.transform_listener import TransformListener
 
 ###################################################################################################
 # For a deployed production application, use the Nav2 Route Server to generate the route from A->B
@@ -48,43 +51,25 @@ from rclpy.qos import QoSDurabilityPolicy, QoSHistoryPolicy
 # 2. Find the key points of interest: the street intersections and locations for navigation targets
 # 3. Update the script's route graph below to match the 3D map and key points of interest
 # Pro Tip: Try to translate/rotate the map's origin to align with already defined waypoints below!
+#          We set the origin to be Tower & Lexington
 ###################################################################################################
 
 # Define the positions of each of the interactions and points of interest for planning
-midway_and_lexington = [0.0, 0.0, 0.0]
-midway_and_saratoga = [100.0, 0.0, 0.0]
-ranger_and_lexington = [200.0, 0.0, 0.0]
-ranger_and_saratoga = [300.0, 0.0, 0.0]
-tower_and_lexington = [400.0, 0.0, 0.0]
-tower_and_saratoga = [500.0, 0.0, 0.0]
-alameda_city_hall = [600.0, 0.0, 0.0]
-humble_sea_brewing = [700.0, 0.0, 0.0]
-alameda_fire_station = [800.0, 0.0, 0.0]
+midway_and_lexington = [295.7, 0.0, 0.0]
+midway_and_saratoga = [295.7, -128.1, 0.0]
+ranger_and_lexington = [181.4, 0.0, 0.0]
+ranger_and_saratoga = [181.4, -128.1, 0.0]
+tower_and_lexington = [0.0, 0.0, 0.0]
+tower_and_saratoga = [0.0, -128.1, 0.0]
+alameda_city_hall = [295.7, -62.5, 0.0]
+humble_sea_brewing = [163.9, -128.1, 0.0]
+alameda_fire_station = [181.4, -94.6, 0.0]
 
-# # Convert RPY into Quaternion
-# def rpyToQuad(self, roll, pitch, yaw):
-#     qx = np.sin(roll/2) * np.cos(pitch/2) * np.cos(yaw/2) - np.cos(roll/2) * np.sin(pitch/2) * np.sin(yaw/2)
-#     qy = np.cos(roll/2) * np.sin(pitch/2) * np.cos(yaw/2) + np.sin(roll/2) * np.cos(pitch/2) * np.sin(yaw/2)
-#     qz = np.cos(roll/2) * np.cos(pitch/2) * np.sin(yaw/2) - np.sin(roll/2) * np.sin(pitch/2) * np.cos(yaw/2)
-#     qw = np.cos(roll/2) * np.cos(pitch/2) * np.cos(yaw/2) + np.sin(roll/2) * np.sin(pitch/2) * np.sin(yaw/2)
-#     return [qx, qy, qz, qw]
+# Helper function to calculate the distance between two points
+def dist(p1, p2):
+    return math.sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2)
 
-# # Convert the annotated waypoints to PoseStamped
-# def wpsToPoses(self, wps):
-#     poses = []
-#     for wp in wps:
-#         pose = PoseStamped()
-#         pose.header.frame_id = 'map'
-#         pose.pose.position.x = wp[0]
-#         pose.pose.position.y = wp[1]
-#         quaternion = rpyToQuad(0.0, 0.0, wp[2])
-#         pose.pose.orientation.z = quaternion[2]
-#         pose.pose.orientation.w = quaternion[3]
-#         poses.append(pose)
-#     return poses
-
-
-# Route graph node for the urban navigation demo
+# Route navigation graph node
 class RouteNode():
     def __init__(self, name, position):
         self.name = name
@@ -107,12 +92,13 @@ class RouteNode():
         return self.name
 
     def getCost(self, neighbor):
-        return math.sqrt((neighbor.position[0] - self.position[0]) ** 2 + (neighbor.position[1] - self.position[1]) ** 2)
+        return dist(neighbor.position, self.position)
 
     def isVisited(self):
         return self.is_visited
 
-# Route graph of nodes for urban navigation demo
+
+# Route navigation graph of nodes
 class RouteGraph():
     def __init__(self):
         self.nodes = self.populateGraph()
@@ -175,16 +161,12 @@ class RouteGraph():
         return nodes
 
 
-# Route planner for the urban navigation demo
+# A *simple* route navigation planner for the urban navigation demo
 class RoutePlanner():
     def __init__(self):
         self.graph = RouteGraph()
   
-    def getRoute(self, end_id, start_id = None):
-        # Get the starting node, if necessary
-        if start_id is None:
-            start_id = self.getClosestNode(self.navigator.getRobotPose()).getName()
-        
+    def getRoute(self, end_id, start_id):
         # Find the start node in the graph
         source = None
         for node in self.graph.nodes:
@@ -192,7 +174,7 @@ class RoutePlanner():
                 source = node
                 source.shortest_path_from_start = 0
 
-        # Make an unvisited list
+        # Make a unvisited list
         current_node = source
         unvisited_nodes = copy.deepcopy(self.graph.nodes)
 
@@ -228,22 +210,20 @@ class RoutePlanner():
                 if candidate_dist < neighbor.shortest_path_from_start:
                     neighbor.shortest_path_from_start = candidate_dist
                     neighbor.previous_node = candidate_node
-
             candidate_node.is_visited = True
-    
         return None
 
     def getClosestNode(self, position):
         closest_distance = 1.0e99
         closest_node = None
-        for node in self.nodes:
-            distance = math.sqrt((node.position[0] - position[0]) ** 2 + (node.position[1] - position[1]) ** 2)
+        for node in self.graph.nodes:
+            distance = dist(node.position, position)
             if distance < closest_distance:
                 closest_distance = distance
                 closest_node = node
         return closest_node
 
-    def interpolate_points(p1, p2, resolution = 0.05):
+    def interpolatePoints(self, p1, p2, resolution = 0.05):
         dx = p2[0] - p1[0]
         dy = p2[1] - p1[1]
         distance = math.sqrt(dx**2 + dy**2)
@@ -252,27 +232,28 @@ class RoutePlanner():
         step_y = dy / steps        
         return [(p1[0] + step_x * i, p1[1] + step_y * i) for i in range(steps + 1)]
 
-    def planToRouteStart(self, start_pose, start_node):
+    def planToRouteStart(self, start_pose, start_node, stamp):
         # Plan a path from the current pose to the start node of the route
         plan = Path()
         plan.header.frame_id = 'map'
-        plan.header.stamp = self.navigator.getNode().now().to_msg()
-        start_pose_list = [start_pose.pose.position.x, start_pose.pose.position.y]
-        interpolated_pts = self.interpolate_points(start_pose_list, start_node.position)
+        plan.header.stamp = stamp
+        interpolated_pts = self.interpolatePoints(
+            [start_pose.pose.position.x, start_pose.pose.position.y], start_node.position)
         for pt in interpolated_pts:
             pose = PoseStamped()
             pose.pose.position.x = pt[0]
             pose.pose.position.y = pt[1]
             plan.poses.append(pose)
+        return plan
 
-    def routeToPlan(self, route):
+    def routeToPlan(self, route, stamp):
         # Upsample the sparse route into a path for the controller to loosely follow
         plan = Path()
         plan.header.frame_id = 'map'
-        plan.header.stamp = self.navigator.getNode().now().to_msg()
+        plan.header.stamp = stamp
         for i, node in enumerate(route[:-1]):
             next_node = route[i + 1]
-            interpolated_pts = self.interpolate_points(node.position, next_node.position)
+            interpolated_pts = self.interpolatePoints(node.position, next_node.position)
             for pt in interpolated_pts:
                 pose = PoseStamped()
                 pose.pose.position.x = pt[0]
@@ -283,7 +264,7 @@ class RoutePlanner():
         pose = PoseStamped()
         pose.pose.position.x = route[-1].position[0]
         pose.pose.position.y = route[-1].position[1]
-        plan.poses.append()
+        plan.poses.append(pose)
         return plan
 
 
@@ -297,6 +278,8 @@ class UrbanNavigationDemo(Node):
         self.lock = Lock()
         self.stop = False
 
+        self.tf_buffer = Buffer()
+        self.tf_listener = TransformListener(self.tf_buffer, self)
         self.navigator = BasicNavigator()
         self.route_planner = RoutePlanner()
 
@@ -313,6 +296,18 @@ class UrbanNavigationDemo(Node):
         self.batt_sub = self.create_subscription(
             BatteryState, 'platform/bms/state', self.batteryCallback, self.batt_qos)
 
+        # Publish artifacts for visualization
+        self.path_pub = self.create_publisher(Path, 'plan', 10)
+        self.graph_pub = self.create_publisher(PoseArray, 'graph', 10)
+        viz_graph = PoseArray()
+        viz_graph.header.frame_id = 'map'
+        viz_graph.header.stamp = self.get_clock().now().to_msg()
+        for node in self.route_planner.graph.nodes:
+            pose = Pose()
+            pose.position.x = node.position[0]
+            pose.position.y = node.position[1]
+            viz_graph.poses.append(pose)
+        self.graph_pub.publish(viz_graph)
         print('Urban Navigation Demo node started.')
 
     def waitUntilActive(self):
@@ -349,23 +344,43 @@ class UrbanNavigationDemo(Node):
             self.demo_thread.start()
 
     def runDemo(self):
+        start_node_id = None
         while rclpy.ok():
+            # Get starting pose and node for search
             nav_start = self.navigator.get_clock().now()
+            start_pose = PoseStamped()
+            try:
+                t = self.tf_buffer.lookup_transform('map', 'base_link', rclpy.time.Time())
+                start_pose.header = t.header
+                start_pose.pose.position.x = t.transform.translation.x
+                start_pose.pose.position.y = t.transform.translation.y
+                start_pose.pose.position.z = t.transform.translation.z
+                start_pose.pose.orientation = t.transform.rotation
+            except TransformException as ex:
+                print(f'Could not transform map to base_link: {ex}')
+                return
 
-            # Select a random, non-correct goal to navigate to in the graph
-            curr_pose = self.navigator.getRobotPose()
-            goal = random.choice(self.route_planner.nodes)
-            while math.sqrt((goal.position[0] - curr_pose.pose.position.x[0]) ** 2 + (goal.position[1] - curr_pose.pose.position.x[1]) ** 2) < 10.0:
-                goal = random.choice(self.route_planner.nodes)
+            if not start_node_id:
+                start_node_id = self.route_planner.getClosestNode(
+                    [start_pose.pose.position.x, start_pose.pose.position.y]).getName()
+
+            # Select a random, non-current goal to navigate to in the graph
+            goal = random.choice(self.route_planner.graph.nodes)
+            while dist(goal.position, [start_pose.pose.position.x, start_pose.pose.position.y]) < 10.0:
+                goal = random.choice(self.route_planner.graph.nodes)
 
             # Compute a route to the goal on the graph, then find its dense path
-            route = self.route_planner.getRoute(goal.getName()) #TODO, start_id='tower_and_saratoga')
-            route_plan = self.route_planner.routeToPlan(route)
-            if math.sqrt((route[0].position[0] - curr_pose.pose.position.x[0]) ** 2 + (route[0].position[1] - curr_pose.pose.position.x[1]) ** 2) > 1.0:
-                init_plan = self.route_planner.planToRouteStart(curr_pose, route[0])
+            route = self.route_planner.getRoute(goal.getName(), start_id=start_node_id)
+            route_plan = self.route_planner.routeToPlan(route, nav_start)
+
+            # If distance from current pose is too far from start node, plan there first
+            if dist(route[0].position, [start_pose.pose.position.x, start_pose.pose.position.y]) > 3.0:
+                init_plan = self.route_planner.planToRouteStart(start_pose, route[0], nav_start)
                 route_plan.poses = init_plan.poses + route_plan.poses
 
-            # Finally, follow it using Nav2's controller
+            # Finally, lightly smooth corners, publish visualization, and follow it with Nav2
+            route_plan = self.navigator.smoothPath(route_plan)
+            self.path_pub.publish(route_plan)
             self.navigator.followPath(route_plan)
 
             # Track ongoing progress
@@ -386,16 +401,22 @@ class UrbanNavigationDemo(Node):
                 print(f'Urban navigation demo succeeded going to {goal.getName()}!')
             elif result == TaskResult.CANCELED:
                 print(f'Urban navigation demo was canceled going to {goal.getName()}!')
+                return
             elif result == TaskResult.FAILED:
                 print(f'Urban navigation demo failed going to {goal.getName()}!')
+                return
             else:
                 print('Urban navigation demo has an invalid return status!')
+                return
 
             # Check if a stop is requested or no looping is necessary
             with self.lock:
                 if self.stop:
                     print('Exiting Urban navigation demo. Stop was requested.')
                     return
+
+            # Else, Start from the goal node for the next task
+            start_node_id = goal.getName()
 
 
 def main():
