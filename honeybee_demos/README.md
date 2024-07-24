@@ -57,11 +57,14 @@ With the GPS, its good to let the robot sit with the filter running for a little
 
 ## Demo 2: Outdoor, Urban 3D Navigation
 
-The goal of this demonstration is to show the AMD Ryzen AI compute in action running Nav2 using 3D SLAM and localization in an urban setting. This is performed on Alameda, an island in the San Francisco bay, because it has a large urban area formerly hosting a Naval Air Station which is perfect for experimentation without through-traffic. This demonstration maps and localizes the robot within a few city blocks on Alameda and routes the robot along the roadways to go from one building to another representing an urban-navigation use-case.
+The goal of this demonstration is to show the AMD Ryzen AI compute in action running Nav2 using 3D SLAM and localization in an urban setting. This is performed on Alameda, an island in the San Francisco bay, because it has a large urban area formerly hosting a Naval Air Station which is perfect for experimentation without much through-traffic. This demonstration maps and localizes the robot within a few city blocks on Alameda and routes the robot along the roadways to go from one building to another representing an urban-navigation use-case.
 
 TODO video
+[![ALT TEXT](./images/demo2.JPG)](https://www.youtube.com/watch?v=255o4IS3rHg)
 
-![ALT TEXT](./images/urban_layout.png)
+**Note: Click on the image above to see the GPS Patrol demo in action on YouTube!**
+
+![ALT TEXT](./images/urban_layout_rotated.jpg)
 
 
 #### Technical Summary
