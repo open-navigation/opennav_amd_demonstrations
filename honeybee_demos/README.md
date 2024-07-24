@@ -62,9 +62,11 @@ The goal of this demonstration is to show the AMD Ryzen AI compute in action run
 TODO video
 [![ALT TEXT](./images/demo2.JPG)](https://www.youtube.com/watch?v=255o4IS3rHg)
 
-**Note: Click on the image above to see the GPS Patrol demo in action on YouTube!**
+**Note: Click on the image above to see the Urban Navigation demo in action on YouTube!**
 
-<img src="./images/urban_layout_rotated.jpg" width="480"> <img src="./images/demo2_godview.gif" width="480">
+This is the experiment's location on Alameda with drone footage showing the area from the sky for scale. The loop is approximately 1km in length and takes the robot about ~10 minutes to navigate around the entire space. On the navigation graph, we can visit a few intersections, a [very nice](https://humblesea.com/) brewery, Alameda's city hall, and a fire training station.
+
+<img src="./images/urban_layout_rotated.jpg" height="270"> <img src="./images/demo2_godview.gif" width="480">
 
 
 #### Technical Summary
