@@ -4,7 +4,7 @@ This package contains a series of real-world applicable demos based on ROS 2 Hum
 
 ## Demo 1: High-Speed, Outdoor GPS Navigation
 
-The goal of this demonstration is to show the AMD Ryzen AI compute in action running Nav2 at full speed - 2m/s - outdoors. This is performed on the Presidio main parade lawn in San Francisco, CA because it is a beautiful, generally empty (during weekdays), wide open space in which we can let robots loose at high speeds safely. This demonstration uses GPS to localize the robot while performing a patroling task in a loop and taking some measurements at each point of interest. 
+The goal of this demonstration is to show the AMD Ryzen AI compute in action running Nav2 at full speed - 2m/s - outdoors. This is performed on the Presidio main parade lawn in San Francisco, CA because it is a beautiful, generally empty (during weekdays), wide open space in which we can let robots loose at high speeds safely. This demonstration uses GPS to localize the robot while performing a patroling task in a loop and taking some measurements at each point of interest. There is no map what so ever.
 
 [![ALT TEXT](./images/demo1.JPG)](https://www.youtube.com/watch?v=255o4IS3rHg)
 
