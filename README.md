@@ -36,17 +36,15 @@ The demonstrations can be launched using their respective launch files in `honey
 
 See launch files for a full set of launch configurations and options!
 
----
-
-ANALYSIS HERE on performance (charts/graphs: CPU )
-
----
-
 ## Demonstrations
 
 TODO show gifs of the 3 that hyperlink to the youtube or code or demos package
 
----
+## Metrics
+
+TODO metrics / marketing / etc - 'so much compute left over while navigating urban with 3D slam/localization, 3d lidar processing, autonomy, at 2m/s. etc. Super powerful machine, love the opportunity this presents in a 80W package'. 
+
+ANALYSIS HERE on performance (charts/graphs: CPU )
 
 ## Build 
 

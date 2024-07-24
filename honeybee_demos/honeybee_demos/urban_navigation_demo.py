@@ -174,7 +174,7 @@ class RoutePlanner():
                 source = node
                 source.shortest_path_from_start = 0
 
-        # Make a unvisited list
+        # Make an unvisited list
         current_node = source
         unvisited_nodes = copy.deepcopy(self.graph.nodes)
 
@@ -369,6 +369,8 @@ class UrbanNavigationDemo(Node):
             while dist(goal.position, [start_pose.pose.position.x, start_pose.pose.position.y]) < 10.0:
                 goal = random.choice(self.route_planner.graph.nodes)
 
+            print(f'Navigating from {start_node_id} to {goal.getName()}...')
+
             # Compute a route to the goal on the graph, then find its dense path
             route = self.route_planner.getRoute(goal.getName(), start_id=start_node_id)
             route_plan = self.route_planner.routeToPlan(route, nav_start)
@@ -379,21 +381,15 @@ class UrbanNavigationDemo(Node):
                 route_plan.poses = init_plan.poses + route_plan.poses
 
             # Finally, lightly smooth corners, publish visualization, and follow it with Nav2
+            # Controller to handle deviations and obstacles required to complete the task
             route_plan = self.navigator.smoothPath(route_plan)
             self.path_pub.publish(route_plan)
             self.navigator.followPath(route_plan)
 
             # Track ongoing progress
-            i = 0
             while not self.navigator.isTaskComplete() or not rclpy.ok():
-                i = i + 1
-                feedback = self.navigator.getFeedback()
-                if feedback and i % 10 == 0:
-                    print('Executing current waypoint: ' + str(feedback.current_waypoint))
-
-                    # Some navigation timeout to demo cancellation
-                    if self.navigator.get_clock().now() - nav_start > Duration(seconds=1200.0):
-                        self.navigator.cancelTask()
+                if self.navigator.get_clock().now() - nav_start > Duration(seconds=1200.0):
+                    self.navigator.cancelTask()
 
             # Log a result of the loop
             result = self.navigator.getResult()

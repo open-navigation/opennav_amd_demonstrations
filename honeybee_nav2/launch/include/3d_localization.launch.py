@@ -51,6 +51,7 @@ def generate_launch_description():
         default_value='False',
         description='Use simulation (Gazebo) clock if true')
 
+    # Specify map to use in 3d_localization.yaml
     lidar_localization_cmd = LifecycleNode(
         name='lidar_localization',
         package='lidar_localization_ros2',
@@ -58,11 +59,11 @@ def generate_launch_description():
         executable='lidar_localization_node',
         parameters=[params_file],
         remappings=[('/velodyne_points','/sensors/lidar_0/points'),
-                    ('/odom', '/platform/odom/filtered')],
+                    ('/odom', '/platform/odom/filtered'),
+                    ('/imu', '/platform/imu_1/data')],
         output='screen',
         condition=IfCondition(PythonExpression(['not ', slam])),
     )
-
 
     to_inactive = launch.actions.EmitEvent(
         event=launch_ros.events.lifecycle.ChangeState(
@@ -107,7 +108,9 @@ def generate_launch_description():
         package='scanmatcher',
         executable='scanmatcher_node',
         parameters=[params_file],
-        remappings=[('/input_cloud','/sensors/lidar_0/points')],
+        remappings=[('/input_cloud','/sensors/lidar_0/points'),
+                    ('/odom', '/platform/odom/filtered'),
+                    ('/imu', '/platform/imu_1/data')],
         output='screen',
         condition=IfCondition(slam),
     )
