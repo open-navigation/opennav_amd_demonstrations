@@ -88,8 +88,7 @@ TODO metrics / marketing / etc - 'so much compute left over while navigating urb
 
 #### Dataset
 
-TODO full dataset from actual run + 3D slam hand-driven only dataset --> use the rviz odom as the dataset's gif?
-TODO the google maps overlay of the annotated intersections / waypoints (or just 3D map instead, no google?)
+TODO full dataset from actual run + 3D slam hand-driven only dataset (note on missing due to bag, but live ok?) --> use the rviz odom as the dataset's gif?
 
 #### Notes on 3D Mapping, Planning
 
