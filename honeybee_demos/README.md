@@ -73,6 +73,7 @@ The space can be mapped either autonomously using Nav2 or using a manually contr
 A few important notes on this demonstration's configuration:
 - Since we're navigating in non-flat, urban 3D spaces, we use a node to segment the ground out from the pointclouds for use in planning/control rather than directly feeding them in with the 3D terrain variations. Some of the streets have large potholes, tall curbs, and small hills.
 - In this demonstration, we use a navigation route graph of the streets and blocks for long-term planning in place of freespace planning on the roadways (i.e. like Google Maps or an AV might route). This may be replaced in another application with freespace planning and semantic segmentation to determine navigable spaces live during execution instead and provide more freedom for freespace planning off of roadways (or sidewalks or similar).
+- We use Nav2's path smoother to smooth out the 90 degree turns in the graph to make better use of the roadway intersections and smooth, intuitive motion.
 - The free-space Nav2 planner is not used in this demonstration (included route graph planner instead). It computes the most optimal route on the roadway graph (i.e. shortest, fastest) to get to a destination node. For a deployed application, you may marry this with the Nav2 freespace planner (like shown in the GPS demonstration above) to go the 'last meters' off the roads/sidewalks for the final positioning.
 - The controller is configured to run at the robot's full speed, 2 m/s to operate on public roadways. This speed **and operating on public roads** should be used by professionals under careful supervision of the robot **and environment around you**. It is recommended to follow the robot **closely** and be ready to take over to pause in case through traffic appears. Be courteous and thoughtful in public spaces. We use DWB for this demonstration to round off the use of all 3 controllers in these 3 demos: RPP, MPPI, and DWB. We might recommend MPPI if attempting to reproduce this.
 - The positioning tolerances are set to be in line with typical indoor 2D applications of 30cm due to the good accuracy of the 3D localization (opposed to uncorrected GPS) to show Nav2 can obtain these accuracies outdoors - its a matter of provided localization accuracy.
@@ -97,7 +98,9 @@ If you wish to use free-space planning, you may want to:
 - Use Smac Planner Hybrid-A* for obtaining high quality, feasible paths at the full speed of the robot performing full SE2 collision checking. 
 - Use the behavior tree navigator to define your navigation logic for off-graph (and on-graph), and associated behavior transitions. 
 
-## Demo 3: Standard Indoor 
+## Demo 3: Long-Duration Indoor 2D Navigation with Keepout, Speed Restricted Zones
+
+loop, dock, repeat (note: no dock, so just docking using docking but not actually recharging, leaving after 30s --> replace with battery status to send to dock / undock at certain power level instead). Keepouts + speed restriction zones as well. Collision mointor. Rotation shim controller. 'just throwing the book at it'.
 
 A few important notes on the configuration:
 - We move slower in this demonstration - 0.5 m/s - due to being indoors around people for safety
@@ -105,5 +108,3 @@ A few important notes on the configuration:
 - Since we're navigating in a 2D environment, we can use PointCloud to Laserscan to ignore the ground points (which can be noisy on shiny surface). We still use the 3D nature of the lidar by considering a large band from the top of the robot (plus some margin) to a few cm off the ground. This uses the 3D lidar's entire useful data, but reduces computation and noisy points without need for explicit PointCloud filtering or use of the ground segmentation node (less points of potential failure with glass / shiny floors).
 - We treat this robot as a large point for global planning as an example with NavFn (oppposed to feasible planners for SE2 footprint checking in other demonstrations). This is a good working example for circular robots or computers with low compute. 
 - We use MPPI in this demonstration for highly dynamic behavior in the dynamic human-filled environment
-
-TODO keepouts
