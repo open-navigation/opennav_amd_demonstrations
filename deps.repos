@@ -11,11 +11,11 @@ repositories:
     type: git
     url: https://github.com/SteveMacenski/nonpersistent_voxel_layer
     version: humble
-  ouster-lidar/ouster-ros: # --recurse-submodules
+  ouster-lidar/ouster-ros: # --recurse-submodules required
     type: git
     url: https://github.com/ouster-lidar/ouster-ros.git
-    version: ros2 # 2a0ef50f1dbe3f512321e809d6ca87391ce38f6e
-  url-kaist/patchwork-plusplus
+    version: ros2  # 2a0ef50f1dbe3f512321e809d6ca87391ce38f6e
+  url-kaist/patchwork-plusplus:
     type: git
     url: https://github.com/url-kaist/patchwork-plusplus
     version: master

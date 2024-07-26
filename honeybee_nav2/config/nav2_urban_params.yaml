@@ -14,14 +14,16 @@ controller_server:
     progress_checker:
       plugin: "nav2_controller::SimpleProgressChecker"
       required_movement_radius: 0.01
-      movement_time_allowance: 1000.0  # Set high to allow for operator override in case of interruption due to cars before continuing
+      # Set high to allow for operator override in case of interruption due to cars before
+      # allowing the system to continue. The hazards of operating a demo on public streets :-)
+      movement_time_allowance: 1000.0
 
     # Goal checker parameters
     general_goal_checker:
       stateful: True
       plugin: "nav2_controller::SimpleGoalChecker"
-      xy_goal_tolerance: 2.0 #TODO
-      yaw_goal_tolerance: 6.28
+      xy_goal_tolerance: 0.5
+      yaw_goal_tolerance: 0.5
 
     # Controller parameters
     FollowPath:
@@ -47,7 +49,7 @@ controller_server:
       linear_granularity: 0.05
       angular_granularity: 0.025
       transform_tolerance: 0.2
-      xy_goal_tolerance: 2.0
+      xy_goal_tolerance: 0.5
       trans_stopped_velocity: 0.25
       short_circuit_trajectory_evaluation: True
       stateful: True
@@ -78,42 +80,69 @@ local_costmap:
       footprint: "[ [0.254, 0.2159], [0.254, -0.2159], [-0.254, -0.2159], [-0.254, 0.2159] ]"
       footprint_padding: 0.1
       track_unknown_space: false
-      plugins: ["nonpersisting_voxel_layer", "inflation_layer"]
+      plugins: ["spatio_temporal_voxel_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
         inflation_radius: 2.0
-      nonpersisting_voxel_layer:
-        plugin: "nav2_costmap_2d/NonPersistentVoxelLayer" #TODO
-        enabled:              true
-        track_unknown_space:  true
-        max_obstacle_height:  2.0
-        unknown_threshold:    15
-        mark_threshold:       0
-        combination_method:   1
-        obstacle_range: 8.0
+      spatio_temporal_voxel_layer:
+        plugin: "nav2_costmap_2d/SpatioTemporalVoxelLayer"
+        enabled: true
+        voxel_decay: 15.
+        decay_model: 0
+        voxel_size: 0.05
+        track_unknown_space: true
+        unknown_threshold: 15
+        mark_threshold: 0
+        update_footprint_enabled: true
+        combination_method: 1
         origin_z: 0.0
-        z_resolution: 0.05
-        z_voxels: 12
-        max_obstacle_height: 2.0
-        publish_voxel_map: False
+        publish_voxel_map: false
+        transform_tolerance: 0.2
+        mapping_mode: false
+        map_save_duration: 60.0
         observation_sources: lidar depth_cam
         lidar:
+          data_type: PointCloud2
           topic: /sensors/lidar_0/segmented_points
+          marking: true
+          clearing: true
+          obstacle_range: 8.0
           min_obstacle_height: 0.254
           max_obstacle_height: 0.8
-          marking: True
-          data_type: "PointCloud2"
-          obstacle_max_range: 8.0
-          obstacle_min_range: 0.3
+          expected_update_rate: 0.0
+          observation_persistence: 0.0
+          inf_is_valid: false
+          filter: "voxel"
+          voxel_min_points: 0
+          clear_after_reading: true
+          max_z: 8.0
+          min_z: 0.3
+          vertical_fov_angle: 0.785398
+          vertical_fov_padding: 0.05 
+          horizontal_fov_angle: 6.29
+          decay_acceleration: 15.0
+          model_type: 1
         depth_cam:
+          data_type: PointCloud2
           topic: /sensors/camera_0/points
+          marking: true
+          clearing: true
+          obstacle_range: 2.0
           min_obstacle_height: 0.1524
           max_obstacle_height: 0.8
-          marking: True
-          data_type: "PointCloud2"
-          obstacle_max_range: 2.0
-          obstacle_min_range: 0.2
+          expected_update_rate: 0.0
+          observation_persistence: 0.0
+          inf_is_valid: false
+          filter: "voxel"
+          voxel_min_points: 0
+          clear_after_reading: true
+          max_z: 2.0
+          min_z: 0.2
+          vertical_fov_angle: 1.047
+          horizontal_fov_angle: 1.221
+          decay_acceleration: 15.0
+          model_type: 0
       always_send_full_costmap: True
 
 smoother_server:
@@ -145,14 +174,6 @@ map_server:
   ros__parameters:
     use_sim_time: True
     yaml_filename: ""
-
-map_saver:
-  ros__parameters:
-    use_sim_time: True
-    save_map_timeout: 5.0
-    free_thresh_default: 0.25
-    occupied_thresh_default: 0.65
-    map_subscribe_transient_local: True
 
 robot_state_publisher:
   ros__parameters:

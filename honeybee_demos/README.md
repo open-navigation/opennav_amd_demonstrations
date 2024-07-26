@@ -76,7 +76,8 @@ A few important notes on this demonstration's configuration:
 - We use Nav2's path smoother to smooth out the 90 degree turns in the graph to make better use of the roadway intersections and smooth, intuitive motion.
 - The free-space Nav2 planner is not used in this demonstration (included route graph planner instead). It computes the most optimal route on the roadway graph (i.e. shortest, fastest) to get to a destination node. For a deployed application, you may marry this with the Nav2 freespace planner (like shown in the GPS demonstration above) to go the 'last meters' off the roads/sidewalks for the final positioning.
 - The controller is configured to run at the robot's full speed, 2 m/s to operate on public roadways. This speed **and operating on public roads** should be used by professionals under careful supervision of the robot **and environment around you**. It is recommended to follow the robot **closely** and be ready to take over to pause in case through traffic appears. Be courteous and thoughtful in public spaces. We use DWB for this demonstration to round off the use of all 3 controllers in these 3 demos: RPP, MPPI, and DWB. We might recommend MPPI if attempting to reproduce this.
-- The positioning tolerances are set to be in line with typical indoor 2D applications of 30cm due to the good accuracy of the 3D localization (opposed to uncorrected GPS) to show Nav2 can obtain these accuracies outdoors - its a matter of provided localization accuracy.
+- The positioning tolerances are set to be 50cm due to the good accuracy of the 3D localization (opposed to uncorrected GPS) to show Nav2 can obtain these accuracies outdoors - its a matter of provided localization accuracy.
+- STVL is used now that localization is accurate to mark and raytrace data for managing a proper environmental model (with a temporal element).
 
 An easy workflow: 
 1. Teleop robot to create map (or using autonomous navigation). Save map.
