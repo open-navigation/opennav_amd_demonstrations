@@ -19,6 +19,8 @@ jobs:
           ros_distro: [humble]
     steps:
     - uses: actions/checkout@v2
+    - name: Install Cyclone DDS
+      run: sudo apt install ros-${{ matrix.ros_distro }}-ament-cmake-auto -y
     - name: Build and run tests
       id: action-ros-ci
       uses: ros-tooling/action-ros-ci@v0.3
