@@ -87,7 +87,7 @@ An easy workflow:
 
 #### Dataset
 
-The raw data from a 3D mapping run around the entire 2 city block area can be [downloaded in this link.](https://drive.google.com/file/d/1rmdceuoLtxQcx_mjlNHPZ57Mk0Pg9Nqx/view?usp=sharing) Unfortunately, due to settings or limitations of the rosbags, some of the 3D lidar data does not appear to have been properly captured in some high-load moments of the experiment, but there are plenty of good segments.
+The raw data from a 3D mapping run around the entire 2 city block area can be [downloaded in this link.](https://drive.google.com/file/d/1rmdceuoLtxQcx_mjlNHPZ57Mk0Pg9Nqx/view?usp=sharing) Unfortunately, due to settings or limitations of the rosbags, some of the 3D lidar data does not appear to have been properly captured in some high-load moments of the experiment due to its length, but there are plenty of good segments.
 
 ![ALT TEXT](./images/demo2_dataset.gif)
 
