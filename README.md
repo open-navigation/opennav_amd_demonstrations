@@ -79,13 +79,6 @@ Now, we can build using colcon:
 colcon build
 ```
 
-You need to build a few things from source because clearpath depends on unreleased software... Or setup using their repos:
-
-Clearpath specific assets
-- https://github.com/clearpathrobotics/clearpath_common
-- https://github.com/clearpathrobotics/clearpath_robot/
-
-
 
 TODO: docs directory for guides
 
