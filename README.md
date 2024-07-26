@@ -85,25 +85,17 @@ TODO: docs directory for guides
 
 ## Details on Robot
 
-See MD file
+The robot has an internal network on the 192.168.131.* range.
+- The robot's builtin PC is `192.168.131.1` with username `administrator`
+- The AMD backpack PC is `192.168.131.10` with username `steve`
+- The ouster lidar is `192.168.131.20` 
 
-TODO diagram of setup might be nice
-Note the following IPs for the internal network:
-- Robot base: 192.168.131.1
-- AMD Computer: 192.168.131.10
-- Ouster Lidar: 192.168.131.20
+The controller has the custom layout shown in the diagram below. Various nodes across the system subscribe to the joystick topic to activate these features (i.e. teleop & estop launch with base bringup; poweroff and demo launches with demos).
 
-TODO diagram
-Mappings for joystick used by the robot base, demonstration watchdogs, and autonomy scripts:
-- Estop is 'O'
-- Reactivate Estop is Triangle for 5 seconds
-- Start demo is Square and start rosbag record
-- Stop demo is X and stop rosbag record
-- Poweroff backpack is holding PS button for 5 seconds
-- Left joy for teleop with left (L1) rocker for deadman
-- Right rocker (R1) for "fast" mode deadman
+![ALT TEXT](./docs/PS4_Layout.png)
 
-Assumes the workspace in root `amd_ws` for scripts and systemd daemons, but can be configured with addtl arguments / changed easily. Not tied into any scripts.
+The daemons that bringup the robot assumes that the workspace is located in `~/amd_ws` for sourcing to launch the resources. This can be easily changed by updating the services for the new workspace location in `honeybee_bringup/systemd` and [following the guide to setup robot bringup](./docs/setup_robot_automatic_bringup.md).
 
-Assumes data to be recorded by watchdogs into a `experiment_files` directory, which the copy/delete data scripts use
+Data from the experiments are recorded and logged by the `nav2_watchdogs` in the `~/experiment_files` directory by default. These have a parameter `filepath` which can be set to use alternative file paths, however the scripts for copying and clearing old data use this filepath as well (but are trivial to update with a new path).
 
+Note: each robot has a `colcon_ws` setup by Clearpath and is a hardcoded path with their auto-generation scripts. It is recommended to not touch this directory to allow for a complete rollback to on-delivery state should issues occur requiring Clearpath's intervention.
