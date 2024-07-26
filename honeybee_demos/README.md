@@ -28,7 +28,7 @@ A few important notes on this demonstration's configuration:
 
 #### Dataset
 
-The raw data from the robot during an approximately ~5 minute patrol loop including odometry, TF, commands, sensor data, and so forth can be [downloaded in this link.](https://drive.google.com/file/d/110dgsD_lPXHl7Hn6XcIk0RsIgyCl47Ws/view?usp=sharing)
+The raw data from the robot during an approximately ~5 minute patrol loop including odometry, TF, commands, sensor data, and so forth can be [downloaded in this link.](https://drive.google.com/file/d/18JQoJMLNp_xd3dxEDEPyUfwqmlg3S48M/view?usp=sharing)
 
 ![ALT TEXT](./images/demo1_dataset.gif)
 
@@ -36,7 +36,7 @@ An example loop of the full length of the parade lawn with noisy GPS data can be
 
 <img src="./images/gps.png" width="480">
 
-This can be reproduced with the [provided rosbag of odometry, GPS data for state estimation](https://drive.google.com/file/d/1sAm1_xIj3lyX5AkacrWUED3nsdiD7rKJ/view?usp=sharing).
+This can be reproduced with the [provided rosbag of odometry, GPS data for state estimation](https://drive.google.com/file/d/1jTezqpsg-2C6iqoRO_IpXHklT5ccKhlT/view?usp=sharing).
 
 
 ```
@@ -66,7 +66,7 @@ This is the experiment's location on Alameda & drone footage show the area for s
 
 #### Technical Summary
 
-We use (TODO 3D SLAM/LOCALIZATION USED) for 3D localization and SLAM using the Ouster 3D lidar. The OS-0 has a lower range than its OS-1 and OS-2 counterparts (in exchange for a wide vertical FOV), thus this demonstration is performed in an area where buildings and structures can be effectively seen within the limited ~30 meter effective range.
+We use [lidarslam_ros2](https://github.com/rsasaki0109/lidarslam_ros2) for 3D SLAM and [lidar_localization_ros2](https://github.com/rsasaki0109/lidar_localization_ros2) SLAM using the Ouster 3D lidar. The OS-0 has a lower range than its OS-1 and OS-2 counterparts (in exchange for a wide vertical FOV), thus this demonstration is performed in an area where buildings and structures can be effectively seen within the limited ~30 meter effective range.
 
 The space can be mapped either autonomously using Nav2 or using a manually controlled data collection run. After the space is mapped, we can use localization to obtain the position of the robot relative to the 3D map generated. This also allows us to have a consistent coordinate system and map to annotate navigable space, points of interest, generate an intersection route graph with task locations, or other application-specific needs.
 
@@ -87,8 +87,9 @@ An easy workflow:
 
 #### Dataset
 
-TODO dataset from actual run 
-TODO dataset 3D slam hand-driven only dataset (first bit before cuts out or note on missing due to bag, but live ok?) --> use the rviz odom as the dataset's gif? I have all this I think already.
+The raw data from a 3D mapping run around the entire 2 city block area can be [downloaded in this link.](https://drive.google.com/file/d/1rmdceuoLtxQcx_mjlNHPZ57Mk0Pg9Nqx/view?usp=sharing) Unfortunately, due to settings or limitations of the rosbags, some of the 3D lidar data does not appear to have been properly captured in some high-load moments of the experiment, but there are plenty of good segments.
+
+![ALT TEXT](./images/demo2_dataset.gif)
 
 #### Notes on 3D Mapping, Planning
 

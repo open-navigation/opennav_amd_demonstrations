@@ -48,7 +48,7 @@ ANALYSIS HERE on performance (charts/graphs: CPU )
 
 ## Build 
 
-TODO --> in another page linked
+TODO cleanup 
 
 You need to build a few things from source because clearpath depends on unreleased software... Or setup using their repos:
 
@@ -62,7 +62,6 @@ sudo sh -c 'echo "deb https://packages.clearpathrobotics.com/stable/ubuntu $(lsb
 sudo apt update
 rosdep update
 ```
-
 
 ## Setup robot Networking, WiFi, Developer Communications
 
