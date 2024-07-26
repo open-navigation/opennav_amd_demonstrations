@@ -13,11 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import rclpy
 import time
-from ros2node.api import get_node_names
+
+
 from lifecycle_msgs.srv import ChangeState, GetState
-from lifecycle_msgs.msg import Transition
+import rclpy
+from ros2node.api import get_node_names
+
 
 """
 A watchdog to check if the ouster is properly activated or not. If not, activate itself.
@@ -26,7 +28,7 @@ A watchdog to check if the ouster is properly activated or not. If not, activate
 
 def main():
     rclpy.init()
-    node = rclpy.create_node("ouster_activation_watchdog")
+    node = rclpy.create_node('ouster_activation_watchdog')
     start_time = time.time()
     node_name = '/sensors/lidar_0/os_sensor'
     srv_name = node_name + '/change_state'
@@ -55,7 +57,7 @@ def main():
         future = mgr_client.call_async(req)
         rclpy.spin_until_future_complete(node, future, timeout_sec=35.0)
         if not future or not future.result().success:
-            print ('Failed to configure sensor, trying again...')
+            print('Failed to configure sensor, trying again...')
         else:
             configured = True
             print('Ouster node ' + node_name + ' was configured')
@@ -73,7 +75,7 @@ def main():
         future = mgr_client.call_async(req)
         rclpy.spin_until_future_complete(node, future, timeout_sec=10.0)
         if not future or not future.result().success:
-            print ('Failed to activate sensor, trying again...')
+            print('Failed to activate sensor, trying again...')
         else:
             activated = True
             print('Ouster node ' + node_name + ' was activated')

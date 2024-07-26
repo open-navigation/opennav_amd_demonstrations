@@ -42,7 +42,7 @@ def generate_launch_description():
         output='screen',
         parameters=[
             {'use_sim_time': True,
-            'robot_description': ParameterValue(Command(['xacro ', str(urdf)]), value_type=str)}
+             'robot_description': ParameterValue(Command(['xacro ', str(urdf)]), value_type=str)}
         ])
 
     # Launch rviz to visualize the robot
@@ -55,27 +55,35 @@ def generate_launch_description():
 
     # Set transforms the gazebo / ros control will populate in a practical application
     transform_front_left = Node(
-        package = "tf2_ros", 
-        executable = "static_transform_publisher",
-        arguments = ["0.131", "0.187795", "0.0345", "0", "0", "0", "chassis_link", "front_left_wheel_link"]
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        arguments=[
+            '0.131', '0.187795', '0.0345', '0', '0', '0',
+            'chassis_link', 'front_left_wheel_link']
     )
 
     transform_front_right = Node(
-        package = "tf2_ros", 
-        executable = "static_transform_publisher",
-        arguments = ["0.131", "-0.187795", "0.0345", "0", "0", "0", "chassis_link", "front_right_wheel_link"]
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        arguments=[
+            '0.131', '-0.187795', '0.0345', '0', '0', '0',
+            'chassis_link', 'front_right_wheel_link']
     )
 
     transform_rear_left = Node(
-        package = "tf2_ros", 
-        executable = "static_transform_publisher",
-        arguments = ["-0.131", "0.187795", "0.0345", "0", "0", "0", "chassis_link", "rear_left_wheel_link"]
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        arguments=[
+            '-0.131', '0.187795', '0.0345', '0', '0', '0',
+            'chassis_link', 'rear_left_wheel_link']
     )
 
     transform_rear_right = Node(
-        package = "tf2_ros", 
-        executable = "static_transform_publisher",
-        arguments = ["-0.131", "-0.187795", "0.0345", "0", "0", "0", "chassis_link", "rear_right_wheel_link"]
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        arguments=[
+            '-0.131', '-0.187795', '0.0345', '0', '0', '0',
+            'chassis_link', 'rear_right_wheel_link']
     )
 
     # Create the launch description and populate it

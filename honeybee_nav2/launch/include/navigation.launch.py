@@ -17,11 +17,10 @@ import os
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, GroupAction, SetEnvironmentVariable
+from launch.actions import DeclareLaunchArgument, SetEnvironmentVariable
 from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch_ros.actions import LoadComposableNodes
-from launch_ros.actions import Node
 from launch_ros.descriptions import ComposableNode, ParameterFile
 from nav2_common.launch import RewrittenYaml
 
@@ -39,7 +38,7 @@ def generate_launch_description():
     general_lifecycle_nodes = ['controller_server',
                                'smoother_server',
                                'velocity_smoother']
-    
+
     composite_lifecycle_nodes = ['planner_server',
                                  'behavior_server',
                                  'bt_navigator',
@@ -82,9 +81,10 @@ def generate_launch_description():
         description='Whether to use indoor (2D), outdoor (3D), or GPS (GPS) localization',
     )
 
-    declare_bt_xml_cmd =  DeclareLaunchArgument(
+    declare_bt_xml_cmd = DeclareLaunchArgument(
         'nav2pose_bt_xml',
-        default_value=os.path.join(bt_navigator_dir, 'behavior_trees', 'navigate_to_pose_w_replanning_and_recovery.xml'),
+        default_value=os.path.join(
+            bt_navigator_dir, 'behavior_trees', 'navigate_to_pose_w_replanning_and_recovery.xml'),
         description='Which navigate to pose BT to use',
     )
 
@@ -121,7 +121,7 @@ def generate_launch_description():
         ],
     )
 
-    # 3D Urban Route Navigation demo doesn't require some modules, so we can skip them in that case 
+    # 3D Urban Route Navigation demo doesn't require some modules, so we can skip them in that case
     load_composite_composable_nodes = LoadComposableNodes(
         target_container=container_name,
         condition=IfCondition(PythonExpression(["'", localization_type, "'!='3D'"])),

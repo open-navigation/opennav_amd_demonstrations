@@ -13,23 +13,19 @@
 # limitations under the License.
 
 import os
-import yaml
-import pathlib
-
-from launch import LaunchDescription
-from launch_ros.actions import Node
-from launch.actions import DeclareLaunchArgument
-from launch.substitutions import EnvironmentVariable, LaunchConfiguration
-import launch_ros.actions
-from launch_ros.descriptions import ParameterFile
 
 from ament_index_python.packages import get_package_share_directory
+from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import Node
+from launch_ros.descriptions import ParameterFile
+
 from nav2_common.launch import RewrittenYaml
 
 
 def generate_launch_description():
     honeybee_nav_dir = get_package_share_directory('honeybee_nav2')
-    honeybee_launch_dir = os.path.join(honeybee_nav_dir, 'launch')
 
     params_file = LaunchConfiguration('params_file')
     params_file_cmd = DeclareLaunchArgument(
@@ -56,16 +52,16 @@ def generate_launch_description():
         params_file_cmd,
         declare_use_sim_time_cmd,
         Node(
-            package='robot_localization', 
-            executable='ekf_node', 
+            package='robot_localization',
+            executable='ekf_node',
             name='ekf_node_map',
             output='screen',
             parameters=[configured_params],
             remappings=[('odometry/filtered', '/ekf_node_map/odometry/global')]
         ),
         Node(
-            package='robot_localization', 
-            executable='navsat_transform_node', 
+            package='robot_localization',
+            executable='navsat_transform_node',
             name='navsat_transform',
             output='screen',
             parameters=[configured_params],

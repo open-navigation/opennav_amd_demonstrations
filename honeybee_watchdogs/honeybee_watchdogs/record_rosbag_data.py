@@ -13,18 +13,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import rclpy
-from rclpy.node import Node
+
 import os
 import subprocess
 import time
-from std_srvs.srv import Empty
+
+import rclpy
+from rclpy.node import Node
 from sensor_msgs.msg import Joy
+from std_srvs.srv import Empty
 
 
 """
 A script to use rosbag to record data for data set creation and analysis of experiments
 """
+
+
 class RecordRosbagData(Node):
     def __init__(self):
         super().__init__('record_rosbag_data')
@@ -57,7 +61,7 @@ class RecordRosbagData(Node):
         self.stop_srv = self.create_service(Empty, '~/stop_recording', self.stopService)
         self.joy_sub = self.create_subscription(
             Joy, 'joy_teleop/joy', self.joyCallback, 10)
-        print ('record_rosbag_data is up and ready to record data.')
+        print('record_rosbag_data is up and ready to record data.')
 
         self.declare_parameter('start_on_bringup', False)
         self.start_on_bringup = self.get_parameter('start_on_bringup').value
@@ -66,15 +70,15 @@ class RecordRosbagData(Node):
 
     def startService(self, request, response):
         if self.process is not None:
-            print ('Data recording is already running.')
+            print('Data recording is already running.')
             return response
-        print (f'Starting to record rosbag data with command: {self.exec}...')
+        print(f'Starting to record rosbag data with command: {self.exec}...')
         self.process = subprocess.Popen(self.exec)
         return response
 
     def stopService(self, request, response):
         if self.process is None:
-            print ('No data recording to stop.')
+            print('No data recording to stop.')
             return response
 
         self.process.terminate()
@@ -84,7 +88,7 @@ class RecordRosbagData(Node):
             print('kill required')
             self.process.kill()
         self.process = None
-        print (f'Stopped recording rosbag data.')
+        print('Stopped recording rosbag data.')
         return response
 
     def joyCallback(self, msg):

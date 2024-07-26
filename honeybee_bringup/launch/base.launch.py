@@ -13,13 +13,11 @@
 # limitations under the License.
 
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, ExecuteProcess, GroupAction
-from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import EnvironmentVariable, FindExecutable, PathJoinSubstitution, LaunchConfiguration
+from launch.actions import DeclareLaunchArgument, GroupAction
+from launch.conditions import UnlessCondition
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
-from launch.conditions import IfCondition, UnlessCondition
-from ament_index_python.packages import get_package_share_directory
 
 
 def generate_launch_description():
@@ -143,8 +141,8 @@ def generate_launch_description():
         executable='imu_filter_madgwick_node',
         package='imu_filter_madgwick',
         output='screen',
-        remappings=
-            [('imu/data_raw', 'sensors/imu_0/data_raw'),
+        remappings=[
+             ('imu/data_raw', 'sensors/imu_0/data_raw'),
              ('imu/mag', 'sensors/imu_0/magnetic_field'),
              ('imu/data', 'sensors/imu_0/data')],
         parameters=[imu_filter_params, {'use_sim_time': use_sim_time}],
@@ -155,8 +153,8 @@ def generate_launch_description():
         executable='wireless_watcher',
         package='wireless_watcher',
         output='screen',
-        parameters=
-            [{'hz': 1.0, 'dev': '',
+        parameters=[
+             {'hz': 1.0, 'dev': '',
               'connected_topic': 'platform/wifi_connected',
               'connection_topic': 'platform/wifi_status',
               'use_sim_time': use_sim_time}],
@@ -198,8 +196,8 @@ def generate_launch_description():
         executable='nmea_topic_driver',
         package='nmea_navsat_driver',
         output='screen',
-        remappings=
-            [('nmea_sentence', 'sensors/gps_0/nmea_sentence'),
+        remappings=[
+             ('nmea_sentence', 'sensors/gps_0/nmea_sentence'),
              ('fix', 'sensors/gps_0/fix'),
              ('heading', 'sensors/gps_0/heading'),
              ('time_reference', 'sensors/gps_0/time_reference'),
@@ -229,7 +227,8 @@ def generate_launch_description():
     #         executable='aggregator_node',
     #         output='screen',
     #         parameters=[PathJoinSubstitution([
-    #             get_package_share_directory('clearpath_diagnostics'), 'config', 'diagnostics.yaml'])],
+    #             get_package_share_directory('clearpath_diagnostics'),
+    #             'config', 'diagnostics.yaml'])],
     #         condition=UnlessCondition(use_simulation)),
     #     Node(
     #         package='clearpath_diagnostics',
@@ -243,7 +242,7 @@ def generate_launch_description():
     ld = LaunchDescription()
     ld.add_action(arg_use_simulation)
     ld.add_action(node_localization)
-    ld.add_action(action_control_group) 
+    ld.add_action(action_control_group)
     ld.add_action(node_joy)
     ld.add_action(node_teleop_twist_joy)
     ld.add_action(node_twist_mux)

@@ -14,20 +14,18 @@
 
 
 from launch import LaunchDescription
-from launch.actions import ExecuteProcess, DeclareLaunchArgument
+from launch.actions import DeclareLaunchArgument, ExecuteProcess
 from launch.conditions import IfCondition
 from launch.substitutions import (
     LaunchConfiguration,
-    PathJoinSubstitution,
     PythonExpression,
 )
 from launch_ros.actions import Node
-from launch_ros.substitutions import FindPackageShare
 
 
 # This launch file is for testing ground segmentation with bags offline.
 def generate_launch_description():
-    bagfile = LaunchConfiguration("bagfile")
+    bagfile = LaunchConfiguration('bagfile')
     declare_bag_cmd = DeclareLaunchArgument(
         'bagfile',
         default_value='',
@@ -40,39 +38,40 @@ def generate_launch_description():
         description='Use simulation (Gazebo) clock if true')
 
     patchworkpp_node = Node(
-        package="patchworkpp",
-        executable="patchworkpp_node",
-        name="patchworkpp_node",
-        output="screen",
+        package='patchworkpp',
+        executable='patchworkpp_node',
+        name='patchworkpp_node',
+        output='screen',
         remappings=[
-			("pointcloud_topic", '/sensors/lidar_0/points'),
-			("/patchworkpp/nonground", '/sensors/lidar_0/segmented_points'),
-			("/patchworkpp/ground", '/sensors/lidar_0/ground_points')
-		],
+            ('pointcloud_topic', '/sensors/lidar_0/points'),
+            ('/patchworkpp/nonground', '/sensors/lidar_0/segmented_points'),
+            ('/patchworkpp/ground', '/sensors/lidar_0/ground_points')
+        ],
         parameters=[
-            {"base_frame": 'os0_lidar',
-			 "use_sim_time": use_sim_time,
-			 'sensor_height': 0.495,
-			 'num_iter': 3,  # Number of iterations for ground plane estimation using PCA.
-			 'num_lpr': 20,  # Maximum number of points to be selected as lowest points representative.
-			 'num_min_pts': 0,  # Minimum number of points to be estimated as ground plane in each patch.
-			 'max_range': 20.0,  # max_range of ground estimation area
-			 'min_range': 0.0,  # min_range of ground estimation area
-			 'th_dist': 0.125,  # threshold for thickness of ground.\
-			 'th_seeds': 0.3,
-			 # threshold for lowest point representatives using in initial seeds selection of ground points.
-			 'th_seeds_v': 0.25,
-			 # threshold for lowest point representatives using in initial seeds selection of vertical structural points.
-			 'th_dist_v': 0.1,  # threshold for thickness of vertical structure. Originally was 0.9
-			 'uprightness_thr': 0.101,
-			 # threshold of uprightness using in Ground Likelihood Estimation(GLE). Please refer paper for more information about GLE.
-			 'verbose': True}
-		],
+            {'base_frame': 'os0_lidar',
+             'use_sim_time': use_sim_time,
+             'sensor_height': 0.495,
+             'num_iter': 3,
+             'num_lpr': 20,
+             'num_min_pts': 0,
+             'max_range': 20.0,
+             'min_range': 0.0,
+             'th_dist': 0.125,
+             'th_seeds': 0.3,
+             'th_seeds_v': 0.25,
+             'th_dist_v': 0.1,  # Originally 0.9
+             'uprightness_thr': 0.101,
+             'verbose': True}
+        ],
     )
 
     bagfile_play = ExecuteProcess(
-        cmd=["ros2", "bag", "play", bagfile],
-        output="screen",
+        cmd=['ros2', 'bag', 'play', bagfile],
+        output='screen',
         condition=IfCondition(PythonExpression(["'", bagfile, "' != ''"])),
     )
-    return LaunchDescription([declare_use_sim_time_cmd, declare_bag_cmd, patchworkpp_node, bagfile_play])
+    return LaunchDescription([
+        declare_use_sim_time_cmd,
+        declare_bag_cmd,
+        patchworkpp_node,
+        bagfile_play])

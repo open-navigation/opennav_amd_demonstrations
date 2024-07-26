@@ -23,15 +23,10 @@ from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch_ros.actions import Node
-from launch_ros.actions import PushRosNamespace
-from launch_ros.descriptions import ParameterFile
-from nav2_common.launch import RewrittenYaml, ReplaceString
 
 
 def generate_launch_description():
     # Get the launch directory
-    bringup_dir = get_package_share_directory('nav2_bringup')
-    nav2_launch_dir = os.path.join(bringup_dir, 'launch')
     honeybee_nav_dir = get_package_share_directory('honeybee_nav2')
     honeybee_launch_dir = os.path.join(honeybee_nav_dir, 'launch')
 
@@ -42,19 +37,6 @@ def generate_launch_description():
     params_file = LaunchConfiguration('params_file')
     localization_type = LaunchConfiguration('localization_type')
     container_name = LaunchConfiguration('container_name')
-
-    # Create our own temporary YAML files that include substitutions
-    param_substitutions = {
-        'use_sim_time': use_sim_time,
-        'yaml_filename': map_yaml_file}
-
-    configured_params = ParameterFile(
-        RewrittenYaml(
-            source_file=params_file,
-            root_key='',
-            param_rewrites=param_substitutions,
-            convert_types=True),
-        allow_substs=True)
 
     stdout_linebuf_envvar = SetEnvironmentVariable(
         'RCUTILS_LOGGING_BUFFERED_STREAM', '1')
@@ -95,14 +77,16 @@ def generate_launch_description():
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 os.path.join(honeybee_launch_dir, 'include', 'slam_toolbox.launch.py')),
-            condition=IfCondition(PythonExpression([slam, " and '", localization_type, "'=='2D'"])),
+            condition=IfCondition(
+                PythonExpression([slam, " and '", localization_type, "'=='2D'"])),
             launch_arguments={'use_sim_time': use_sim_time}.items()),
 
         # 2D Localization
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 os.path.join(honeybee_launch_dir, 'include', 'amcl.launch.py')),
-            condition=IfCondition(PythonExpression(['not ', slam, " and '", localization_type, "'=='2D'"])),
+            condition=IfCondition(
+                PythonExpression(['not ', slam, " and '", localization_type, "'=='2D'"])),
             launch_arguments={'map': map_yaml_file,
                               'use_sim_time': use_sim_time,
                               'params_file': params_file,
@@ -110,9 +94,9 @@ def generate_launch_description():
 
         # if local_nav, map->odom is unity static transform
         Node(
-            package="tf2_ros", 
-            executable="static_transform_publisher",
-            arguments=["0.0", "0.0", "0.0", "0", "0", "0", "map", "odom"],
+            package='tf2_ros',
+            executable='static_transform_publisher',
+            arguments=['0.0', '0.0', '0.0', '0.0', '0.0', '0.0', 'map', 'odom'],
             parameters=[{'use_sim_time': use_sim_time}],
             condition=IfCondition(PythonExpression(["'", localization_type, "'=='local'"]))
         ),
@@ -123,24 +107,30 @@ def generate_launch_description():
                 os.path.join(honeybee_launch_dir, 'include', 'gps_localization.launch.py')),
             condition=IfCondition(PythonExpression(["'", localization_type, "'=='GPS'"])),
             launch_arguments={'use_sim_time': use_sim_time,
-                              'params_file': os.path.join(honeybee_nav_dir, 'config', 'gps_localization.yaml')}.items()),
+                              'params_file': os.path.join(
+                                  honeybee_nav_dir, 'config', 'gps_localization.yaml')
+                              }.items()),
 
         # 3D SLAM
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 os.path.join(honeybee_launch_dir, 'include', '3d_localization.launch.py')),
-            condition=IfCondition(PythonExpression([slam, " and '", localization_type, "'=='3D'"])),
+            condition=IfCondition(
+                PythonExpression([slam, " and '", localization_type, "'=='3D'"])),
             launch_arguments={'use_sim_time': use_sim_time,
-                              'params_file': os.path.join(honeybee_nav_dir, 'config', '3d_localization.yaml'),
+                              'params_file':
+                                  os.path.join(honeybee_nav_dir, 'config', '3d_localization.yaml'),
                               'slam': 'True'}.items()),
 
         # 3D Localization
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 os.path.join(honeybee_launch_dir, 'include', '3d_localization.launch.py')),
-            condition=IfCondition(PythonExpression(['not ', slam, " and '", localization_type, "'=='3D'"])),
+            condition=IfCondition(
+                PythonExpression(['not ', slam, " and '", localization_type, "'=='3D'"])),
             launch_arguments={'use_sim_time': use_sim_time,
-                              'params_file': os.path.join(honeybee_nav_dir, 'config', '3d_localization.yaml'),
+                              'params_file':
+                                  os.path.join(honeybee_nav_dir, 'config', '3d_localization.yaml'),
                               'slam': 'False'}.items()),
 
     ])

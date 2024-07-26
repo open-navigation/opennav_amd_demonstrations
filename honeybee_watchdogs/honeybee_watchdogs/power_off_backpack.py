@@ -13,15 +13,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+
 import rclpy
 from rclpy.node import Node
-import os
 from sensor_msgs.msg import Joy
-
 
 """
 A watchdog to check if PS controller indicates a power off event is coming.
 """
+
+
 class PowerOffBackPack(Node):
     def __init__(self):
         super().__init__('power_off_backpack')
@@ -31,8 +33,9 @@ class PowerOffBackPack(Node):
         self.button_num = self.get_parameter('poweroff_joy_button').value
         joy_topic = self.get_parameter('joy_topic').value
 
-        joy_sub = self.create_subscription(Joy, joy_topic, self.joy_callback, 10)
-        print(f'Power off backpack node started. Checking for power off event on {joy_topic} topic on button {self.button_num}')
+        self.joy_sub = self.create_subscription(Joy, joy_topic, self.joy_callback, 10)
+        print(f'Power off backpack node started. '
+              f'Checking for power off event on {joy_topic} topic on button {self.button_num}')
 
     def joy_callback(self, msg):
         if msg.buttons[self.button_num] == 1:

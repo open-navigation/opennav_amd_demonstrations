@@ -15,38 +15,28 @@
 """This is all-in-one launch script intended for use by nav2 developers."""
 
 import os
-import tempfile
 
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
 from launch.actions import (
-    AppendEnvironmentVariable,
     DeclareLaunchArgument,
-    ExecuteProcess,
     GroupAction,
     IncludeLaunchDescription,
-    OpaqueFunction,
-    RegisterEventHandler,
     SetEnvironmentVariable,
 )
-from launch.conditions import IfCondition
-from launch.event_handlers import OnShutdown
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import Command, LaunchConfiguration, PythonExpression
+from launch.substitutions import LaunchConfiguration
 
 from launch_ros.actions import Node
 from launch_ros.descriptions import ParameterFile
-from nav2_common.launch import RewrittenYaml, ReplaceString
+from nav2_common.launch import RewrittenYaml
 
 
 def generate_launch_description():
     # Get the launch directory
-    bringup_dir = get_package_share_directory('nav2_bringup')
     bt_navigator_dir = get_package_share_directory('nav2_bt_navigator')
-    nav2_launch_dir = os.path.join(bringup_dir, 'launch')
     honeybee_nav_dir = get_package_share_directory('honeybee_nav2')
-    launch_dir = os.path.join(honeybee_nav_dir, 'launch')
     honeybee_launch_dir = os.path.join(honeybee_nav_dir, 'launch')
 
     # Create the launch configuration variables
@@ -81,7 +71,8 @@ def generate_launch_description():
 
     declare_map_yaml_cmd = DeclareLaunchArgument(
         'map',
-        default_value=os.path.join(get_package_share_directory('nav2_bringup'), 'maps', 'turtlebot3_world.yaml'),
+        default_value=os.path.join(
+            get_package_share_directory('nav2_bringup'), 'maps', 'turtlebot3_world.yaml'),
         description='Full path to map file to load',
     )
 
@@ -103,9 +94,10 @@ def generate_launch_description():
         description='Whether to use indoor (2D), outdoor (3D), or GPS (GPS) localization',
     )
 
-    declare_bt_xml_cmd =  DeclareLaunchArgument(
+    declare_bt_xml_cmd = DeclareLaunchArgument(
         'nav2pose_bt_xml',
-        default_value=os.path.join(bt_navigator_dir, 'behavior_trees', 'navigate_to_pose_w_replanning_and_recovery.xml'),
+        default_value=os.path.join(
+            bt_navigator_dir, 'behavior_trees', 'navigate_to_pose_w_replanning_and_recovery.xml'),
         description='Which navigate to pose BT to use',
     )
 
@@ -130,7 +122,8 @@ def generate_launch_description():
                               'container_name': 'nav2_container'}.items()),
 
         IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(os.path.join(honeybee_launch_dir, 'include', 'navigation.launch.py')),
+            PythonLaunchDescriptionSource(
+                os.path.join(honeybee_launch_dir, 'include', 'navigation.launch.py')),
             launch_arguments={'use_sim_time': use_sim_time,
                               'params_file': params_file,
                               'use_composition': 'True',

@@ -13,23 +13,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
 import copy
-import random
-from threading import Thread, Lock
-import numpy as np
-import time
 import math
+import random
+from threading import Lock, Thread
+import time
 
-import rclpy
-from rclpy.node import Node
-from rclpy.duration import Duration
-from geometry_msgs.msg import PoseStamped, PoseArray, Pose
-from nav_msgs.msg import Path
-from sensor_msgs.msg import Joy, BatteryState
+from geometry_msgs.msg import Pose, PoseArray, PoseStamped
 from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
-from rclpy.qos import QoSProfile, QoSReliabilityPolicy
+from nav_msgs.msg import Path
+import rclpy
+from rclpy.duration import Duration
+from rclpy.node import Node
 from rclpy.qos import QoSDurabilityPolicy, QoSHistoryPolicy
+from rclpy.qos import QoSProfile, QoSReliabilityPolicy
+from sensor_msgs.msg import BatteryState, Joy
 from tf2_ros import TransformException
 from tf2_ros.buffer import Buffer
 from tf2_ros.transform_listener import TransformListener
@@ -72,9 +70,11 @@ alameda_city_hall = [295.7, -62.5, 0.0]
 # alameda_city_hall = [-162.2, 71.96, 0.0]
 # humble_sea_brewing = [-67.09, -53.8, 0.0]
 
+
 # Helper function to calculate the distance between two points
 def dist(p1, p2):
     return math.sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2)
+
 
 # Route navigation graph node
 class RouteNode():
@@ -88,13 +88,13 @@ class RouteNode():
 
     def addNeighbor(self, neighbor):
         self.neighbors.append(neighbor)
-    
+
     def getNeighbors(self):
         return self.neighbors
-    
+
     def getPosition(self):
         return self.position
-    
+
     def getName(self):
         return self.name
 
@@ -172,7 +172,7 @@ class RouteGraph():
 class RoutePlanner():
     def __init__(self):
         self.graph = RouteGraph()
-  
+
     def getRoute(self, end_id, start_id):
         # Find the start node in the graph
         source = None
@@ -213,7 +213,8 @@ class RoutePlanner():
 
             # Search all neighbors
             for neighbor in candidate_node.getNeighbors():
-                candidate_dist = candidate_node.shortest_path_from_start + candidate_node.getCost(neighbor)
+                candidate_dist = \
+                  candidate_node.shortest_path_from_start + candidate_node.getCost(neighbor)
                 if candidate_dist < neighbor.shortest_path_from_start:
                     neighbor.shortest_path_from_start = candidate_dist
                     neighbor.previous_node = candidate_node
@@ -230,13 +231,13 @@ class RoutePlanner():
                 closest_node = node
         return closest_node
 
-    def interpolatePoints(self, p1, p2, resolution = 0.05):
+    def interpolatePoints(self, p1, p2, resolution=0.05):
         dx = p2[0] - p1[0]
         dy = p2[1] - p1[1]
         distance = math.sqrt(dx**2 + dy**2)
         steps = int(math.ceil(distance / resolution))
         step_x = dx / steps
-        step_y = dy / steps        
+        step_y = dy / steps
         return [(p1[0] + step_x * i, p1[1] + step_y * i) for i in range(steps + 1)]
 
     def planToRouteStart(self, start_pose, start_node, stamp):
@@ -278,6 +279,8 @@ class RoutePlanner():
 """
 An Urban Navigation demo navigating between buildings on a city block
 """
+
+
 class UrbanNavigationDemo(Node):
     def __init__(self):
         super().__init__('urban_navigation_demo')
@@ -377,8 +380,9 @@ class UrbanNavigationDemo(Node):
                     [start_pose.pose.position.x, start_pose.pose.position.y]).getName()
 
             # Select a random, non-current goal to navigate to in the graph
+            start_pose_list = [start_pose.pose.position.x, start_pose.pose.position.y]
             goal = random.choice(self.route_planner.graph.nodes)
-            while dist(goal.position, [start_pose.pose.position.x, start_pose.pose.position.y]) < 10.0:
+            while dist(goal.position, start_pose_list) < 10.0:
                 goal = random.choice(self.route_planner.graph.nodes)
 
             print(f'Navigating from {start_node_id} to {goal.getName()}...')
@@ -388,8 +392,9 @@ class UrbanNavigationDemo(Node):
             route_plan = self.route_planner.routeToPlan(route, nav_start.to_msg())
 
             # If distance from current pose is too far from start node, plan there first
-            if dist(route[0].position, [start_pose.pose.position.x, start_pose.pose.position.y]) > 3.0:
-                init_plan = self.route_planner.planToRouteStart(start_pose, route[0], nav_start.to_msg())
+            if dist(route[0].position, start_pose_list) > 3.0:
+                init_plan = self.route_planner.planToRouteStart(
+                    start_pose, route[0], nav_start.to_msg())
                 route_plan.poses = init_plan.poses + route_plan.poses
 
             # Finally, smooth corners, publish visualization, and follow it with Nav2
