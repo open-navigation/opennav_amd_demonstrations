@@ -28,7 +28,8 @@ jobs:
         import-token: ${{ secrets.GITHUB_TOKEN }}
         target-ros2-distro: ${{ matrix.ros_distro }}
         vcs-repo-file-url: "${{ github.workspace }}/deps.repos"
-        package-name: honeyee_gazebo honeybee_description honeybee_nav2 honeybee_demos honeybee_bringup honeybee_watchdogs
+        package-name: honeybee_gazebo honeybee_description honeybee_nav2 honeybee_demos honeybee_bringup honeybee_watchdogs
+        # colcon-extra-args: "--packages-select "
     - uses: actions/upload-artifact@v1
       with:
         name: colcon-logs
