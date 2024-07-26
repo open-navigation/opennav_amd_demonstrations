@@ -25,6 +25,7 @@ A watchdog to check if PS controller indicates a power off event is coming.
 
 
 class PowerOffBackPack(Node):
+
     def __init__(self):
         super().__init__('power_off_backpack')
         self.poweroff_count = 0

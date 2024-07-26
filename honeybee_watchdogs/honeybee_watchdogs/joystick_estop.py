@@ -26,6 +26,7 @@ A watchdog to check for the soft E-Stop from the joystick
 
 
 class JoyEStop(Node):
+
     def __init__(self):
         super().__init__('joystick_estop')
         self.declare_parameter('estop_joy_button', 1)  # Red circle on PS4 controller

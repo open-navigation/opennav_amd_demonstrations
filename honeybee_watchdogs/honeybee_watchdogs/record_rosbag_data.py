@@ -30,6 +30,7 @@ A script to use rosbag to record data for data set creation and analysis of expe
 
 
 class RecordRosbagData(Node):
+
     def __init__(self):
         super().__init__('record_rosbag_data')
         self.declare_parameter('filepath', '~/experiment_files')

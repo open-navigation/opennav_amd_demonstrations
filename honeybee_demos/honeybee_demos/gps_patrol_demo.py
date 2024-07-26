@@ -67,6 +67,7 @@ A high-speed GPS patrol loop navigation task
 
 
 class GPSPatrolDemo(Node):
+
     def __init__(self):
         super().__init__('gps_waypoint_demo')
         self.stop = False

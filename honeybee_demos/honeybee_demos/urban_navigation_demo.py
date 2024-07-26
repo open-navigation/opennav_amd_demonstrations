@@ -78,6 +78,7 @@ def dist(p1, p2):
 
 # Route navigation graph node
 class RouteNode():
+
     def __init__(self, name, position):
         self.name = name
         self.position = position
@@ -107,6 +108,7 @@ class RouteNode():
 
 # Route navigation graph of nodes
 class RouteGraph():
+
     def __init__(self):
         self.nodes = self.populateGraph()
 
@@ -170,6 +172,7 @@ class RouteGraph():
 
 # A *simple* route navigation planner for the urban navigation demo
 class RoutePlanner():
+
     def __init__(self):
         self.graph = RouteGraph()
 
@@ -282,6 +285,7 @@ An Urban Navigation demo navigating between buildings on a city block
 
 
 class UrbanNavigationDemo(Node):
+
     def __init__(self):
         super().__init__('urban_navigation_demo')
         self.demo_thread = None
