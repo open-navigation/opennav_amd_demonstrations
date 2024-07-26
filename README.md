@@ -86,8 +86,8 @@ TODO: docs directory for guides
 ## Details on Robot
 
 The robot has an internal network on the 192.168.131.* range.
-- The robot's builtin PC is `192.168.131.1` with username `administrator`
-- The AMD backpack PC is `192.168.131.10` with username `steve`
+- The robot's builtin PC is `192.168.131.1` with username `administrator` & password `clearpath`
+- The AMD backpack PC is `192.168.131.10` with username `steve` & password `clearpath`
 - The ouster lidar is `192.168.131.20` 
 
 The controller has the custom layout shown in the diagram below. Various nodes across the system subscribe to the joystick topic to activate these features (i.e. teleop & estop launch with base bringup; poweroff and demo launches with demos).
