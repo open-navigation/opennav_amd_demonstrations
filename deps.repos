@@ -27,7 +27,7 @@ repositories:
     type: git
     url: https://github.com/rsasaki0109/lidar_localization_ros2.git
     version: main
-  rsasaki0109/ndt_omp_ros2:
-    type: git
-    url: https://github.com/rsasaki0109/ndt_omp_ros2.git
-    version: humble
+  # rsasaki0109/ndt_omp_ros2:  # if recursive cloning, lidarslam_ros2 provides
+  #   type: git
+  #   url: https://github.com/rsasaki0109/ndt_omp_ros2.git
+  #   version: humble
