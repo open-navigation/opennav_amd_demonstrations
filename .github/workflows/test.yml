@@ -19,7 +19,7 @@ jobs:
           ros_distro: [humble]
     steps:
     - uses: actions/checkout@v2
-    - name: Install Cyclone DDS
+    - name: Installing deps
       run: sudo apt install ros-${{ matrix.ros_distro }}-ament-cmake-auto -y
     - name: Build and run tests
       id: action-ros-ci
@@ -28,6 +28,7 @@ jobs:
         import-token: ${{ secrets.GITHUB_TOKEN }}
         target-ros2-distro: ${{ matrix.ros_distro }}
         vcs-repo-file-url: "${{ github.workspace }}/deps.repos"
+        package-name: honeyee_gazebo honeybee_description honeybee_nav2 honeybee_demos honeybee_bringup honeybee_watchdogs
     - uses: actions/upload-artifact@v1
       with:
         name: colcon-logs
