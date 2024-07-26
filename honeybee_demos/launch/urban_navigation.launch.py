@@ -89,7 +89,7 @@ def generate_launch_description():
     # Create LaunchDescription
     ld = LaunchDescription()
     ld.add_action(arg_use_sim_time)
-    ls.add_action(arg_slam)
+    ld.add_action(arg_slam)
     ld.add_action(demo_script_cmd)
     ld.add_action(rosbag_record_cmd)
     ld.add_action(power_off_cmd)

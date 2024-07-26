@@ -63,7 +63,7 @@ def generate_launch_description():
 			 # threshold for lowest point representatives using in initial seeds selection of ground points.
 			 'th_seeds_v': 0.25,
 			 # threshold for lowest point representatives using in initial seeds selection of vertical structural points.
-			 'th_dist_v': 0.1,  # threshold for thickness of vertical structure. #TODO was 0.9
+			 'th_dist_v': 0.1,  # threshold for thickness of vertical structure. Originally was 0.9
 			 'uprightness_thr': 0.101,
 			 # threshold of uprightness using in Ground Likelihood Estimation(GLE). Please refer paper for more information about GLE.
 			 'verbose': True}

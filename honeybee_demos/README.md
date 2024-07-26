@@ -78,6 +78,13 @@ A few important notes on this demonstration's configuration:
 - The controller is configured to run at the robot's full speed, 2 m/s to operate on public roadways. This speed **and operating on public roads** should be used by professionals under careful supervision of the robot **and environment around you**. It is recommended to follow the robot **closely** and be ready to take over to pause in case through traffic appears. Be courteous and thoughtful in public spaces. We use DWB for this demonstration to round off the use of all 3 controllers in these 3 demos: RPP, MPPI, and DWB. We might recommend MPPI if attempting to reproduce this.
 - The positioning tolerances are set to be in line with typical indoor 2D applications of 30cm due to the good accuracy of the 3D localization (opposed to uncorrected GPS) to show Nav2 can obtain these accuracies outdoors - its a matter of provided localization accuracy.
 
+An easy workflow: 
+1. Teleop robot to create map (or using autonomous navigation). Save map.
+2. Using Rviz or another tool, find the location of key points of interest and intersections.
+3. Update the graph to contain these intersections or points of interest based on the SLAM map's coordinate system.
+4. Launch the demo and localize the robot in the 3D map, making sure that there is good correspondances between the map and sensor data before starting
+5. Start the demo to go to random locations or modify to send it on a particular route!
+
 #### Dataset
 
 TODO dataset from actual run 

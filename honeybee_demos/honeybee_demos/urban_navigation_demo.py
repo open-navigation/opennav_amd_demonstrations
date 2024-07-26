@@ -55,15 +55,22 @@ from tf2_ros.transform_listener import TransformListener
 ###################################################################################################
 
 # Define the positions of each of the interactions and points of interest for planning
-midway_and_lexington = [295.7, 0.0, 0.0]
 midway_and_saratoga = [295.7, -128.1, 0.0]
-ranger_and_lexington = [181.4, 0.0, 0.0]
+midway_and_lexington = [295.7, 0.0, 0.0]
 ranger_and_saratoga = [181.4, -128.1, 0.0]
-tower_and_lexington = [0.0, 0.0, 0.0]
+ranger_and_lexington = [181.4, 0.0, 0.0]
 tower_and_saratoga = [0.0, -128.1, 0.0]
-alameda_city_hall = [295.7, -62.5, 0.0]
-humble_sea_brewing = [163.9, -128.1, 0.0]
+tower_and_lexington = [0.0, 0.0, 0.0]
 alameda_fire_station = [181.4, -94.6, 0.0]
+humble_sea_brewing = [163.9, -128.1, 0.0]
+alameda_city_hall = [295.7, -62.5, 0.0]
+
+# Old non-coordinate adjusted positions from R&D map1.pcd
+# midway_and_saratoga = [-100.07, 79.56, 0.0]
+# ranger_and_saratoga = [-74.0, -25.05, 0.0]
+# tower_and_saratoga = [-43.29, -178.3, 0.0]
+# alameda_city_hall = [-162.2, 71.96, 0.0]
+# humble_sea_brewing = [-67.09, -53.8, 0.0]
 
 # Helper function to calculate the distance between two points
 def dist(p1, p2):
@@ -311,8 +318,10 @@ class UrbanNavigationDemo(Node):
         print('Urban Navigation Demo node started.')
 
     def waitUntilActive(self):
-        """Block until the full navigation system is up and running."""
-        self.navigator._waitForNodeToActivate('bt_navigator')
+        """Block until the components of the navigation system are up and running."""
+        self.navigator._waitForNodeToActivate('controller_server')
+        self.navigator._waitForNodeToActivate('smoother_server')
+        self.navigator._waitForNodeToActivate('velocity_smoother')
         print('Nav2 is ready for use!')
 
     def getParameters(self):
@@ -346,6 +355,9 @@ class UrbanNavigationDemo(Node):
     def runDemo(self):
         start_node_id = None
         while rclpy.ok():
+            # Pause before starting and pause at each location
+            time.sleep(2)
+
             # Get starting pose and node for search
             nav_start = self.navigator.get_clock().now()
             start_pose = PoseStamped()
@@ -373,16 +385,17 @@ class UrbanNavigationDemo(Node):
 
             # Compute a route to the goal on the graph, then find its dense path
             route = self.route_planner.getRoute(goal.getName(), start_id=start_node_id)
-            route_plan = self.route_planner.routeToPlan(route, nav_start)
+            route_plan = self.route_planner.routeToPlan(route, nav_start.to_msg())
 
             # If distance from current pose is too far from start node, plan there first
             if dist(route[0].position, [start_pose.pose.position.x, start_pose.pose.position.y]) > 3.0:
-                init_plan = self.route_planner.planToRouteStart(start_pose, route[0], nav_start)
+                init_plan = self.route_planner.planToRouteStart(start_pose, route[0], nav_start.to_msg())
                 route_plan.poses = init_plan.poses + route_plan.poses
 
-            # Finally, lightly smooth corners, publish visualization, and follow it with Nav2
+            # Finally, smooth corners, publish visualization, and follow it with Nav2
             # Controller to handle deviations and obstacles required to complete the task
-            route_plan = self.navigator.smoothPath(route_plan)
+            for i in range(10):
+                route_plan = self.navigator.smoothPath(route_plan)
             self.path_pub.publish(route_plan)
             self.navigator.followPath(route_plan)
 

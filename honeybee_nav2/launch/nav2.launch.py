@@ -134,6 +134,7 @@ def generate_launch_description():
             launch_arguments={'use_sim_time': use_sim_time,
                               'params_file': params_file,
                               'use_composition': 'True',
+                              'localization_type': localization_type,
                               'container_name': 'nav2_container',
                               'nav2pose_bt_xml': nav2pose_bt_xml}.items()),
     ])
