@@ -238,47 +238,41 @@ planner_server:
     use_sim_time: True
     expected_planner_frequency: 20.0
     planner_plugins: ["GridBased"]
-    GridBased:
-      plugin: "nav2_navfn_planner/NavfnPlanner"
-      tolerance: 0.25
-      use_astar: false
-      allow_unknown: true
+    plugin: "nav2_smac_planner/SmacPlannerHybrid"
+    downsample_costmap: false 
+    downsampling_factor: 1 
+    tolerance: 1.0
+    allow_unknown: true   
+    max_iterations: 1000000  
+    max_on_approach_iterations: 1000 
+    max_planning_time: 5.0
+    motion_model_for_search: "DUBIN"
+    angle_quantization_bins: 72
+    analytic_expansion_ratio: 3.5
+    analytic_expansion_max_length: 3.0 
+    analytic_expansion_max_cost: 200.0 
+    analytic_expansion_max_cost_override: false  
+    minimum_turning_radius: 1.0
+    reverse_penalty: 2.0
+    change_penalty: 0.0 
+    non_straight_penalty: 1.2
+    cost_penalty: 2.0
+    retrospective_penalty: 0.015
+    lookup_table_size: 5.0
+    cache_obstacle_heuristic: false
+    debug_visualizations: false 
+    use_quadratic_cost_penalty: False
+    downsample_obstacle_heuristic: True
+    allow_primitive_interpolation: False
+    smooth_path: True 
 
-      # plugin: "nav2_smac_planner/SmacPlannerHybrid"
-      # downsample_costmap: false 
-      # downsampling_factor: 1 
-      # tolerance: 1.0
-      # allow_unknown: true   
-      # max_iterations: 1000000  
-      # max_on_approach_iterations: 1000 
-      # max_planning_time: 5.0
-      # motion_model_for_search: "DUBIN"
-      # angle_quantization_bins: 72
-      # analytic_expansion_ratio: 3.5
-      # analytic_expansion_max_length: 3.0 
-      # analytic_expansion_max_cost: 200.0 
-      # analytic_expansion_max_cost_override: false  
-      # minimum_turning_radius: 1.0
-      # reverse_penalty: 2.0
-      # change_penalty: 0.0 
-      # non_straight_penalty: 1.2
-      # cost_penalty: 2.0
-      # retrospective_penalty: 0.015
-      # lookup_table_size: 5.0
-      # cache_obstacle_heuristic: false
-      # debug_visualizations: false 
-      # use_quadratic_cost_penalty: False
-      # downsample_obstacle_heuristic: True
-      # allow_primitive_interpolation: False
-      # smooth_path: True 
-
-      # smoother:
-      #   max_iterations: 1000
-      #   w_smooth: 0.3
-      #   w_data: 0.2
-      #   tolerance: 1.0e-10
-      #   do_refinement: true
-      #   refinement_num: 2
+    smoother:
+      max_iterations: 1000
+      w_smooth: 0.3
+      w_data: 0.2
+      tolerance: 1.0e-10
+      do_refinement: true
+      refinement_num: 2
 
 smoother_server:
   ros__parameters:

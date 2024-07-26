@@ -1,0 +1,180 @@
+controller_server:
+  ros__parameters:
+    use_sim_time: True
+    controller_frequency: 20.0
+    min_x_velocity_threshold: 0.05
+    min_y_velocity_threshold: 0.5
+    min_theta_velocity_threshold: 0.01
+    failure_tolerance: 0.5
+    progress_checker_plugin: "progress_checker"
+    goal_checker_plugins: ["general_goal_checker"]
+    controller_plugins: ["FollowPath"]
+
+    # Progress checker parameters
+    progress_checker:
+      plugin: "nav2_controller::SimpleProgressChecker"
+      required_movement_radius: 0.01
+      # Set high to allow for operator override in case of interruption due to cars before
+      # allowing the system to continue. The hazards of operating a demo on public streets :-)
+      movement_time_allowance: 1000.0
+
+    # Goal checker parameters
+    general_goal_checker:
+      stateful: True
+      plugin: "nav2_controller::SimpleGoalChecker"
+      xy_goal_tolerance: 0.5
+      yaw_goal_tolerance: 0.5
+
+    # Controller parameters
+    FollowPath:
+      plugin: "dwb_core::DWBLocalPlanner"
+      min_vel_x: 0.0
+      min_vel_y: 0.0
+      max_vel_x: 2.0
+      max_vel_y: 0.0
+      max_vel_theta: 3.0
+      min_speed_xy: 0.0
+      max_speed_xy: 2.0
+      min_speed_theta: 0.0
+      acc_lim_x: 3.5
+      acc_lim_y: 0.0
+      acc_lim_theta: 10.0
+      decel_lim_x: -3.5
+      decel_lim_y: 0.0
+      decel_lim_theta: -10.0
+      vx_samples: 60
+      vy_samples: 1
+      vtheta_samples: 20
+      sim_time: 1.7
+      linear_granularity: 0.05
+      angular_granularity: 0.025
+      transform_tolerance: 0.2
+      xy_goal_tolerance: 0.5
+      trans_stopped_velocity: 0.25
+      short_circuit_trajectory_evaluation: True
+      stateful: True
+      critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
+      BaseObstacle.scale: 0.02
+      PathAlign.scale: 32.0
+      PathAlign.forward_point_distance: 0.1
+      GoalAlign.scale: 24.0
+      GoalAlign.forward_point_distance: 0.1
+      PathDist.scale: 32.0
+      GoalDist.scale: 24.0
+      RotateToGoal.scale: 32.0
+      RotateToGoal.slowing_factor: 5.0
+      RotateToGoal.lookahead_time: -1.0
+
+local_costmap:
+  local_costmap:
+    ros__parameters:
+      use_sim_time: True
+      update_frequency: 5.0
+      publish_frequency: 2.0
+      global_frame: odom
+      robot_base_frame: base_link
+      rolling_window: true
+      width: 8
+      height: 8
+      resolution: 0.05
+      footprint: "[ [0.254, 0.2159], [0.254, -0.2159], [-0.254, -0.2159], [-0.254, 0.2159] ]"
+      footprint_padding: 0.1
+      track_unknown_space: false
+      plugins: ["spatio_temporal_voxel_layer", "inflation_layer"]
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 3.0
+        inflation_radius: 2.0
+      spatio_temporal_voxel_layer:
+        plugin: "nav2_costmap_2d/SpatioTemporalVoxelLayer"
+        enabled: true
+        voxel_decay: 15.
+        decay_model: 0
+        voxel_size: 0.05
+        track_unknown_space: true
+        unknown_threshold: 15
+        mark_threshold: 0
+        update_footprint_enabled: true
+        combination_method: 1
+        origin_z: 0.0
+        publish_voxel_map: false
+        transform_tolerance: 0.2
+        mapping_mode: false
+        map_save_duration: 60.0
+        observation_sources: lidar depth_cam
+        lidar:
+          data_type: PointCloud2
+          topic: /sensors/lidar_0/segmented_points
+          marking: true
+          clearing: true
+          obstacle_range: 8.0
+          min_obstacle_height: 0.254
+          max_obstacle_height: 0.8
+          expected_update_rate: 0.0
+          observation_persistence: 0.0
+          inf_is_valid: false
+          filter: "voxel"
+          voxel_min_points: 0
+          clear_after_reading: true
+          max_z: 8.0
+          min_z: 0.3
+          vertical_fov_angle: 0.785398
+          vertical_fov_padding: 0.05 
+          horizontal_fov_angle: 6.29
+          decay_acceleration: 15.0
+          model_type: 1
+        depth_cam:
+          data_type: PointCloud2
+          topic: /sensors/camera_0/points
+          marking: true
+          clearing: true
+          obstacle_range: 2.0
+          min_obstacle_height: 0.1524
+          max_obstacle_height: 0.8
+          expected_update_rate: 0.0
+          observation_persistence: 0.0
+          inf_is_valid: false
+          filter: "voxel"
+          voxel_min_points: 0
+          clear_after_reading: true
+          max_z: 2.0
+          min_z: 0.2
+          vertical_fov_angle: 1.047
+          horizontal_fov_angle: 1.221
+          decay_acceleration: 15.0
+          model_type: 0
+      always_send_full_costmap: True
+
+smoother_server:
+  ros__parameters:
+    use_sim_time: True
+    smoother_plugins: ["simple_smoother"]
+    simple_smoother:
+      plugin: "nav2_smoother::SavitzkyGolaySmoother"
+      tolerance: 1.0e-10
+      max_its: 1000
+      do_refinement: True
+
+velocity_smoother:
+  ros__parameters:
+    use_sim_time: True
+    smoothing_frequency: 20.0
+    scale_velocities: True
+    feedback: "OPEN_LOOP"
+    max_velocity: [2.0, 0.0, 4.0]
+    min_velocity: [-2.0, 0.0, -4.0]
+    max_accel: [3.5, 0.0, 10.0]
+    max_decel: [-3.5, 0.0, -10.0]
+    odom_topic: "/platform/odom/filtered"
+    odom_duration: 0.1
+    deadband_velocity: [0.0, 0.0, 0.0]
+    velocity_timeout: 1.0
+
+map_server:
+  ros__parameters:
+    use_sim_time: True
+    yaml_filename: ""
+
+robot_state_publisher:
+  ros__parameters:
+    use_sim_time: True

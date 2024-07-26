@@ -1,4 +1,4 @@
-# Copyright (C) 2024 Open Navigation LLC
+# Copyright (c) 2024 Open Navigation LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,14 +17,12 @@ import os
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, GroupAction, DeclareLaunchArgument, ExecuteProcess
+from launch.actions import DeclareLaunchArgument, GroupAction, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import EnvironmentVariable, FindExecutable, PathJoinSubstitution, LaunchConfiguration
-from launch_ros.actions import Node
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import SetRemap
 from launch_ros.substitutions import FindPackageShare
-from launch.substitutions import LaunchConfiguration
-from launch.actions import DeclareLaunchArgument
+
 
 def generate_launch_description():
     pkg_microstrain_inertial_driver = FindPackageShare('microstrain_inertial_driver')

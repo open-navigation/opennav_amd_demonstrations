@@ -16,16 +16,13 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 
+import launch
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, GroupAction, SetEnvironmentVariable
+from launch.actions import DeclareLaunchArgument
 from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration, PythonExpression
-from launch_ros.actions import LoadComposableNodes
-from launch_ros.actions import Node, LifecycleNode
-from launch_ros.descriptions import ComposableNode, ParameterFile
-from nav2_common.launch import RewrittenYaml
-import launch
 import launch_ros
+from launch_ros.actions import LifecycleNode, Node
 import lifecycle_msgs
 
 
@@ -51,18 +48,19 @@ def generate_launch_description():
         default_value='False',
         description='Use simulation (Gazebo) clock if true')
 
+    # Specify map to use in 3d_localization.yaml
     lidar_localization_cmd = LifecycleNode(
         name='lidar_localization',
         package='lidar_localization_ros2',
         namespace='',
         executable='lidar_localization_node',
-        parameters=[params_file],
-        remappings=[('/velodyne_points','/sensors/lidar_0/points'),
-                    ('/odom', '/platform/odom/filtered')],
+        parameters=[params_file, {'use_sim_time': use_sim_time}],
+        remappings=[('/velodyne_points', '/sensors/lidar_0/points'),
+                    ('/odom', '/platform/odom/filtered'),
+                    ('/imu', '/platform/imu_1/data')],
         output='screen',
         condition=IfCondition(PythonExpression(['not ', slam])),
     )
-
 
     to_inactive = launch.actions.EmitEvent(
         event=launch_ros.events.lifecycle.ChangeState(
@@ -77,7 +75,7 @@ def generate_launch_description():
             target_lifecycle_node=lidar_localization_cmd,
             goal_state='unconfigured',
             entities=[
-                launch.actions.LogInfo(msg="-- Unconfigured --"),
+                launch.actions.LogInfo(msg='-- Unconfigured --'),
                 launch.actions.EmitEvent(event=launch_ros.events.lifecycle.ChangeState(
                     lifecycle_node_matcher=launch.events.matches_action(lidar_localization_cmd),
                     transition_id=lifecycle_msgs.msg.Transition.TRANSITION_CONFIGURE,
@@ -90,10 +88,10 @@ def generate_launch_description():
     from_inactive_to_active = launch.actions.RegisterEventHandler(
         launch_ros.event_handlers.OnStateTransition(
             target_lifecycle_node=lidar_localization_cmd,
-            start_state = 'configuring',
+            start_state='configuring',
             goal_state='inactive',
             entities=[
-                launch.actions.LogInfo(msg="-- Inactive --"),
+                launch.actions.LogInfo(msg='-- Inactive --'),
                 launch.actions.EmitEvent(event=launch_ros.events.lifecycle.ChangeState(
                     lifecycle_node_matcher=launch.events.matches_action(lidar_localization_cmd),
                     transition_id=lifecycle_msgs.msg.Transition.TRANSITION_ACTIVATE,
@@ -106,8 +104,10 @@ def generate_launch_description():
     scan_matcher_cmd = Node(
         package='scanmatcher',
         executable='scanmatcher_node',
-        parameters=[params_file],
-        remappings=[('/input_cloud','/sensors/lidar_0/points')],
+        parameters=[params_file, {'use_sim_time': use_sim_time}],
+        remappings=[('/input_cloud', '/sensors/lidar_0/points'),
+                    ('/odom', '/platform/odom/filtered'),
+                    ('/imu', '/platform/imu_1/data')],
         output='screen',
         condition=IfCondition(slam),
     )
@@ -115,7 +115,7 @@ def generate_launch_description():
     graph_slam_cmd = Node(
         package='graph_based_slam',
         executable='graph_based_slam_node',
-        parameters=[params_file],
+        parameters=[params_file, {'use_sim_time': use_sim_time}],
         output='screen',
         condition=IfCondition(slam),
     )
@@ -131,5 +131,5 @@ def generate_launch_description():
     ld.add_action(to_inactive)
     ld.add_action(from_unconfigured_to_inactive)
     ld.add_action(from_inactive_to_active)
-    
+
     return ld

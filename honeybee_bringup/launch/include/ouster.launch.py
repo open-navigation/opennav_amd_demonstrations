@@ -12,25 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Launch a sensor node along with os_cloud and os_"""
+"""Launch a sensor node and processing nodes."""
 
 import os
-from pathlib import Path
-import launch
-import lifecycle_msgs.msg
+
 from ament_index_python.packages import get_package_share_directory
-from launch_ros.actions import LifecycleNode
+import launch
+from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import ComposableNodeContainer
-from launch_ros.descriptions import ComposableNode
-from launch.actions import (DeclareLaunchArgument, IncludeLaunchDescription, TimerAction,
-                            ExecuteProcess, RegisterEventHandler, EmitEvent, LogInfo)
-from launch.conditions import IfCondition
-from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration, FindExecutable
-from launch.events import matches_action
-from launch_ros.events.lifecycle import ChangeState
-from launch_ros.event_handlers import OnStateTransition
 from launch_ros.actions import Node
+from launch_ros.descriptions import ComposableNode
 
 
 def generate_launch_description():
@@ -75,24 +67,24 @@ def generate_launch_description():
         package='pointcloud_to_laserscan',
         executable='pointcloud_to_laserscan_node',
         name='pointcloud_to_laserscan',
-        parameters=[{'min_height': -0.2032, 'max_height': 0.127,  # -8 to +5 inches in sensor frame 
+        parameters=[{'min_height': -0.2032, 'max_height': 0.127,  # -8 to +5 inches in sensor frame
                      'range_max': 25.0, 'angle_increment': 0.01227,  # 512x10 mode
-                     'target_frame': 'os0_sensor', 'scan_time': 0.10}],  # Invert the frame for RHR rotation direction
+                     'target_frame': 'os0_sensor', 'scan_time': 0.10}],  # Invert the frame
         remappings=[('/cloud_in', '/sensors/lidar_0/points'),
                     ('scan', '/sensors/lidar_0/scan')],
     )
 
     # Obtain segmented pointclouds for ground and non-ground points
     patchworkpp_cmd = Node(
-        package="patchworkpp",
-        executable="patchworkpp_node",
-        name="patchworkpp_node",
-        output="screen",
+        package='patchworkpp',
+        executable='patchworkpp_node',
+        name='patchworkpp_node',
+        output='screen',
         remappings=[
-			("pointcloud_topic", '/sensors/lidar_0/points'),
-			("/patchworkpp/nonground", '/sensors/lidar_0/segmented_points'),
-			("/patchworkpp/ground", '/sensors/lidar_0/ground_points')
-		],
+            ('pointcloud_topic', '/sensors/lidar_0/points'),
+            ('/patchworkpp/nonground', '/sensors/lidar_0/segmented_points'),
+            ('/patchworkpp/ground', '/sensors/lidar_0/ground_points')
+        ],
         parameters=[params_file],
     )
 

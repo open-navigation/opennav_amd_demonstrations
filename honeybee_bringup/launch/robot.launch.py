@@ -1,4 +1,4 @@
-# Copyright (C) 2024 Open Navigation LLC
+# Copyright (c) 2024 Open Navigation LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,16 +13,17 @@
 # limitations under the License.
 
 import os
+
+from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
-from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import Command, PathJoinSubstitution
-from launch_ros.substitutions import FindPackageShare
-from launch.substitutions import PathJoinSubstitution, LaunchConfiguration
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.conditions import IfCondition, UnlessCondition
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import Command
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.descriptions import ParameterValue
-from ament_index_python.packages import get_package_share_directory
+from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
@@ -73,9 +74,9 @@ def generate_launch_description():
         output='screen',
         parameters=[
             {'use_sim_time': use_sim_time,
-            'robot_description': ParameterValue(
-              Command(['xacro ', str(urdf), ' ', 'is_sim:=', use_sim_time,
-              ' ', 'gazebo_controllers:=', control_config]), value_type=str)}
+             'robot_description': ParameterValue(
+                Command(['xacro ', str(urdf), ' ', 'is_sim:=', use_sim_time,
+                         ' ', 'gazebo_controllers:=', control_config]), value_type=str)}
         ],
         remappings=[('joint_states', 'platform/joint_states')]
     )

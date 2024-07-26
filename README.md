@@ -36,121 +36,66 @@ The demonstrations can be launched using their respective launch files in `honey
 
 See launch files for a full set of launch configurations and options!
 
----
+## Demonstrations
+
+TODO show gifs of the 3 that hyperlink to the youtube or code or demos package
+
+## Metrics
+
+TODO metrics / marketing / etc - 'so much compute left over while navigating urban with 3D slam/localization, 3d lidar processing, autonomy, at 2m/s. etc. Super powerful machine, love the opportunity this presents in a 80W package'. 
 
 ANALYSIS HERE on performance (charts/graphs: CPU )
 
----
-
 ## Build 
 
-TODO --> in another page linked
-
-You need to build a few things from source because clearpath depends on unreleased software... Or setup using their repos:
-
-Clearpath specific assets
-- https://github.com/clearpathrobotics/clearpath_common
-- https://github.com/clearpathrobotics/clearpath_robot/
+This is straight forward to build and work with. Clone this repository into your workspace:
 
 ```
-wget https://packages.clearpathrobotics.com/public.key -O - | sudo apt-key add -
-sudo sh -c 'echo "deb https://packages.clearpathrobotics.com/stable/ubuntu $(lsb_release -cs) main" > /etc/apt/sources.list.d/clearpath-latest.list'
-sudo apt update
+mkdir -p amd_ws/src
+cd amd_ws/src
+git clone git@github.com:open-navigation/opennav_amd_demos.git
+```
+
+Then, we need to pull in some dependencies that we cannot obtain from `rosdep`:
+
+```
+sudo apt install python3-vcstool  # if don't already have
+vcs import . < opennav_AMD_demos/deps.repos
+cd ouster-lidar/ouster-ros && git submodule update --init  # Unfortunately, Ouster's software process is poor
+cd ../../../
+```
+
+Next, we need to obtain our dependencies that are available on from `rosdep`:
+
+```
+rosdep init  # if haven't done
 rosdep update
+rosdep install -r -y --from-paths src --ignore-src
+```
+
+Now, we can build using colcon:
+
+```
+colcon build
 ```
 
 
-## Setup robot Networking, WiFi, Developer Communications
+TODO: docs directory for guides
 
-TODO -> another page linked from docs
-
-1. Set a wireless connection with profile named "Jackal" which is a manual IPv4 connection with:
-
-```
-address: 192.168.131.100
-netmask: 255.255.255.0
-Gateway: Leave blank
-```
-
-2. Connect robot to your PC via an ethernet cable
-
-3. SSH into the robot (ssh administrator@192.168.131.1) and connect it to your network of choice. Navigate to `/etc/netplan` and modify `60-wireless.yaml` to contain your entry. You can include many network connections.
-
-```
-networks:
-  wifis:
-    wlp2s0:
-      optional: true
-      access-points:
-        <ssid>:
-          password: <password>
-      dhcp4: yes
-      dhcp-overrides:
-        send-hostname: true
-
-```
-
-Then, apply with `sudo netplan apply --debug` and ensure no meaningful errors appear. Wait a few seconds and `ping google.com` to make sure the connection is live.
-
-4. Disconnect the to main computer from ethernet. Power cycle the robot. Once back up, ssh into it using its `.local` address, using your serial number
-
-```
-ssh administrator@cpr-j100-0842.local
-```
-
-If this does not work, you can use nmap to find all the devices connected to your wireless and manually find the right device.
-
-```
-nmap -sP 192.168.1.*/24
-```
-
-Log back out.
-
-5. Add the IP of the robot to your `/etc/host` so you can SSH into it in the future without `.local`
-
-```
-127.0.0.1       localhost
-127.0.1.1       reese
-192.168.1.64    nova
-192.168.1.17    honeybee # new entry
-```
-
-6. Enable passwordless SSH by setting up ssh keys between your computer and the robot
-
-```
-ssh-keygen -t rsa # hit enter to all prompts without input
-ssh-copy-id administrator@honeybee
-```
-
----
-
-Now you can ssh into the robot remotely on this network without password and using a unique robot name!
-
-```
-ssh administrator@honeybee
-```
 
 ## Details on Robot
 
-See MD file
+The robot has an internal network on the 192.168.131.* range.
+- The robot's builtin PC is `192.168.131.1` with username `administrator` & password `clearpath`
+- The AMD backpack PC is `192.168.131.10` with username `steve` & password `clearpath`
+- The ouster lidar is `192.168.131.20` 
 
-TODO diagram of setup might be nice
-Note the following IPs for the internal network:
-- Robot base: 192.168.131.1
-- AMD Computer: 192.168.131.10
-- Ouster Lidar: 192.168.131.20
+The controller has the custom layout shown in the diagram below. Various nodes across the system subscribe to the joystick topic to activate these features (i.e. teleop & estop launch with base bringup; poweroff and demo launches with demos).
 
-TODO diagram
-Mappings for joystick used by the robot base, demonstration watchdogs, and autonomy scripts:
-- Estop is 'O'
-- Reactivate Estop is Triangle for 5 seconds
-- Start demo is Square and start rosbag record
-- Stop demo is X and stop rosbag record
-- Poweroff backpack is holding PS button for 5 seconds
-- Left joy for teleop with left (L1) rocker for deadman
-- Right rocker (R1) for "fast" mode deadman
+![ALT TEXT](./docs/PS4_Layout.png)
 
-Assumes the workspace in root `amd_ws` for scripts and systemd daemons, but can be configured with addtl arguments / changed easily. Not tied into any scripts.
+The daemons that bringup the robot assumes that the workspace is located in `~/amd_ws` for sourcing to launch the resources. This can be easily changed by updating the services for the new workspace location in `honeybee_bringup/systemd` and [following the guide to setup robot bringup](./docs/setup_robot_automatic_bringup.md).
 
-Assumes data to be recorded by watchdogs into a `experiment_files` directory, which the copy/delete data scripts use
+Data from the experiments are recorded and logged by the `nav2_watchdogs` in the `~/experiment_files` directory by default. These have a parameter `filepath` which can be set to use alternative file paths, however the scripts for copying and clearing old data use this filepath as well (but are trivial to update with a new path).
 
+Note: each robot has a `colcon_ws` setup by Clearpath and is a hardcoded path with their auto-generation scripts. It is recommended to not touch this directory to allow for a complete rollback to on-delivery state should issues occur requiring Clearpath's intervention.

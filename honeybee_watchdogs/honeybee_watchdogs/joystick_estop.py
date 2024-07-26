@@ -13,18 +13,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 import rclpy
 from rclpy.node import Node
-import os
 from sensor_msgs.msg import Joy
 from std_msgs.msg import Bool
-import time
 
 
 """
 A watchdog to check for the soft E-Stop from the joystick
 """
+
+
 class JoyEStop(Node):
+
     def __init__(self):
         super().__init__('joystick_estop')
         self.declare_parameter('estop_joy_button', 1)  # Red circle on PS4 controller
@@ -42,7 +44,8 @@ class JoyEStop(Node):
         bool_msg = Bool()
         bool_msg.data = False
         self.soft_estop_pub.publish(bool_msg)
-        print(f'Soft joystick e-stop node started. Checking for e-stop events on {joy_topic} topic on button {self.estop_button_num}')
+        print(f'Soft joystick e-stop node started. '
+              f'Checking for e-stop events on {joy_topic} topic on button {self.estop_button_num}')
 
     def joy_callback(self, msg):
         # Infinitely block if the button is pressed
@@ -57,7 +60,7 @@ class JoyEStop(Node):
             bool_msg = Bool()
             bool_msg.data = True
             self.soft_estop_pub.publish(bool_msg)
-        
+
         if msg.buttons[self.enable_button_num] == 1:
             self.reactivate_count += 1
             if self.reactivate_count >= 100:  # hold down for 5s
@@ -67,6 +70,7 @@ class JoyEStop(Node):
                 bool_msg.data = False
                 self.soft_estop_pub.publish(bool_msg)
                 self.reactivate_count = 0
+
 
 def main():
     rclpy.init()

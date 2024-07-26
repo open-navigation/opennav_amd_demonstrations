@@ -13,27 +13,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+import math
+import os
+import subprocess
+import time
+
+from nav_msgs.msg import Odometry
+import psutil
 import rclpy
 from rclpy.node import Node
-import os
-import psutil
-import time
-import subprocess
-import math
-from nav_msgs.msg import Odometry
+from rclpy.qos import QoSHistoryPolicy, QoSProfile, QoSReliabilityPolicy
 from sensor_msgs.msg import BatteryState
-from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSHistoryPolicy
-
 
 """
 A method to easily parse system metrics from a file for analytics
 """
+
+
 def parseSystemMetrics(file):
     data_dicts = []
     with open(file, 'r') as file:
         for line in file:
             data = line.split(', ')
-            dict = {}
+            adict = {}
             for pair in data:
                 key, value = pair.split(': ')
                 try:
@@ -42,15 +45,18 @@ def parseSystemMetrics(file):
                         value = int(value)
                 except ValueError:
                     pass
-                dict[key] = value
-            data_dicts.append(dict)
+                adict[key] = value
+            data_dicts.append(adict)
     return data_dicts
 
 
 """
 A script to capture system metrics for later analysis
 """
+
+
 class CaptureSystemMetrics(Node):
+
     def __init__(self):
         super().__init__('capture_system_metrics')
         self.declare_parameter('filepath', '~/experiment_files')
@@ -67,7 +73,9 @@ class CaptureSystemMetrics(Node):
         self.timer = self.create_timer(1.0, self.callback)
         self.odom_sub = self.create_subscription(
             Odometry, '/platform/odom/filtered', self.odom_callback, 10)
-        qos_profile = QoSProfile(reliability=QoSReliabilityPolicy.BEST_EFFORT, history=QoSHistoryPolicy.KEEP_LAST, depth=10)
+        qos_profile = QoSProfile(
+            reliability=QoSReliabilityPolicy.BEST_EFFORT,
+            history=QoSHistoryPolicy.KEEP_LAST, depth=10)
         self.batt_sub = self.create_subscription(
             BatteryState, '/platform/bms/state', self.battery_callback, qos_profile)
 
@@ -79,9 +87,10 @@ class CaptureSystemMetrics(Node):
             return
         else:
             pose_msg = msg.pose.pose.position
-            self.distance += math.hypot(pose_msg.x - self.last_pose.x, pose_msg.y - self.last_pose.y)
+            self.distance += math.hypot(pose_msg.x - self.last_pose.x,
+                                        pose_msg.y - self.last_pose.y)
             self.last_pose = msg.pose.pose.position
-    
+
     def battery_callback(self, msg):
         self.battery_level = msg.percentage * 100
 
@@ -99,7 +108,7 @@ class CaptureSystemMetrics(Node):
                     return signal_level
 
             return None
-        except subprocess.CalledProcessError as e:
+        except subprocess.CalledProcessError:
             return None
 
     def callback(self):
@@ -120,7 +129,10 @@ class CaptureSystemMetrics(Node):
         topics = topics[:-1]
 
         # Get Robot Info: sensor rates
-        data = f'Time: {curr_time}, CPU: {cpu_percent}, Memory: {memory_percent}, Swap: {swap_memory_percent}, Disk: {disk_percent}, Signal: {signal}, NetError: {network_issues}, Speed: {self.speed}, Distance: {self.distance}, Battery: {self.battery_level}, Topics: {topics} \n'
+        data = f'Time: {curr_time}, CPU: {cpu_percent}, Memory: {memory_percent}, ' \
+               f'Swap: {swap_memory_percent}, Disk: {disk_percent}, Signal: {signal}, ' \
+               f'NetError: {network_issues}, Speed: {self.speed}, Distance: {self.distance}, ' \
+               f'Battery: {self.battery_level}, Topics: {topics} \n'
         # print(data)
         print(f'Logging system metrics to file: {self.filename}')
         with open(self.filename, 'a+') as f:

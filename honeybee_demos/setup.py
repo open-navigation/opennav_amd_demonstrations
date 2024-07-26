@@ -25,6 +25,7 @@ setup(
     entry_points={
         'console_scripts': [
             'gps_patrol_demo = honeybee_demos.gps_patrol_demo:main',
+            'urban_navigation_demo = honeybee_demos.urban_navigation_demo:main',
         ],
     },
 )

@@ -1,0 +1,21 @@
+name: Lint
+on:
+  pull_request:
+
+jobs:
+  ament_lint_general:
+    name: ament_${{ matrix.linter }}
+    runs-on: ubuntu-latest
+    container:
+      image: rostooling/setup-ros-docker:ubuntu-jammy-ros-humble-ros-base-latest
+    strategy:
+      fail-fast: false
+      matrix:
+          linter: [xmllint, pep257, flake8]
+    steps:
+    - uses: actions/checkout@v4
+    - uses: ros-tooling/action-ros-lint@v0.1
+      with:
+        linter: ${{ matrix.linter }}
+        distribution: humble
+        package-name: "*"

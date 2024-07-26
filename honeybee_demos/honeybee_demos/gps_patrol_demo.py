@@ -13,23 +13,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
 import copy
-from threading import Thread, Lock
-import numpy as np
+from threading import Lock, Thread
 import time
 
-import rclpy
-from rclpy.node import Node
-from rclpy.duration import Duration
-from geometry_msgs.msg import PoseStamped
-from sensor_msgs.msg import Joy, BatteryState
-from robot_localization.srv import SetDatum
 from geographic_msgs.msg import GeoPose
+from geometry_msgs.msg import PoseStamped
 from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
-from rclpy.qos import QoSProfile, QoSReliabilityPolicy
+import numpy as np
+import rclpy
+from rclpy.duration import Duration
+from rclpy.node import Node
 from rclpy.qos import QoSDurabilityPolicy, QoSHistoryPolicy
-from std_srvs.srv import Empty
+from rclpy.qos import QoSProfile, QoSReliabilityPolicy
+from robot_localization.srv import SetDatum
+from sensor_msgs.msg import BatteryState, Joy
 
 ###################################################################################################
 # For a deployed production application, these would be stored on the robot to run on some
@@ -37,7 +35,7 @@ from std_srvs.srv import Empty
 # a dynamic mission or job description and executed when necessary to complete a broader task
 # containing these elements.
 
-# For this demo, we will hardcode the information for our particular demo that can be trivially 
+# For this demo, we will hardcode the information for our particular demo that can be trivially
 # updated for another demo or application using an action. This demo is suitable to be run in
 # a park, open field, lake, or similar locations.
 
@@ -46,14 +44,14 @@ from std_srvs.srv import Empty
 # 1. Go to the location and put the robot somewhere in the middle of the lawn.
 # 2. Echo the GPS fix and record the latitude and longitude as the `datum` below.
 # 3. Launch RL, drive to waypoints, and record the NavSat odom as the waypoints
-#    or determine via math/GUI relative to datum.
+#    or determine via math/GUI relative to datum
 #    or use GPS fix instead of cartesian, for ROS 2 Iron and newer
 ###################################################################################################
 
 # Datum to create consistent cartesian reference frame. We picked a measurement near the start.
 datum = [37.80046733333333, -122.45829418, 0.0]
 
-# Mission waypoints to be visited in order.
+# Mission waypoints to be visited in order on a patrol loop.
 # Can use absolute GPS (Iron and newer) or cartesian (all distros) relative to datum's origin.
 inspection_targets_gps = []
 inspection_targets_cartesian = [
@@ -62,10 +60,14 @@ inspection_targets_cartesian = [
     [2.2, 36.4, 0.0],
     [-15.0, 11.7, 0.0]]
 
+
 """
-A high-speed GPS patrol navigation task 
+A high-speed GPS patrol loop navigation task
 """
+
+
 class GPSPatrolDemo(Node):
+
     def __init__(self):
         super().__init__('gps_waypoint_demo')
         self.stop = False
@@ -125,12 +127,12 @@ class GPSPatrolDemo(Node):
             rl_datum.geo_pose.orientation.z = quaternion[2]
             rl_datum.geo_pose.orientation.w = quaternion[3]
             try:
-              future = self.datum_srv.call_async(rl_datum)
-              rclpy.spin_until_future_complete(self, future)
-              print('Successfully set datum')
-            except Exception as e:
-              print('Failed to set datum!')
-              exit(1)
+                future = self.datum_srv.call_async(rl_datum)
+                rclpy.spin_until_future_complete(self, future)
+                print('Successfully set datum')
+            except Exception:
+                print('Failed to set datum!')
+                exit(1)
         else:
             print('Failed to find set datum service!')
             exit(1)
@@ -193,7 +195,8 @@ class GPSPatrolDemo(Node):
             # Check if a stop is requested or no looping is necessary
             with self.lock:
                 if self.stop or not self.loop:
-                    print('Exiting GPS Waypoint demo. Stop was requested or looping was not enabled.')
+                    print('Exiting GPS Waypoint demo. '
+                          'Stop was requested or looping was not enabled.')
                     return
 
             self.looped_once = True
@@ -228,13 +231,18 @@ class GPSPatrolDemo(Node):
         # Add starting point for full loop
         poses.append(copy.deepcopy(poses[0]))
         return poses
-    
+
     def _quaternion_from_euler(self, roll, pitch, yaw):
-        qx = np.sin(roll/2) * np.cos(pitch/2) * np.cos(yaw/2) - np.cos(roll/2) * np.sin(pitch/2) * np.sin(yaw/2)
-        qy = np.cos(roll/2) * np.sin(pitch/2) * np.cos(yaw/2) + np.sin(roll/2) * np.cos(pitch/2) * np.sin(yaw/2)
-        qz = np.cos(roll/2) * np.cos(pitch/2) * np.sin(yaw/2) - np.sin(roll/2) * np.sin(pitch/2) * np.cos(yaw/2)
-        qw = np.cos(roll/2) * np.cos(pitch/2) * np.cos(yaw/2) + np.sin(roll/2) * np.sin(pitch/2) * np.sin(yaw/2)
+        qx = np.sin(roll/2) * np.cos(pitch/2) * np.cos(yaw/2) - \
+            np.cos(roll/2) * np.sin(pitch/2) * np.sin(yaw/2)
+        qy = np.cos(roll/2) * np.sin(pitch/2) * np.cos(yaw/2) + \
+            np.sin(roll/2) * np.cos(pitch/2) * np.sin(yaw/2)
+        qz = np.cos(roll/2) * np.cos(pitch/2) * np.sin(yaw/2) - \
+            np.sin(roll/2) * np.sin(pitch/2) * np.cos(yaw/2)
+        qw = np.cos(roll/2) * np.cos(pitch/2) * np.cos(yaw/2) + \
+            np.sin(roll/2) * np.sin(pitch/2) * np.sin(yaw/2)
         return [qx, qy, qz, qw]
+
 
 def main():
     rclpy.init()

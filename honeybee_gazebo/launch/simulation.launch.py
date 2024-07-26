@@ -1,4 +1,4 @@
-# Copyright (C) 2024 Open Navigation LLC
+# Copyright (c) 2024 Open Navigation LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -30,10 +30,11 @@ from launch.actions import (
 from launch.conditions import IfCondition
 from launch.event_handlers import OnShutdown
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import Command, LaunchConfiguration, PythonExpression, PathJoinSubstitution
+from launch.substitutions import Command, LaunchConfiguration
+from launch.substitutions import PathJoinSubstitution, PythonExpression
 
-from launch_ros.descriptions import ParameterValue
 from launch_ros.actions import Node
+from launch_ros.descriptions import ParameterValue
 
 
 def generate_launch_description():
@@ -163,9 +164,9 @@ def generate_launch_description():
         output='screen',
         parameters=[
             {'use_sim_time': True,
-            'robot_description': ParameterValue(
+             'robot_description': ParameterValue(
               Command(['xacro ', str(urdf), ' ', 'is_sim:=True',
-              ' ', 'gazebo_controllers:=', control_config]), value_type=str)}
+                       ' ', 'gazebo_controllers:=', control_config]), value_type=str)}
         ],
         remappings=[('joint_states', 'platform/joint_states')],
         condition=IfCondition(use_joint_state_publisher)
@@ -176,7 +177,7 @@ def generate_launch_description():
         executable='pointcloud_to_laserscan_node',
         name='pointcloud_to_laserscan',
         parameters=[{'range_max': 25.0, 'angle_increment': 0.01227,  # 512x10 mode
-                     'target_frame': 'os0_sensor', 'scan_time': 0.10}],  # Invert the frame for RHR rotation direction
+                     'target_frame': 'os0_sensor', 'scan_time': 0.10}],  # Invert the frame
         remappings=[('/cloud_in', '/sensors/lidar_0/points'),
                     ('scan', '/sensors/lidar_0/scan')],
     )
