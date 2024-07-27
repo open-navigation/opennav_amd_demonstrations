@@ -155,7 +155,7 @@ class UrbanNavigationDemo(Node):
         viz_graph = PoseArray()
         viz_graph.header.frame_id = 'map'
         viz_graph.header.stamp = self.get_clock().now().to_msg()
-        for node in self.route_planner.graph.nodes:
+        for node in self.route_planner.graph:
             pose = Pose()
             pose.position.x = node.position[0]
             pose.position.y = node.position[1]
@@ -224,9 +224,9 @@ class UrbanNavigationDemo(Node):
 
             # Select a random, non-current goal to navigate to in the graph
             start_pose_list = [start_pose.pose.position.x, start_pose.pose.position.y]
-            goal = random.choice(self.route_planner.graph.nodes)
+            goal = random.choice(self.route_planner.graph)
             while dist(goal.position, start_pose_list) < 10.0:
-                goal = random.choice(self.route_planner.graph.nodes)
+                goal = random.choice(self.route_planner.graph)
 
             print(f'Navigating from {start_node_id} to {goal.getName()}...')
 
