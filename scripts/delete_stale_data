@@ -1,0 +1,15 @@
+#!/bin/bash
+# Deletes files in the data directory that are older than a month
+# Could be run as a cron job, in the watchdog as an initial step, or manually 
+
+# Define the target directory
+TARGET_DIR="$HOME/experiment_files"
+DAYS_TO_DELETE_AFTER=30
+
+# Find and delete files older than 30 days
+find "$TARGET_DIR" -type f -mtime +"$DAYS_TO_DELETE_AFTER" -exec rm -f {} \;
+
+# Optionally, you can also delete empty directories
+find "$TARGET_DIR" -type d -empty -delete
+
+echo "Old files deleted from $TARGET_DIR"
