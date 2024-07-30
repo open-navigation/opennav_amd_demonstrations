@@ -57,8 +57,7 @@ With the GPS, its good to let the robot sit with the filter running for a little
 
 The goal of this demonstration is to show the system in action running Nav2 using 3D SLAM and localization in an urban setting. This is performed on Alameda, an island in the San Francisco bay, because it has a large urban area formerly hosting a Naval Air Station which is perfect for experimentation without much through-traffic (and generally kind, understanding people). This demonstration maps and localizes the robot within a few city blocks on Alameda and routes the robot along the roadways using a navigation graph to go from one building to another representing an urban-navigation use-case.
 
-TODO video
-[![ALT TEXT](./images/demo2.JPG)](https://www.youtube.com/watch?v=255o4IS3rHg)
+[![ALT TEXT](./images/demo2.JPG)](https://www.youtube.com/watch?v=sL2GZdODUcE)
 
 **Note: Click on the image above to see the Urban Navigation demo in action on YouTube!**
 

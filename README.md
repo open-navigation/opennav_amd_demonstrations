@@ -37,7 +37,10 @@ See launch files for a full set of launch configurations and options!
 
 ## Demonstrations
 
-TODO show gifs of the 3 that hyperlink to the youtube or code or demos package
+[![ALT TEXT](./images/demo1_gif.gif)](https://www.youtube.com/watch?v=255o4IS3rHg)
+[![ALT TEXT](./images/demo2_gif.gif)](https://www.youtube.com/watch?v=sL2GZdODUcE)
+
+**Click on the demo gifs to see the full videos on YouTube!**
 
 ## Metrics
 
