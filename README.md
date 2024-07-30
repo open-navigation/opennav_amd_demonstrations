@@ -23,7 +23,7 @@ Bonus: `docs` contains a number of developer guides for bootstrapping new comput
 
 **[See the `honeybee_demos` package for detailed demonstration descriptions, videos, and datasets](./honeybee_demos/README.md)**
 
-<video src="https://github.com/user-attachments/assets/9eef0d12-7b01-4654-be78-96281b261b64" controls autoloop></video>
+<video src="https://github.com/user-attachments/assets/9eef0d12-7b01-4654-be78-96281b261b64" controls autoplay loop></video>
 
 ## Launching Robot, Nav2, and Demos
 
