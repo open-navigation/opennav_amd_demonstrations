@@ -1,8 +1,8 @@
 # Open Navigation - AMD Ryzen AI Demonstrations
 
-This contains demonstrations and analysis using AMD's powerful Ryzen AI CPU and acceleration technologies with Nav2, ROS 2 Humble, and the open-source robotics community's technologies. These demononstrations show complete & tuned reference applications to perform **indoor 2D-based**, **urban 3D-based**, and **outdoor GPS-based navigation** and how AMD's compute technologies are well up to the task with plenty of compute time remaining for advanced AI, business logic and application layers, and other computationally demanding tasks with a low power footprint.
+This project has demonstrations and analysis using AMD's powerful Ryzen CPU, AI, and acceleration technologies with Nav2, ROS 2 Humble, and the open-source robotics community's technologies. These demononstrations show complete & tuned reference applications to perform **indoor 2D-based**, **urban 3D-based**, and **outdoor GPS-based** navigation. They use AMD's compute technologies and show that they are very well suited to robotics tasks and workloads, with plenty of compute time remaining for AI, business logic, application layers, and other computationally demanding tasks on top of advanced mobility and 3D perception. 
 
-These demonstrations orbit around Honeybee, a [Clearpath Robotics Jackal](https://clearpathrobotics.com/jackal-small-unmanned-ground-vehicle/) outfitted with:
+These demonstrations orbit around the Honeybee reference platform, a [Clearpath Robotics Jackal](https://clearpathrobotics.com/jackal-small-unmanned-ground-vehicle/) outfitted with:
 - AMD Ryzen Zen4 CPU using a [Miniforum UM790 Pro](https://store.minisforum.com/products/minisforum-um790-pro)
 - [Ouster OS0-32](https://ouster.com/products/hardware/os0-lidar-sensor)
 - [Realsense D435i](https://www.intelrealsense.com/depth-camera-d435i/)
@@ -12,7 +12,7 @@ These demonstrations orbit around Honeybee, a [Clearpath Robotics Jackal](https:
 
 This project contains a typical layout for a ROS-based mobile robot:
 - `honeybee_description` contains the robot's description, meshes, and frame transformations (URDF)
-- `honeybee_gazebo` contains the robot's simulation in modern Gazebo (not Gazebo Classic) with the full sensor suite
+- `honeybee_gazebo` contains the robot's simulation in modern Gazebo with the full sensor suite
 - `honeybee_bringup` contains the bringup scripts to launch the robot's base and sensors on the physical hardware and/or simulation
 - `honeybee_watchdogs` contains a set of watchdogs for hardware use, such as checking on the state of lifecycle activations and recording background datasets
 - `honeybee_nav2` contains the navigation configurations for the various demonstrations
@@ -23,8 +23,7 @@ Bonus: `docs` contains a number of developer guides for bootstrapping new comput
 
 **[See the `honeybee_demos` package for detailed demonstration descriptions, videos, and datasets](./honeybee_demos/README.md)**
 
-TODO Have the marketing gif here
-(ground, drone, urban, park, indoor, rviz)
+<video src="https://github.com/user-attachments/assets/9eef0d12-7b01-4654-be78-96281b261b64" controls autoloop></video>
 
 ## Launching Robot, Nav2, and Demos
 
@@ -87,7 +86,7 @@ TODO: docs directory for guides
 
 The robot has an internal network on the 192.168.131.* range.
 - The robot's builtin PC is `192.168.131.1` with username `administrator` & password `clearpath`
-- The AMD backpack PC is `192.168.131.10` with username `steve` & password `clearpath`
+- The AMD backpack PC is `192.168.131.10` with username `administrator` & password `clearpath`
 - The ouster lidar is `192.168.131.20` 
 
 The controller has the custom layout shown in the diagram below. Various nodes across the system subscribe to the joystick topic to activate these features (i.e. teleop & estop launch with base bringup; poweroff and demo launches with demos).
