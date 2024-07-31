@@ -44,8 +44,6 @@ def generate_launch_description():
                                  'bt_navigator',
                                  'waypoint_follower']
 
-    remappings = [('/tf', 'tf'),
-                  ('/tf_static', 'tf_static')]
     param_substitutions = {
         'use_sim_time': use_sim_time,
         'autostart': 'True',
@@ -97,20 +95,12 @@ def generate_launch_description():
                 plugin='nav2_controller::ControllerServer',
                 name='controller_server',
                 parameters=[configured_params],
-                remappings=remappings + [('cmd_vel', 'cmd_vel_nav')]),
+                remappings=[('cmd_vel', 'cmd_vel_nav')]),
             ComposableNode(
                 package='nav2_smoother',
                 plugin='nav2_smoother::SmootherServer',
                 name='smoother_server',
-                parameters=[configured_params],
-                remappings=remappings),
-            ComposableNode(
-                package='nav2_velocity_smoother',
-                plugin='nav2_velocity_smoother::VelocitySmoother',
-                name='velocity_smoother',
-                parameters=[configured_params],
-                remappings=remappings +
-                           [('cmd_vel', 'cmd_vel_nav'), ('cmd_vel_smoothed', 'cmd_vel')]),
+                parameters=[configured_params]),
             ComposableNode(
                 package='nav2_lifecycle_manager',
                 plugin='nav2_lifecycle_manager::LifecycleManager',
@@ -118,6 +108,51 @@ def generate_launch_description():
                 parameters=[{'use_sim_time': use_sim_time,
                              'autostart': True,
                              'node_names': general_lifecycle_nodes}]),
+        ],
+    )
+
+    # 2D navigation uses the collision monitor which takes output of velocity smoother
+    load_2D_nodes = LoadComposableNodes(
+        target_container=container_name,
+        condition=IfCondition(PythonExpression(["'", localization_type, "'=='2D'"])),
+        composable_node_descriptions=[
+            ComposableNode(
+                package='nav2_velocity_smoother',
+                plugin='nav2_velocity_smoother::VelocitySmoother',
+                name='velocity_smoother',
+                parameters=[configured_params],
+                remappings=[('cmd_vel', 'cmd_vel_nav')]),
+            ComposableNode(
+                package='nav2_collision_monitor',
+                plugin='nav2_collision_monitor::CollisionMonitor',
+                name='collision_monitor',
+                parameters=[configured_params]),
+            ComposableNode(
+                package='opennav_docking',
+                plugin='opennav_docking::DockingServer',
+                name='docking_server',
+                parameters=[configured_params]),
+            ComposableNode(
+                package='nav2_lifecycle_manager',
+                plugin='nav2_lifecycle_manager::LifecycleManager',
+                name='lifecycle_manager_application_navigation',
+                parameters=[{'use_sim_time': use_sim_time,
+                             'autostart': True,
+                             'node_names': ['docking_server', 'collision_monitor']}]),
+        ],
+    )
+
+    # Non-2D navigation doesn't use the collision monitor; remap cmd_vel_smoothed to cmd_vel
+    load_non_2D_nodes = LoadComposableNodes(
+        target_container=container_name,
+        condition=IfCondition(PythonExpression(["'", localization_type, "'!='2D'"])),
+        composable_node_descriptions=[
+            ComposableNode(
+                package='nav2_velocity_smoother',
+                plugin='nav2_velocity_smoother::VelocitySmoother',
+                name='velocity_smoother',
+                parameters=[configured_params],
+                remappings=[('cmd_vel', 'cmd_vel_nav'), ('cmd_vel_smoothed', 'cmd_vel')]),
         ],
     )
 
@@ -130,26 +165,22 @@ def generate_launch_description():
                 package='nav2_planner',
                 plugin='nav2_planner::PlannerServer',
                 name='planner_server',
-                parameters=[configured_params],
-                remappings=remappings),
+                parameters=[configured_params]),
             ComposableNode(
                 package='nav2_behaviors',
                 plugin='behavior_server::BehaviorServer',
                 name='behavior_server',
-                parameters=[configured_params],
-                remappings=remappings),
+                parameters=[configured_params]),
             ComposableNode(
                 package='nav2_bt_navigator',
                 plugin='nav2_bt_navigator::BtNavigator',
                 name='bt_navigator',
-                parameters=[configured_params],
-                remappings=remappings),
+                parameters=[configured_params]),
             ComposableNode(
                 package='nav2_waypoint_follower',
                 plugin='nav2_waypoint_follower::WaypointFollower',
                 name='waypoint_follower',
-                parameters=[configured_params],
-                remappings=remappings),
+                parameters=[configured_params]),
             ComposableNode(
                 package='nav2_lifecycle_manager',
                 plugin='nav2_lifecycle_manager::LifecycleManager',
@@ -170,4 +201,6 @@ def generate_launch_description():
     ld.add_action(declare_bt_xml_cmd)
     ld.add_action(load_general_composable_nodes)
     ld.add_action(load_composite_composable_nodes)
+    ld.add_action(load_2D_nodes)
+    ld.add_action(load_non_2D_nodes)
     return ld

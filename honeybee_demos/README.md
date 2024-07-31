@@ -106,13 +106,17 @@ If you wish to use free-space planning, you may want to:
 - Use Smac Planner Hybrid-A* for obtaining high quality, feasible paths at the full speed of the robot performing full SE2 collision checking. 
 - Use the behavior tree navigator to define your navigation logic for off-graph (and on-graph), and associated behavior transitions. 
 
-## Demo 3: Long-Duration Indoor 2D Navigation with Keepout, Speed Restricted Zones
+## Demo 3: Long-Duration Indoor 2D Picking with Keepout, Speed Restricted Zones
 
-loop, dock, repeat (note: no dock, so just docking using docking but not actually recharging, leaving after 30s --> replace with battery status to send to dock / undock at certain power level instead). Keepouts + speed restriction zones as well. Collision mointor. Rotation shim controller. 'just throwing the book at it'. Picking.
+TODO this section in docs
+pickiing missions, dock to recharge between sets of jobs, repeat
 
 A few important notes on the configuration:
 - We move slower in this demonstration - 0.5 m/s - due to being indoors around people for safety
 - We use the standard Nav2 localization and SLAM integrations - AMCL and SLAM Toolbox for positioning. We also use largely the standard defaults from Nav2 with the exception of robot specifics like footprint and controller tuning.
 - Since we're navigating in a 2D environment, we can use PointCloud to Laserscan to ignore the ground points (which can be noisy on shiny surface). We still use the 3D nature of the lidar by considering a large band from the top of the robot (plus some margin) to a few cm off the ground. This uses the 3D lidar's entire useful data, but reduces computation and noisy points without need for explicit PointCloud filtering or use of the ground segmentation node (less points of potential failure with glass / shiny floors).
-- We treat this robot as a large point for global planning as an example with NavFn (oppposed to feasible planners for SE2 footprint checking in other demonstrations). This is a good working example for circular robots or computers with low compute. 
-- We use MPPI in this demonstration for highly dynamic behavior in the dynamic human-filled environment
+- We use Hybrid-A* to consider the robot's non-circular footprint during planning
+- We use MPPI in this demonstration for highly dynamic behavior in the dynamic human-filled environment, which considers Hybrid-A*'s feasible path's orientations for accurate directional tracking
+- The collision monitor is used to prevent collision using raw sensor data by reducing the velocity commands proportionately to be at least 1.5 seconds from collision at all times.
+- This demonstration uses Nav2's new Opennav Docking server to autodock the robot for charging. Since this platform does not come with a charging dock, this charging is simulated using a dock detection feature with no actual charging enabled
+- The demonstration script shown inline how to trigger jobs based on (a) a cloud dispatcher or external trigger like a button, (b) based on the robot's battery being sufficiently energized to take on new missions after having charged when sufficiently low and, (c) based on a timer or cron job
