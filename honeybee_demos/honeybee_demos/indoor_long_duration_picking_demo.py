@@ -17,7 +17,9 @@ from threading import Lock, Thread
 import time
 
 from action_msgs.msg import GoalStatus
+from geometry_msgs.msg import PoseStamped, Quaternion
 from nav2_simple_commander.robot_navigator import BasicNavigator
+import numpy as np
 from opennav_docking_msgs.action import DockRobot, UndockRobot  # nav_msgs in Iron and newer
 import rclpy
 from rclpy.action import ActionClient
@@ -45,41 +47,36 @@ from .pick_dispatcher import Dispatcher
 # 1. Go to the location and joystick robot, or navigate autonomously to generate the 2D map
 # 2. Update the key points of interest: Picking locations, place bins, charging dock, etc.
 # 3. Update keepout or speed restricted zones, if necessary
+# 4. Run, starting at dock
 ###################################################################################################
 
 # Define the positions of picking locations in map and place bins to drop off goods at
-shelf_a = {'slot_a': [], 'slot_b': [], 'slot_c': [], 'slot_d': []}  # x, y, yaw in map
-shelf_b = {'slot_a': [], 'slot_b': [], 'slot_c': []}
-shelf_c = {'slot_a': [], 'slot_b': [], 'slot_c': [], 'slot_d': []}
-shelf_d = {'slot_a': [], 'slot_b': []}
+shelf_a = {'slot_a': [-3.46, 15.92, -1.922], 'slot_b': [-2.36, 15.42, -1.922],
+           'slot_c': [-1.26, 14.96, -1.922], 'slot_d': [-0.16, 14.78, -1.922],
+           'slot_e': [2.00, 13.77, -1.922]}  # x, y, yaw in map
+shelf_b = {'slot_a': [-4.63, 12.73, -1.922], 'slot_b': [-3.47, 11.88, -1.922],
+           'slot_c': [-2.25, 11.36, -1.922], 'slot_d': [-1.01, 10.88, -1.922],
+           'slot_e': [0.94, 10.46, -1.922]}
+shelf_c = {'slot_a': [-12.30, 2.47, -1.922], 'slot_b': [-10.77, 1.95, -1.922],
+           'slot_c': [-9.17, 1.34, -1.922]}
+shelf_d = {'slot_a': [-8.52, 5.77, -1.922], 'slot_b': [-9.11, 4.23, -1.922]}
 picking_locations = {'shelf_a': shelf_a,
                      'shelf_b': shelf_b,
                      'shelf_c': shelf_c,
                      'shelf_d': shelf_d}
 
-place_bin_a = []  # x, y, yaw in map
-place_bin_b = []
-place_bin_c = []
-place_bin_d = []
+place_bin_a = [5.79, 3.83, -0.367]  # x, y, yaw in map
+place_bin_b = [5.92, 1.09, -0.367]
+place_bin_c = [5.04, 7.51, -0.367]
 goods_bins = {'bin_a': place_bin_a,
               'bin_b': place_bin_b,
-              'bin_c': place_bin_c,
-              'bin_d': place_bin_d}
+              'bin_c': place_bin_c}
 
-
-# Onsite:
-# - Validate configuration of planner, controller, costmaps, collision monitor
-# - docking: staging dist, docked dist, dock location in map in yaml, detection
-# - Validate running into stuff gone like DWB/NavFn
-# - Map + QR code docking setup working, annotation
-# - Experiment looping, videos, dataset
-# - Keepout, Speed zones?
+dock_pose = [-10.24, 0.87, -1.922]
 
 # After:
 # - Gif in main readme
 # - Update demo docs with last demo in same format (+ main image + tech details)
-# - Publish dataset + gif with dataset
-
 
 """
 A Long-Duration, Indoor Picking demo navigating to pick and place bins & charging between missions
@@ -100,8 +97,8 @@ class IndoorPickingDemo(Node):
         self.waitUntilActive()
         self.getParameters()
 
-        self.docking_client = ActionClient(self, DockRobot, 'dock_robot')
-        self.undocking_client = ActionClient(self, UndockRobot, 'undock_robot')
+        self.docking_client = ActionClient(self.navigator, DockRobot, 'dock_robot')
+        self.undocking_client = ActionClient(self.navigator, UndockRobot, 'undock_robot')
 
         self.batt_qos = QoSProfile(
             durability=QoSDurabilityPolicy.VOLATILE,
@@ -146,15 +143,16 @@ class IndoorPickingDemo(Node):
         goal_msg.dock_id = dock_id
         goal_msg.navigate_to_staging_pose = nav_to_dock
         print('Docking at dock ID: ' + str(dock_id) + '...')
-        send_goal_future = self.docking_client.send_goal_async(goal_msg,
-                                                               self._feedbackCallback)
-        rclpy.spin_until_future_complete(self, send_goal_future)
+        send_goal_future = self.docking_client.send_goal_async(goal_msg)
+        rclpy.spin_until_future_complete(self.navigator, send_goal_future)
         goal_handle = send_goal_future.result()
         result_future = goal_handle.get_result_async()
-        rclpy.spin_until_future_complete(self, result_future)
+        rclpy.spin_until_future_complete(self.navigator, result_future)
         status = result_future.result().status
         if status != GoalStatus.STATUS_SUCCEEDED:
             print(f'Docking with failed with status code: {status}')
+        else:
+            print('Docking successful!')
 
     def undockRobot(self, dock_type=''):
         while not self.undocking_client.wait_for_server(timeout_sec=1.0):
@@ -162,15 +160,16 @@ class IndoorPickingDemo(Node):
         goal_msg = UndockRobot.Goal()
         goal_msg.dock_type = dock_type
         print('Undocking from dock of type: ' + str(dock_type) + '...')
-        send_goal_future = self.undocking_client.send_goal_async(goal_msg,
-                                                                 self._feedbackCallback)
-        rclpy.spin_until_future_complete(self, send_goal_future)
+        send_goal_future = self.undocking_client.send_goal_async(goal_msg)
+        rclpy.spin_until_future_complete(self.navigator, send_goal_future)
         goal_handle = send_goal_future.result()
         result_future = goal_handle.get_result_async()
-        rclpy.spin_until_future_complete(self, result_future)
+        rclpy.spin_until_future_complete(self.navigator, result_future)
         status = result_future.result().status
         if status != GoalStatus.STATUS_SUCCEEDED:
             print(f'Undocking with failed with status code: {status}')
+        else:
+            print('Undocking successful!')
 
     def batteryCallback(self, msg):
         if msg.percentage < self.min_battery_lvl:
@@ -208,6 +207,13 @@ class IndoorPickingDemo(Node):
         pose.pose.orientation.w = quaternion[3]
         return pose
 
+    def getQuad(self, yaw):
+        q_list = self._quaternion_from_euler(0.0, 0.0, yaw)
+        q = Quaternion()
+        q.z = q_list[2]
+        q.w = q_list[3]
+        return q
+
     def _quaternion_from_euler(self, roll, pitch, yaw):
         qx = np.sin(roll/2) * np.cos(pitch/2) * np.cos(yaw/2) - \
             np.cos(roll/2) * np.sin(pitch/2) * np.sin(yaw/2)
@@ -222,6 +228,15 @@ class IndoorPickingDemo(Node):
     def runDemo(self):
         stop = False
         nav_start = self.navigator.get_clock().now()
+        init_pose = PoseStamped()
+        init_pose.header.frame_id = 'map'
+        init_pose.header.stamp = nav_start.to_msg()
+        init_pose.pose.position.x = dock_pose[0]
+        init_pose.pose.position.y = dock_pose[1]
+        init_pose.pose.orientation = self.getQuad(dock_pose[2])
+        self.navigator.setInitialPose(init_pose)
+        time.sleep(2)
+        self.navigator.clearAllCostmaps()
         self.undockRobot(dock_type='charging_dock')
 
         # Get next mission from dispatcher: N picks and places
@@ -234,7 +249,7 @@ class IndoorPickingDemo(Node):
             print(f'Picking item from {pick_pose} and dropping at {place_pose}...')
 
             # Go to picking location
-            self.navigator.goToPose(pick_pose)
+            self.navigator.goToPose(self.wpToPose(pick_pose))
             while not self.navigator.isTaskComplete() or not rclpy.ok():
                 if self.navigator.get_clock().now() - nav_start > Duration(seconds=600.0):
                     self.navigator.cancelTask()
@@ -243,7 +258,7 @@ class IndoorPickingDemo(Node):
             time.sleep(3)
 
             # Go to place bin
-            self.navigator.goToPose(place_pose)
+            self.navigator.goToPose(self.wpToPose(place_pose))
             while not self.navigator.isTaskComplete() or not rclpy.ok():
                 if self.navigator.get_clock().now() - nav_start > Duration(seconds=600.0):
                     self.navigator.cancelTask()
@@ -263,9 +278,11 @@ class IndoorPickingDemo(Node):
         #     pick_poses = self.dispatcher.get_next_picks(num_picks=3)
         #     place_poses = self.dispatcher.get_next_drops(num_drops=3)
         #     continue
-        self.dockRobot(dock_id='charging_dock', nav_to_dock=True)
+        self.dockRobot(dock_id='home_dock', nav_to_dock=True)
         print('Pick and place mission completed and robot is docked to charge.'
               ' Waiting for next mission...')
+        self.stop = False
+        self.demo_thread = None
 
 
 def main():

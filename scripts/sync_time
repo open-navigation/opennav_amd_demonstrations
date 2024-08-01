@@ -1,0 +1,6 @@
+#!/bin/bash
+# Get the current timestamp from the onboard clearpath computer
+timestamp=$(ssh administrator@192.168.131.1 'date +%s')
+
+# Set the timestamp on the destination computer
+sudo date +%s -s @$timestamp

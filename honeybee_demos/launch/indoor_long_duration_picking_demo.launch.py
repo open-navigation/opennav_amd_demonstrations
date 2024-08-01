@@ -42,7 +42,7 @@ def generate_launch_description():
     arg_map_yaml_file = DeclareLaunchArgument(
         'map',
         default_value=os.path.join(
-            get_package_share_directory('nav2_bringup'), 'maps', 'turtlebot3_world.yaml'),
+            os.path.expanduser('~/experiment_files'), 'map_1722446837.yaml'),
         description='Map to use for localization (if necessary)'
     )
 

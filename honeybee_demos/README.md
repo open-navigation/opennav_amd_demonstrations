@@ -107,9 +107,12 @@ If you wish to use free-space planning, you may want to:
 - Use the behavior tree navigator to define your navigation logic for off-graph (and on-graph), and associated behavior transitions. 
 
 ## Demo 3: Long-Duration Indoor 2D Picking with Keepout, Speed Restricted Zones
-
+to
 TODO this section in docs
+TODO time sync with chrony for external computer
 pickiing missions, dock to recharge between sets of jobs, repeat
+Assumes starting / stopping on dock for setting initial localization
+Dock uses QR coe
 
 A few important notes on the configuration:
 - We move slower in this demonstration - 0.5 m/s - due to being indoors around people for safety
