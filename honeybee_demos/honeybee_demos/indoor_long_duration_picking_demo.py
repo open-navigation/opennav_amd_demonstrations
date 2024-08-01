@@ -74,10 +74,6 @@ goods_bins = {'bin_a': place_bin_a,
 
 dock_pose = [-10.24, 0.87, -1.922]
 
-# After:
-# - Gif in main readme
-# - Update demo docs with last demo in same format (+ main image + tech details)
-
 """
 A Long-Duration, Indoor Picking demo navigating to pick and place bins & charging between missions
 """
