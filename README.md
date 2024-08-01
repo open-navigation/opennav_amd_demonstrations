@@ -2,16 +2,18 @@
 
 This project has demonstrations and analysis using AMD's powerful Ryzen CPU, AI, and acceleration technologies with Nav2, ROS 2 Humble, and the open-source robotics community's technologies. These demononstrations show complete & tuned reference applications to perform **indoor 2D-based**, **urban 3D-based**, and **outdoor GPS-based** navigation. They use AMD's compute technologies and show that they are very well suited to robotics tasks and workloads, with plenty of compute time remaining for AI, business logic, application layers, and other computationally demanding tasks on top of advanced mobility and 3D perception. 
 
+**⚠️ Need ROS 2, Nav2 help or support? Contact [Open Navigation](https://www.opennav.org/)! ⚠️**
+
 These demonstrations orbit around the Honeybee reference platform, a [Clearpath Robotics Jackal](https://clearpathrobotics.com/jackal-small-unmanned-ground-vehicle/) outfitted with:
 - AMD Ryzen Zen4 CPU using a [Miniforum UM790 Pro](https://store.minisforum.com/products/minisforum-um790-pro)
 - [Ouster OS0-32](https://ouster.com/products/hardware/os0-lidar-sensor)
 - [Realsense D435i](https://www.intelrealsense.com/depth-camera-d435i/)
 - [Microstrain GX-25](https://www.microstrain.com/inertial-sensors/3dm-gx5-25)
 
-Demonstration 1: Outdoor GPS Navigation | Demonstration 2: Urban 3D Navigation 
+[Demonstration 1: Outdoor GPS Navigation](./honeybee_demos/honeybee_demos/gps_patrol_demo.py) | [Demonstration 2: Urban 3D Navigation](./honeybee_demos/honeybee_demos/urban_navigation_demo.py) 
 :-------------------------:|:-------------------------:
 [![ALT TEXT](./honeybee_demos/images/demo1_gif.gif)](https://www.youtube.com/watch?v=255o4IS3rHg) |  [![ALT TEXT](./honeybee_demos/images/demo2_gif.gif)](https://www.youtube.com/watch?v=sL2GZdODUcE)
-**Demonstration 3: Long-Duration Indoor Navigation** | **Glamour Shot** |
+[**Demonstration 3: Long-Duration Indoor Navigation**](./honeybee_demos/honeybee_demos/indoor_long_duration_picking_demo.py) | **Glamour Shot** |
 [![ALT TEXT](./honeybee_demos/images/demo3_gif.gif)](https://www.youtube.com/watch?v=evZ-GvswU4o) | <img src="./honeybee_demos/images/opennav_amd_ggb.png" width="500">
 
 **Click on the demo gifs to see the full videos on YouTube!**
@@ -27,7 +29,16 @@ This project contains a typical layout for a ROS-based mobile robot:
 
 Bonus: `docs` contains a number of developer guides for bootstrapping new computers for robots, network setup with ROS 2, setting up field experimental networks, how to visualize data remotely, make software run on startup, and so on.
 
-**[See the `honeybee_demos` package for detailed demonstration descriptions, videos, and datasets](./honeybee_demos/README.md)**
+- [First-Time Robot Computer Bootstrapping Guide](./docs/bootstrapping_robot_computer.md)
+- [Setup Robot Automatic Software Launch Guide](./docs/setup_robot_automatic_bringup.md)
+- [Multi-Computer Time Synchronization Guide](./docs/multi_computer_time_synchonization.md)
+- [Offline Command, Control, and Visualization Guide](./docs/offline_command_and_control.md)
+- [First-Time Mapping And Localization Guide](./docs/map_spaces.md)
+- [Honeybee: Networking Setup Guide](./docs/honeybee_network_setup.md)
+- [Honeybee: Disable CPR Services Guide](./docs/disable_clearpath_services.md)
+- [Make Sure To Checkout Nav2's Great Guides Too!](https://docs.nav2.org/)
+
+**[See the `honeybee_demos` package for detailed demonstration descriptions, videos, and datasets](./honeybee_demos)**
 
 <video src="https://github.com/user-attachments/assets/9eef0d12-7b01-4654-be78-96281b261b64" controls autoplay loop></video>
 
@@ -80,10 +91,6 @@ Now, we can build using colcon:
 colcon build
 ```
 
-
-TODO: docs directory for guides
-
-
 ## Details on Robot
 
 The robot has an internal network on the 192.168.131.* range.
@@ -104,3 +111,5 @@ The daemons that bringup the robot assumes that the workspace is located in `~/a
 Data from the experiments are recorded and logged by the `nav2_watchdogs` in the `~/experiment_files` directory by default. These have a parameter `filepath` which can be set to use alternative file paths, however the scripts for copying and clearing old data use this filepath as well (but are trivial to update with a new path).
 
 Note: each robot has a `colcon_ws` setup by Clearpath and is a hardcoded path with their auto-generation scripts. It is recommended to not touch this directory to allow for a complete rollback to on-delivery state should issues occur requiring Clearpath's intervention.
+
+Subscribing to large topics over Wifi can hose the network and stall the programs. This can cause the robot to lose scheduling/TF transform timing, bluetooth controller to cutout, and so forth. It is recommended to use the robot in `ROS_LOCALHOST_ONLY` mode or not subscribe to topics off of the robot when not necessary or in current operations (i.e. close rviz so headless, run program in tmux session). This is good for setting up and debugging, but not in deployed applications -- at least with the default DDS settings in ROS 2 Humble.

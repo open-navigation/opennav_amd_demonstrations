@@ -4,6 +4,8 @@ This package contains a series of real-world applicable demos based on ROS 2 Hum
 
 They are also great entry points for robotics applications to show how to setup a robot system, configure Nav2 for a variety of non-trivial situations, and design a proof of concept autonomy script for research, startups, or prototypers!
 
+**⚠️ Need ROS 2, Nav2 help or support? Contact [Open Navigation](https://www.opennav.org/)! ⚠️**
+
 ## Demo 1: High-Speed, Outdoor GPS Navigation
 
 The goal of this demonstration is to navigate outdoors in a non-planar environment running Nav2 at full speed - 2m/s. This is performed on the Presidio main parade lawn in San Francisco, CA because it is a beautiful, generally empty, wide open space in which the robots can be let loose at high speeds safely. This demonstration uses GPS to localize the robot while performing a patroling task in a loop and taking some measurements at each point of interest. There is no map what so ever.
