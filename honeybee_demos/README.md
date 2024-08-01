@@ -4,7 +4,7 @@ This package contains a series of real-world applicable demos based on ROS 2 Hum
 
 They are also great entry points for robotics applications to show how to setup a robot system, configure Nav2 for a variety of non-trivial situations, and design a proof of concept autonomy script for research, startups, or prototypers!
 
-**Need ROS 2, Nav2 help? Contact [Open Navigation](https://www.opennav.org/) for support!**
+**⚠️ Need ROS 2, Nav2 help or support? Contact [Open Navigation](https://www.opennav.org/)!**
 
 ## Demo 1: High-Speed, Outdoor GPS Navigation
 
