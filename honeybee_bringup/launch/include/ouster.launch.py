@@ -119,7 +119,6 @@ def generate_launch_description():
 
     return launch.LaunchDescription([
         params_file_arg,
-        check_lidar_topic_node_cmd,
         os_container,
         pc2_to_laserscan_cmd,
         activation_watchdog_cmd,
