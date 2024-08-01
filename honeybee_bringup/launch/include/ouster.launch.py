@@ -15,14 +15,50 @@
 """Launch a sensor node and processing nodes."""
 
 import os
+import time
 
 from ament_index_python.packages import get_package_share_directory
 import launch
-from launch.actions import DeclareLaunchArgument, TimerAction
+from launch.actions import DeclareLaunchArgument, OpaqueFunction
+from launch.event_handlers import OnProcessIO
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import ComposableNodeContainer
 from launch_ros.actions import Node
 from launch_ros.descriptions import ComposableNode
+import rclpy
+from sensor_msgs.msg import PointCloud2
+
+
+def wait_for_lidar_and_launch_ground_segmentation(context, *args, **kwargs):
+    rclpy.init(args=None)
+    node = rclpy.create_node('ouster_topic_checker')
+    future = rclpy.task.Future()
+
+    # Wait for the lidar topic to be available and publishing
+    def listener_callback(msg):
+        future.set_result(True)
+    sub = node.create_subscription(PointCloud2, '/sensors/lidar_0/points', listener_callback, 10)
+    while not future.done() and rclpy.ok():
+        rclpy.spin_once(node, timeout_sec=0.1)
+
+    # Pause for messages to stabilize (which is why we need this)
+    time.sleep(5)
+
+    # Launch our node
+    params_file = LaunchConfiguration('params_file').perform(context)
+    patchworkpp_cmd = Node(
+        package='patchworkpp',
+        executable='patchworkpp_node',
+        name='patchworkpp_node',
+        output='screen',
+        remappings=[
+            ('pointcloud_topic', '/sensors/lidar_0/points'),
+            ('/patchworkpp/nonground', '/sensors/lidar_0/segmented_points'),
+            ('/patchworkpp/ground', '/sensors/lidar_0/ground_points')
+        ],
+        parameters=[params_file],
+    )
+    return [patchworkpp_cmd]
 
 
 def generate_launch_description():
@@ -74,20 +110,6 @@ def generate_launch_description():
                     ('scan', '/sensors/lidar_0/scan')],
     )
 
-    # Obtain segmented pointclouds for ground and non-ground points, after sensor is up
-    patchworkpp_cmd = Node(
-        package='patchworkpp',
-        executable='patchworkpp_node',
-        name='patchworkpp_node',
-        output='screen',
-        remappings=[
-            ('pointcloud_topic', '/sensors/lidar_0/points'),
-            ('/patchworkpp/nonground', '/sensors/lidar_0/segmented_points'),
-            ('/patchworkpp/ground', '/sensors/lidar_0/ground_points')
-        ],
-        parameters=[params_file],
-    )
-
     # Bringup since Configure is flaky in the driver, we need a retry mechanism
     activation_watchdog_cmd = Node(
         package='honeybee_watchdogs',
@@ -97,8 +119,10 @@ def generate_launch_description():
 
     return launch.LaunchDescription([
         params_file_arg,
+        check_lidar_topic_node_cmd,
         os_container,
         pc2_to_laserscan_cmd,
         activation_watchdog_cmd,
-        TimerAction(period=0.05, actions=[patchworkpp_cmd])
+        # Obtain segmented pointclouds for ground and non-ground points, after sensor is up
+        OpaqueFunction(function=wait_for_lidar_and_launch_ground_segmentation)
     ])
