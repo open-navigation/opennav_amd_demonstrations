@@ -43,6 +43,13 @@ Demonstration 1: Outdoor GPS Navigation | Demonstration 2: Urban 3D Navigation
 **Demonstration 3: Long-Duration Indoor Navigation** | **Cool Videos** |
 [![ALT TEXT](./honeybee_demos/images/demo3_gif.gif)](https://www.youtube.com/watch?v=evZ-GvswU4o) | ![ALT TEXT](https://github.com/user-attachments/assets/9eef0d12-7b01-4654-be78-96281b261b64)
 
+
+Demonstration 1: Outdoor GPS Navigation | Demonstration 2: Urban 3D Navigation | Demonstration 3: Long-Duration Indoor Navigation
+:-------------------------:|:-------------------------:|:-------------------------:
+[![ALT TEXT](./honeybee_demos/images/demo1_gif.gif)](https://www.youtube.com/watch?v=255o4IS3rHg) |  [![ALT TEXT](./honeybee_demos/images/demo2_gif.gif)](https://www.youtube.com/watch?v=sL2GZdODUcE) | [![ALT TEXT](./honeybee_demos/images/demo3_gif.gif)](https://www.youtube.com/watch?v=evZ-GvswU4o)
+
+TODO
+
 **Click on the demo gifs to see the full videos on YouTube!**
 
 ## Metrics
