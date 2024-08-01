@@ -108,14 +108,14 @@ If you wish to use free-space planning, you may want to:
 
 ## Demo 3: Long-Duration Indoor 2D Picking
 
-The goal of this demonstration is to show the system in action running Nav2 using the standard 2D SLAM and localization in an indoor setting for long-duration applications involving auto-docking for charging to run over multiple days. This was performed at Polymath Robotics in San Francisco by their generous offer to help! 
+The goal of this demonstration is to show the system in action running Nav2 using the standard 2D SLAM and localization in an indoor setting for long-duration applications involving auto-docking for charging to run over multiple days for continuous service. This was performed at Polymath Robotics in San Francisco by their generous offer to help! 
 
 TODO video
 [![ALT TEXT](./images/demo3.png)](https://www.youtube.com/watch?v=sL2GZdODUcE)
 
-**Note: Click on the image above to see the Urban Navigation demo in action on YouTube!**
+**Note: Click on the image above to see the Long-Duration Picking demo in action on YouTube!**
 
-This demonstration sets out a number of picking locations around a central shipping and receiving desk area and place locations at the end of engineering desk rows for delivery of goods. In a separate part of the office a docking location is marked by an Apriltag used by Nav2 Docking. Note: the Clearpath Jackal does not come with a charging dock nor can it charge while powered on, so the docking is simulated using Nav2 Docking based on the Apriltag feature but doesn't actually charge. This is the same detection and docking pipeline you can use with an actual dock however, shown in `opennav_docking`'s examples.
+This demonstration sets out a number of picking locations around a central shipping and receiving desk area and place locations at the end of engineering desk rows for delivery of goods. This demonstrations simulates picks at these locations and places them at the terminus of the desk rows. A docking location is marked by an Apriltag used by Nav2 Docking for charging between missions for continuous uptime. Note: the Clearpath Jackal does not come with a charging dock nor can it charge while powered on, so the charging is simulated using Nav2 Docking based on the Apriltag feature but doesn't actually charge. This is the same detection and docking pipeline you can use with an actual dock however, shown in `opennav_docking`'s examples.
 
 The map and experiment layout can be seen below:
 
@@ -123,9 +123,9 @@ The map and experiment layout can be seen below:
 
 #### Technical Summary
 
-A picking dispatcher is used to create pick-and-place missions. In our autonomy program, we execute 3 pick-and-place missions and then go back to the charging dock in order to recharge until triggered again to execute by the dispatcher (in this case, our joystick). Within the program, there are commented out blocks for also enabling continuous pick-and-place mission execution until the battery is sufficiently low. After which, the robot automatically docks and will continue mission execution once the battery exceeds a minimum threshold to continue. Additionally, there's an option to run the pick-and-place missions on a fixed schedule (such as once an hour). This makes it easy to customize for either (a) cloud dispatched operations, (b) continuous operations, or (c) scheduled operations.
+A picking dispatcher is used to create random pick-and-place missions. In our autonomy program, we execute 3 pick-and-place missions and then go back to the charging dock in order to recharge until triggered again to execute by the dispatcher (in this case, our joystick). Within the program, there are commented out blocks for also enabling continuous pick-and-place mission execution until the battery is sufficiently low. After which, the robot automatically docks and will continue mission execution once the battery exceeds a minimum threshold to continue. Additionally, there's an option to run the pick-and-place missions on a fixed schedule (such as once an hour). This makes it easy to customize for either (a) cloud dispatched operations, (b) continuous operations, or (c) scheduled operations.
 
-We made this running continuously for 90 minutes with 5 minute picking missions (18 complete, 3 pick-and-place & charge docking loops).
+We made this running continuously for 90 minutes with 5 minute picking missions (18 complete, 3 pick-and-place & charge docking loops), which is roughly the battery life of the honeybee - since there is no charging dock.
 
 A few important notes on the configuration:
 - We move slower in this demonstration - 0.5 m/s - due to being indoors around people for safety in the office
@@ -136,8 +136,9 @@ A few important notes on the configuration:
 - The collision monitor is used to prevent collision using raw sensor data by reducing the velocity commands proportionately to be at least 1.5 seconds from collision at all times.
 - This demonstration uses Nav2's new Opennav Docking server to autodock the robot for charging. Since this platform does not come with a charging dock, this charging is simulated using a dock detection feature with no actual charging enabled
 - The demonstration script shown inline how to trigger jobs based on (a) a cloud dispatcher or external trigger like a button, (b) based on the robot's battery being sufficiently energized to take on new missions after having charged when sufficiently low and, (c) based on a timer or cron job
+- While not shown, it is easy to add in Keepout or Speed Restricted Zones to prevent navigation into certain areas or reduce speed in others - [see Nav2's tutorials](https://docs.nav2.org/tutorials/index.html).
 
-Due to the nature of the location, no dataset is provided for this experiment.
+Due to the nature of the location as a working office, no dataset is provided for this experiment.
 
 An easy workflow to reproduce: 
 1. Teleop robot to create map (or using autonomous navigation). Save map.
