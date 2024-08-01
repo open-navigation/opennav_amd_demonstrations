@@ -42,11 +42,12 @@ Demonstration 1: Outdoor GPS Navigation | Demonstration 2: Urban 3D Navigation |
 :-------------------------:|:-------------------------:|:-------------------------:
 [![ALT TEXT](./honeybee_demos/images/demo1_gif.gif)](https://www.youtube.com/watch?v=255o4IS3rHg) |  [![ALT TEXT](./honeybee_demos/images/demo2_gif.gif)](https://www.youtube.com/watch?v=sL2GZdODUcE) | [![ALT TEXT](./honeybee_demos/images/demo2_gif.gif)](https://www.youtube.com/watch?v=sL2GZdODUcE)
 
+
 Demonstration 1: Outdoor GPS Navigation | Demonstration 2: Urban 3D Navigation 
-:-------------------------:|:-------------------------:|:-------------------------:
+:-------------------------:|:-------------------------:
 [![ALT TEXT](./honeybee_demos/images/demo1_gif.gif)](https://www.youtube.com/watch?v=255o4IS3rHg) |  [![ALT TEXT](./honeybee_demos/images/demo2_gif.gif)](https://www.youtube.com/watch?v=sL2GZdODUcE)
 Demonstration 3: Long-Duration Indoor Navigation | |
-:-------------------------:|:-------------------------:|:-------------------------:
+:-------------------------:|:-------------------------:
 [![ALT TEXT](./honeybee_demos/images/demo2_gif.gif)](https://www.youtube.com/watch?v=sL2GZdODUcE) |
 
 
