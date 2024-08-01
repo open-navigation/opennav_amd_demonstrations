@@ -91,6 +91,8 @@ The robot has an internal network on the 192.168.131.* range.
 - The AMD backpack PC is `192.168.131.10` with username `administrator` & password `clearpath`
 - The ouster lidar is `192.168.131.20` 
 
+![ALT TEXT](./docs/hardware_design.png)
+
 The controller has the custom layout shown in the diagram below. Various nodes across the system subscribe to the joystick topic to activate these features (i.e. teleop & estop launch with base bringup; poweroff and demo launches with demos).
 
 ![ALT TEXT](./docs/PS4_Layout.png)
