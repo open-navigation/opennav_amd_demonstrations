@@ -62,11 +62,11 @@ Then, we need to pull in some dependencies that we cannot obtain from `rosdep`:
 ```
 sudo apt install python3-vcstool  # if don't already have
 vcs import . < opennav_AMD_demos/deps.repos
-cd ouster-lidar/ouster-ros && git submodule update --init  # Unfortunately, Ouster's software process is poor
+cd ouster-lidar/ouster-ros && git submodule update --init
 cd ../../../
 ```
 
-Next, we need to obtain our dependencies that are available on from `rosdep`:
+Next, we need to obtain our dependencies that are available from `rosdep`:
 
 ```
 rosdep init  # if haven't done
@@ -90,6 +90,8 @@ The robot has an internal network on the 192.168.131.* range.
 - The robot's builtin PC is `192.168.131.1` with username `administrator` & password `clearpath`
 - The AMD backpack PC is `192.168.131.10` with username `administrator` & password `clearpath`
 - The ouster lidar is `192.168.131.20` 
+
+The Lidar is connected to the builtin PC due to limitations on the number of ethernet ports on the AMD computer (but could be easily remedied by an ethernet switch).
 
 ![ALT TEXT](./docs/hardware_design.png)
 
