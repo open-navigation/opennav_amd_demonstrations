@@ -36,6 +36,7 @@ Bonus: `docs` contains a number of developer guides for bootstrapping new comput
 - [First-Time Mapping And Localization Guide](./docs/map_spaces.md)
 - [Honeybee: Networking Setup Guide](./docs/honeybee_network_setup.md)
 - [Honeybee: Disable CPR Services Guide](./docs/disable_clearpath_services.md)
+- [Make Sure To Checkout Nav2's Great Guides Too!](https://docs.nav2.org/)
 
 **[See the `honeybee_demos` package for detailed demonstration descriptions, videos, and datasets](./honeybee_demos)**
 
