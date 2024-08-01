@@ -27,7 +27,7 @@ This project contains a typical layout for a ROS-based mobile robot:
 
 Bonus: `docs` contains a number of developer guides for bootstrapping new computers for robots, network setup with ROS 2, setting up field experimental networks, how to visualize data remotely, make software run on startup, and so on.
 
-**[See the `honeybee_demos` package for detailed demonstration descriptions, videos, and datasets](./honeybee_demos/README.md)**
+**[See the `honeybee_demos` package for detailed demonstration descriptions, videos, and datasets](./honeybee_demos)**
 
 <video src="https://github.com/user-attachments/assets/9eef0d12-7b01-4654-be78-96281b261b64" controls autoplay loop></video>
 
