@@ -68,7 +68,7 @@ We may need to configure the DDS vendors to do this. By default, if your wired c
 
 If you want to disable wireless use, see below:
 
-If using Fast-DDS, save a file containing the following and add `export FASTDDS_DEFAULT_PROFILES_FILE=/path/to/fastdds.xml` (TODO or `FASTRTPS_DEFAULT_PROFILES_FILE`?) to your `~/.bashrc` file so that each time a terminal opens, it uses this configuration automatically without your need to set it each time:
+If using Fast-DDS, save a file containing the following and add `export FASTDDS_DEFAULT_PROFILES_FILE=/path/to/fastdds.xml` (or `FASTRTPS_DEFAULT_PROFILES_FILE`, depending on ROS 2 version) to your `~/.bashrc` file so that each time a terminal opens, it uses this configuration automatically without your need to set it each time:
 
 ``` xml
 <?xml version="1.0" encoding="UTF-8" ?>
@@ -81,7 +81,7 @@ If using Fast-DDS, save a file containing the following and add `export FASTDDS_
         <type>UDPv4</type>
 
         <!-- For ROS 2 versions Jazzy and later -->
-        <!-- Modify fowithr your interface(s) of choice! eno, enx, br0, etc-->
+        <!-- Modify with your interface(s) of choice! eno, enx, br0, etc-->
         <!-- <interfaces>
           <allowlist>
             <interface name="wlp59s0"/>
@@ -133,85 +133,6 @@ If using Cyclone DDS, do the same with the following file's contents and `export
 
 Note: if you do this, you will no longer be able to see the data on your wireless network from a remote PC. You'll need to either SSH into the robot, communicate via a cloud provider, or install a router that you can connect to on the internal network. This is probably a good thing for most users anyway since exposing your ROS 2 system to the entire WAN is probably not a good option and you'd have to set `ROS_LOCALHOST_ONLY` anyway. This way, the network is effectively trapped on localhost.
 
-
 4. Setup ROS and application specific software
 
 You are now ready to setup the software elements of your application. Install your desired ROS version, dependencies, and build/install/etc your application work for use.
-
----
-
-If you have made it this far, you are now ready to setup your robot to automatically bringup the platform and sensors after the computer is started up. See `setup_robot_automatic_bringup.md` next.
-
-
-
-------------------
-
-## Setup robot Networking, WiFi, Developer Communications
-
-TODO -> another page linked from docs
-
-1. Set a wireless connection with profile named "Jackal" which is a manual IPv4 connection with:
-
-```
-address: 192.168.131.100
-netmask: 255.255.255.0
-Gateway: Leave blank
-```
-
-2. Connect robot to your PC via an ethernet cable
-
-3. SSH into the robot (ssh administrator@192.168.131.1) and connect it to your network of choice. Navigate to `/etc/netplan` and modify `60-wireless.yaml` to contain your entry. You can include many network connections.
-
-```
-networks:
-  wifis:
-    wlp2s0:
-      optional: true
-      access-points:
-        <ssid>:
-          password: <password>
-      dhcp4: yes
-      dhcp-overrides:
-        send-hostname: true
-
-```
-
-Then, apply with `sudo netplan apply --debug` and ensure no meaningful errors appear. Wait a few seconds and `ping google.com` to make sure the connection is live.
-
-4. Disconnect the to main computer from ethernet. Power cycle the robot. Once back up, ssh into it using its `.local` address, using your serial number
-
-```
-ssh administrator@cpr-j100-0842.local
-```
-
-If this does not work, you can use nmap to find all the devices connected to your wireless and manually find the right device.
-
-```
-nmap -sP 192.168.1.*/24
-```
-
-Log back out.
-
-5. Add the IP of the robot to your `/etc/host` so you can SSH into it in the future without `.local`
-
-```
-127.0.0.1       localhost
-127.0.1.1       reese
-192.168.1.64    nova
-192.168.1.17    honeybee # new entry
-```
-
-6. Enable passwordless SSH by setting up ssh keys between your computer and the robot
-
-```
-ssh-keygen -t rsa # hit enter to all prompts without input
-ssh-copy-id administrator@honeybee
-```
-
----
-
-Now you can ssh into the robot remotely on this network without password and using a unique robot name!
-
-```
-ssh administrator@honeybee
-```

@@ -44,3 +44,5 @@ Then, restart chrony `sudo systemctl restart chrony`
 3. Verify
 
 On the client, run `chronyc tracking` and it should show that it is sychronizing. You should see its source as the server computer using `chronyc sources -v`. You should see the source on the server computer as remote servers.
+
+Reboot your computers. Now, both computers should remain synchronized!
