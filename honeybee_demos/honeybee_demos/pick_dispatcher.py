@@ -22,6 +22,7 @@ Pseudo-cloud dispatcher interface to get next pick and drop location tasks
 
 
 class Dispatcher():
+
     def __init__(self, picking_locations, goods_bins):
         self.picking_locations = picking_locations
         self.goods_bins = goods_bins
