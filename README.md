@@ -29,6 +29,14 @@ This project contains a typical layout for a ROS-based mobile robot:
 
 Bonus: `docs` contains a number of developer guides for bootstrapping new computers for robots, network setup with ROS 2, setting up field experimental networks, how to visualize data remotely, make software run on startup, and so on.
 
+- [First-Time Robot Computer Bootstrapping Guide](./docs/bootstrapping_robot_computer.md)
+- [Setup Robot Automatic Software Launch Guide](./docs/setup_robot_automatic_bringup.md)
+- [Multi-Computer Time Synchronization Guide](./docs/multi_computer_time_synchonization.md)
+- [Offline Command, Control, and Visualization Guide](./docs/offline_command_and_control.md)
+- [First-Time Mapping And Localization Guide](./docs/map_spaces.md)
+- [Honeybee: Networking Setup Guide](./docs/honeybee_network_setup.md)
+- [Honeybee: Disable CPR Services Guide](./docs/disable_clearpath_services.md)
+
 **[See the `honeybee_demos` package for detailed demonstration descriptions, videos, and datasets](./honeybee_demos)**
 
 <video src="https://github.com/user-attachments/assets/9eef0d12-7b01-4654-be78-96281b261b64" controls autoplay loop></video>
@@ -81,10 +89,6 @@ Now, we can build using colcon:
 ```
 colcon build
 ```
-
-
-TODO: docs directory for guides
-
 
 ## Details on Robot
 
