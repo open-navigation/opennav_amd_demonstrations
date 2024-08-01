@@ -19,7 +19,7 @@ import time
 
 from ament_index_python.packages import get_package_share_directory
 import launch
-from launch.actions import DeclareLaunchArgument, OpaqueFunction
+from launch.actions import DeclareLaunchArgument, OpaqueFunction, TimerAction
 from launch.event_handlers import OnProcessIO
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import ComposableNodeContainer
@@ -123,5 +123,5 @@ def generate_launch_description():
         pc2_to_laserscan_cmd,
         activation_watchdog_cmd,
         # Obtain segmented pointclouds for ground and non-ground points, after sensor is up
-        OpaqueFunction(function=wait_for_lidar_and_launch_ground_segmentation)
+        TimerAction(period=1.0, actions=[OpaqueFunction(function=wait_for_lidar_and_launch_ground_segmentation)])
     ])
