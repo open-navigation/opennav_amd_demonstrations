@@ -40,8 +40,13 @@ See launch files for a full set of launch configurations and options!
 Demonstration 1: Outdoor GPS Navigation | Demonstration 2: Urban 3D Navigation 
 :-------------------------:|:-------------------------:
 [![ALT TEXT](./honeybee_demos/images/demo1_gif.gif)](https://www.youtube.com/watch?v=255o4IS3rHg) |  [![ALT TEXT](./honeybee_demos/images/demo2_gif.gif)](https://www.youtube.com/watch?v=sL2GZdODUcE)
-**Demonstration 3: Long-Duration Indoor Navigation** | **Cool Videos** |
-[![ALT TEXT](./honeybee_demos/images/demo3_gif.gif)](https://www.youtube.com/watch?v=evZ-GvswU4o) | ![ALT TEXT](./honeybee_demos/images/opennav_amd_ggb.png)
+**Demonstration 3: Long-Duration Indoor Navigation** | **Glamour Shot** |
+[![ALT TEXT](./honeybee_demos/images/demo3_gif.gif)](https://www.youtube.com/watch?v=evZ-GvswU4o) | <img src="./honeybee_demos/images/opennav_amd_ggb.png" width="500">
+
+
+
+
+    
 
 
 **Click on the demo gifs to see the full videos on YouTube!**
