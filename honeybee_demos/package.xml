@@ -11,6 +11,7 @@
   <exec_depend>honeybee_watchdogs</exec_depend>
   <exec_depend>honeybee_bringup</exec_depend>
   <exec_depend>honeybee_nav2</exec_depend>
+  <exec_depend>opennav_docking</exec_depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>

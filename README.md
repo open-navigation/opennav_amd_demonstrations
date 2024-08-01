@@ -8,7 +8,13 @@ These demonstrations orbit around the Honeybee reference platform, a [Clearpath 
 - [Realsense D435i](https://www.intelrealsense.com/depth-camera-d435i/)
 - [Microstrain GX-25](https://www.microstrain.com/inertial-sensors/3dm-gx5-25)
 
-![ALT TEXT](./honeybee_demos/images/opennav_amd_ggb.png)
+Demonstration 1: Outdoor GPS Navigation | Demonstration 2: Urban 3D Navigation 
+:-------------------------:|:-------------------------:
+[![ALT TEXT](./honeybee_demos/images/demo1_gif.gif)](https://www.youtube.com/watch?v=255o4IS3rHg) |  [![ALT TEXT](./honeybee_demos/images/demo2_gif.gif)](https://www.youtube.com/watch?v=sL2GZdODUcE)
+**Demonstration 3: Long-Duration Indoor Navigation** | **Glamour Shot** |
+[![ALT TEXT](./honeybee_demos/images/demo3_gif.gif)](https://www.youtube.com/watch?v=evZ-GvswU4o) | <img src="./honeybee_demos/images/opennav_amd_ggb.png" width="500">
+
+**Click on the demo gifs to see the full videos on YouTube!**
 
 This project contains a typical layout for a ROS-based mobile robot:
 - `honeybee_description` contains the robot's description, meshes, and frame transformations (URDF)
@@ -34,16 +40,6 @@ The navigation system can be launched using `ros2 launch honeyee_nav2 nav2.launc
 The demonstrations can be launched using their respective launch files in `honeybee_demos` and utilize Nav2 configured for the particular application, the annotated autonomy scripts developed for the demonstrations, and appropriate watchdogs for data recording and system handling.
 
 See launch files for a full set of launch configurations and options!
-
-## Demonstrations
-
-
-Demonstration 1: Outdoor GPS Navigation  | Demonstration 2: Urban 3D Navigation
-:-------------------------:|:-------------------------:
-[![ALT TEXT](./honeybee_demos/images/demo1_gif.gif)](https://www.youtube.com/watch?v=255o4IS3rHg) |  [![ALT TEXT](./honeybee_demos/images/demo2_gif.gif)](https://www.youtube.com/watch?v=sL2GZdODUcE)
-
-
-**Click on the demo gifs to see the full videos on YouTube!**
 
 ## Metrics
 

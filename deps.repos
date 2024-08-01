@@ -1,4 +1,5 @@
 repositories:
+  # Generally required
   micro-ROS/micro-ROS-Agent:
     type: git
     url: https://github.com/micro-ROS/micro-ROS-Agent.git
@@ -7,18 +8,24 @@ repositories:
     type: git
     url: https://github.com/clearpathrobotics/clearpath_robot.git
     version: 0.2.11
-  SteveMacenski/nonpersistent_voxel_layer:
-    type: git
-    url: https://github.com/SteveMacenski/nonpersistent_voxel_layer
-    version: humble
   ouster-lidar/ouster-ros: # --recurse-submodules required
     type: git
     url: https://github.com/ouster-lidar/ouster-ros.git
     version: ros2  # 2a0ef50f1dbe3f512321e809d6ca87391ce38f6e
+
+  # For GPS demo
+  SteveMacenski/nonpersistent_voxel_layer:
+    type: git
+    url: https://github.com/SteveMacenski/nonpersistent_voxel_layer
+    version: humble
+
+  # For ground segmentation
   url-kaist/patchwork-plusplus:
     type: git
     url: https://github.com/url-kaist/patchwork-plusplus
     version: master
+  
+  # For 3D SLAM and Localization
   rsasaki0109/lidarslam_ros2:
     type: git
     url: https://github.com/rsasaki0109/lidarslam_ros2.git

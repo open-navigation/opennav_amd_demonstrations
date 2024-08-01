@@ -106,13 +106,44 @@ If you wish to use free-space planning, you may want to:
 - Use Smac Planner Hybrid-A* for obtaining high quality, feasible paths at the full speed of the robot performing full SE2 collision checking. 
 - Use the behavior tree navigator to define your navigation logic for off-graph (and on-graph), and associated behavior transitions. 
 
-## Demo 3: Long-Duration Indoor 2D Navigation with Keepout, Speed Restricted Zones
+## Demo 3: Long-Duration Indoor 2D Picking
 
-loop, dock, repeat (note: no dock, so just docking using docking but not actually recharging, leaving after 30s --> replace with battery status to send to dock / undock at certain power level instead). Keepouts + speed restriction zones as well. Collision mointor. Rotation shim controller. 'just throwing the book at it'. Picking.
+The goal of this demonstration is to show the system in action running Nav2 using the standard 2D SLAM and localization in an indoor setting for long-duration applications involving auto-docking for charging to run over multiple days for continuous service. This was performed at Polymath Robotics in San Francisco by their generous offer to help! 
+
+[![ALT TEXT](./images/demo3.png)](https://www.youtube.com/watch?v=evZ-GvswU4o)
+
+**Note: Click on the image above to see the Long-Duration Picking demo in action on YouTube!**
+
+This demonstration sets out a number of picking locations around a central shipping and receiving desk area and place locations at the end of engineering desk rows for delivery of goods. This demonstrations simulates picks at these locations and places them at the terminus of the desk rows. A docking location is marked by an Apriltag used by Nav2 Docking for charging between missions for continuous uptime. Note: the Clearpath Jackal does not come with a charging dock nor can it charge while powered on, so the charging is simulated using Nav2 Docking based on the Apriltag feature but doesn't actually charge. This is the same detection and docking pipeline you can use with an actual dock however, shown in `opennav_docking`'s examples.
+
+The map and experiment layout can be seen below:
+
+![ALT TEXT](./images/demo3_annotated.png)
+
+#### Technical Summary
+
+A picking dispatcher is used to create random pick-and-place missions. In our autonomy program, we execute 3 pick-and-place missions and then go back to the charging dock in order to recharge until triggered again to execute by the dispatcher (in this case, our joystick). Within the program, there are commented out blocks for also enabling continuous pick-and-place mission execution until the battery is sufficiently low. After which, the robot automatically docks and will continue mission execution once the battery exceeds a minimum threshold to continue. Additionally, there's an option to run the pick-and-place missions on a fixed schedule (such as once an hour). This makes it easy to customize for either (a) cloud dispatched operations, (b) continuous operations, or (c) scheduled operations.
+
+We made this running continuously for 90 minutes with 5 minute picking missions (18 complete, 3 pick-and-place & charge docking loops), which is roughly the battery life of the honeybee - since there is no charging dock.
 
 A few important notes on the configuration:
-- We move slower in this demonstration - 0.5 m/s - due to being indoors around people for safety
+- We move slower in this demonstration - 0.5 m/s - due to being indoors around people for safety in the office
 - We use the standard Nav2 localization and SLAM integrations - AMCL and SLAM Toolbox for positioning. We also use largely the standard defaults from Nav2 with the exception of robot specifics like footprint and controller tuning.
 - Since we're navigating in a 2D environment, we can use PointCloud to Laserscan to ignore the ground points (which can be noisy on shiny surface). We still use the 3D nature of the lidar by considering a large band from the top of the robot (plus some margin) to a few cm off the ground. This uses the 3D lidar's entire useful data, but reduces computation and noisy points without need for explicit PointCloud filtering or use of the ground segmentation node (less points of potential failure with glass / shiny floors).
-- We treat this robot as a large point for global planning as an example with NavFn (oppposed to feasible planners for SE2 footprint checking in other demonstrations). This is a good working example for circular robots or computers with low compute. 
-- We use MPPI in this demonstration for highly dynamic behavior in the dynamic human-filled environment
+- We use Hybrid-A* to consider the robot's non-circular footprint during planning
+- We use MPPI in this demonstration for highly dynamic behavior in the dynamic human-filled environment, which considers Hybrid-A*'s feasible path's orientations for accurate directional tracking
+- The collision monitor is used to prevent collision using raw sensor data by reducing the velocity commands proportionately to be at least 1.5 seconds from collision at all times.
+- This demonstration uses Nav2's new Opennav Docking server to autodock the robot for charging. Since this platform does not come with a charging dock, this charging is simulated using a dock detection feature with no actual charging enabled
+- The demonstration script shown inline how to trigger jobs based on (a) a cloud dispatcher or external trigger like a button, (b) based on the robot's battery being sufficiently energized to take on new missions after having charged when sufficiently low and, (c) based on a timer or cron job
+- While not shown, it is easy to add in Keepout or Speed Restricted Zones to prevent navigation into certain areas or reduce speed in others - [see Nav2's tutorials](https://docs.nav2.org/tutorials/index.html).
+
+Due to the nature of the location as a working office, no dataset is provided for this experiment.
+
+An easy workflow to reproduce: 
+1. Teleop robot to create map (or using autonomous navigation). Save map.
+2. Using Rviz or another tool, find the location of key points of interest for picking and placing (like shelf and slot locations).
+3. Update the pick and place dicts to contain the points of interest based on the map's coordinate system.
+4. Setup a docking location and update it in the Nav2 yaml and script.
+5. Launch the demo! It will automatically localize on the dock and start the random pick-and-place missions using the dispatcher!
+
+![ALT TEXT](./images/demo3_gif2.gif)

@@ -26,6 +26,7 @@ setup(
         'console_scripts': [
             'gps_patrol_demo = honeybee_demos.gps_patrol_demo:main',
             'urban_navigation_demo = honeybee_demos.urban_navigation_demo:main',
+            'indoor_long_duration_picking_demo = honeybee_demos.indoor_long_duration_picking_demo:main',  # noqa: E501
         ],
     },
 )

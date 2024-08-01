@@ -1,0 +1,14 @@
+#!/bin/bash
+# Saves a map to the experiment_files directory
+# This could be called from the command line or as a button press on a joystick
+
+# Define the map filename
+TIMESTAMP=$(date +%s)
+MAP_FILENAME="map_$TIMESTAMP"
+MAP_DIRECTORY="$HOME/experiment_files"
+MAP_PATH="$MAP_DIRECTORY/$MAP_FILENAME"
+
+source /opt/ros/humble/setup.bash
+ros2 run nav2_map_server map_saver_cli -f "$MAP_PATH" -t map
+
+echo "Map saved to $MAP_PATH.yaml"
