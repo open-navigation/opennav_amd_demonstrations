@@ -26,6 +26,7 @@ from launch_ros.actions import ComposableNodeContainer
 from launch_ros.actions import Node
 from launch_ros.descriptions import ComposableNode
 import rclpy
+from rclpy.qos import QoSHistoryPolicy, QoSProfile, QoSReliabilityPolicy
 from sensor_msgs.msg import PointCloud2
 
 
@@ -37,7 +38,11 @@ def wait_for_lidar_and_launch_ground_segmentation(context, *args, **kwargs):
     # Wait for the lidar topic to be available and publishing
     def listener_callback(msg):
         future.set_result(True)
-    sub = node.create_subscription(PointCloud2, '/sensors/lidar_0/points', listener_callback, 10)
+    qos_profile = QoSProfile(
+        reliability=QoSReliabilityPolicy.BEST_EFFORT,
+        history=QoSHistoryPolicy.KEEP_LAST, depth=10)
+    sub = node.create_subscription(
+        PointCloud2, '/sensors/lidar_0/points', listener_callback, qos_profile)
     while not future.done() and rclpy.ok():
         rclpy.spin_once(node, timeout_sec=0.1)
 
