@@ -146,4 +146,4 @@ An easy workflow to reproduce:
 4. Setup a docking location and update it in the Nav2 yaml and script.
 5. Launch the demo! It will automatically localize on the dock and start the random pick-and-place missions using the dispatcher!
 
-![ALT TEXT](./honeybee_demos/images/demo3_gif2.gif)
+![ALT TEXT](./images/demo3_gif2.gif)
