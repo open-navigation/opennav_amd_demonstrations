@@ -110,9 +110,12 @@ If you wish to use free-space planning, you may want to:
 
 The goal of this demonstration is to show the system in action running Nav2 using the standard 2D SLAM and localization in an indoor setting for long-duration applications involving auto-docking for charging to run over multiple days. This was performed at Polymath Robotics in San Francisco by their generous offer to help! 
 
-This demonstration sets out a number of picking locations around a central shipping and receiving desk area and place locations at the end of engineering desk rows for delivery of goods. In a separate part of the office a docking location is marked by an Apriltag used by Nav2 Docking. Note: the Clearpath Jackal does not come with a charging dock nor can it charge while powered on, so the docking is simulated using Nav2 Docking based on the Apriltag feature but doesn't actually charge. This is the same detection and docking pipeline you can use with an actual dock however, shown in `opennav_docking`'s examples.
+TODO video
+[![ALT TEXT](./images/demo3.png)](https://www.youtube.com/watch?v=sL2GZdODUcE)
 
-TODO image + video
+**Note: Click on the image above to see the Urban Navigation demo in action on YouTube!**
+
+This demonstration sets out a number of picking locations around a central shipping and receiving desk area and place locations at the end of engineering desk rows for delivery of goods. In a separate part of the office a docking location is marked by an Apriltag used by Nav2 Docking. Note: the Clearpath Jackal does not come with a charging dock nor can it charge while powered on, so the docking is simulated using Nav2 Docking based on the Apriltag feature but doesn't actually charge. This is the same detection and docking pipeline you can use with an actual dock however, shown in `opennav_docking`'s examples.
 
 The map and experiment layout can be seen below:
 
@@ -120,7 +123,9 @@ The map and experiment layout can be seen below:
 
 #### Technical Summary
 
-A picking dispatcher is used to create pick-and-place missions. In our autonomy program, we execute 3 pick-and-place missions and then go back to the charging dock in order to recharge until triggered again to execute by the dispatcher (in this case, our joystick). Within the program, there are commented out blocks for also enabling continuous pick-and-place mission execution until the battery is sufficiently low. After which, the robot automatically docks and will continue mission execution once the battery exceeds a minimum threshold to continue. Additionally, there's an option to run the pick-and-place missions on a fixed schedule (such as once an hour).
+A picking dispatcher is used to create pick-and-place missions. In our autonomy program, we execute 3 pick-and-place missions and then go back to the charging dock in order to recharge until triggered again to execute by the dispatcher (in this case, our joystick). Within the program, there are commented out blocks for also enabling continuous pick-and-place mission execution until the battery is sufficiently low. After which, the robot automatically docks and will continue mission execution once the battery exceeds a minimum threshold to continue. Additionally, there's an option to run the pick-and-place missions on a fixed schedule (such as once an hour). This makes it easy to customize for either (a) cloud dispatched operations, (b) continuous operations, or (c) scheduled operations.
+
+We made this running continuously for 90 minutes with 5 minute picking missions (18 complete, 3 pick-and-place & charge docking loops).
 
 A few important notes on the configuration:
 - We move slower in this demonstration - 0.5 m/s - due to being indoors around people for safety in the office
