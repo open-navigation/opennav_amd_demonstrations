@@ -58,8 +58,6 @@ If you want the robot computers to be able to SSH into each other without passwo
 
 ### ROS 2
 
-TODO: a guide for setting up multi-robot communication over ethernet might be good.
-
 Now that you have the computers able to connect over the internal wired network, now we may need to configure ROS 2 to use this internal network **rather than** the wireless network. This is so that you get high speed wired transport of the data between the computers rather than communicating over the external wireless router. 
 
 This has 2 options:

@@ -1,10 +1,5 @@
 
 
-- Boot strap machine
-- Setup SSH for easy access without password / get on internet
-- Multimachine communication DDS/linux
-- Bringup of software
-
 
 - Software deployment and sync (docker)
 - VPN for internet communication // operations software (online)
