@@ -110,8 +110,7 @@ If you wish to use free-space planning, you may want to:
 
 The goal of this demonstration is to show the system in action running Nav2 using the standard 2D SLAM and localization in an indoor setting for long-duration applications involving auto-docking for charging to run over multiple days for continuous service. This was performed at Polymath Robotics in San Francisco by their generous offer to help! 
 
-TODO video
-[![ALT TEXT](./images/demo3.png)](https://www.youtube.com/watch?v=sL2GZdODUcE)
+[![ALT TEXT](./images/demo3.png)](TODO)
 
 **Note: Click on the image above to see the Long-Duration Picking demo in action on YouTube!**
 
