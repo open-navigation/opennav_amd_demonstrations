@@ -18,7 +18,7 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 import launch
-from launch.actions import DeclareLaunchArgument
+from launch.actions import DeclareLaunchArgument, TimerAction
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import ComposableNodeContainer
 from launch_ros.actions import Node
@@ -74,7 +74,7 @@ def generate_launch_description():
                     ('scan', '/sensors/lidar_0/scan')],
     )
 
-    # Obtain segmented pointclouds for ground and non-ground points
+    # Obtain segmented pointclouds for ground and non-ground points, after sensor is up
     patchworkpp_cmd = Node(
         package='patchworkpp',
         executable='patchworkpp_node',
@@ -100,5 +100,5 @@ def generate_launch_description():
         os_container,
         pc2_to_laserscan_cmd,
         activation_watchdog_cmd,
-        patchworkpp_cmd
+        TimerAction(period=0.05, actions=[patchworkpp_cmd])
     ])
