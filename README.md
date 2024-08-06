@@ -52,11 +52,17 @@ The demonstrations can be launched using their respective launch files in `honey
 
 See launch files for a full set of launch configurations and options!
 
-## Metrics
+## Metrics and Analysis
 
-TODO metrics / marketing / etc - 'so much compute left over while navigating urban with 3D slam/localization, 3d lidar processing, autonomy, at 2m/s. etc. Super powerful machine, love the opportunity this presents in a 80W package'. 
+While running the demonstrations, the resource utilization running the autonomy program, Nav2's autonomous navigation, 3D lidar and camera perception, and localization averaged to **10.85%** of the available CPU time on the 16-core, 60W [Ryzen AI](https://www.amd.com/en/products/processors/consumer/ryzen-ai.html)-powered computer. That's amazingly powerful leaving plenty of room for *many* application compute tasks, AI, and additional sensor processing pipelines. The entirety of the autonomy, perception, and localization systems can be handled only 2 AMD Zen 4 cores! This greatly unburdens systems and can run more, faster, and cheaper opening up new application possibilities.
 
-ANALYSIS HERE on performance (charts/graphs: CPU )
+While running outdoor GPS localization with the RPP or DWB controllers with non-persisting voxel grids, the average was **8.7%**, due to the lower compute demands. While when using more comparatively expensive and modern algorithms like MPPI, temporal voxel grids, and live SLAM, it rose to only **12.8%**. 
+
+It can also build all of Nav2 in only **10 min, 15 sec**, as compared to 23 min, 3 sec minutes using an Intel i7-1365U on an X1 Carbon (Gen 11). 
+
+Open Navigation is incredibly impressed with these results, using a computer with equivilient power utilization as an Nvidia Jetson in max power mode or an Intel NUC. This is a powerful machine for under $500! 
+
+We're working next to tap into the Ryzen AI computer's built-in GPU and NPU for accelerating workloads and real-time AI (3D detection, semantic segmentation, GenAI, accelerating robotics algorithms). We'd highly recommend considering Ryzen AI-powered devices for future robotics products and projects for its power, pricepoint, and AI and hardware acceleration integrations, especially if you require more powerful x86 cores!
 
 ## Build 
 

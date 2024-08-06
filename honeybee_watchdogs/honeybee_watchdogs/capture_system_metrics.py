@@ -27,9 +27,8 @@ from rclpy.qos import QoSHistoryPolicy, QoSProfile, QoSReliabilityPolicy
 from sensor_msgs.msg import BatteryState
 
 """
-A method to easily parse system metrics from a file for analytics
+A method to easily parse system metrics & analze files for analytics
 """
-
 
 def parseSystemMetrics(file):
     data_dicts = []
@@ -48,6 +47,36 @@ def parseSystemMetrics(file):
                 adict[key] = value
             data_dicts.append(adict)
     return data_dicts
+
+def analyze_system_metrics():
+    # Obtain all the raw data from files
+    files_in_directory = os.listdir('.')  # os.path.expanduser('~/experiment_files')
+    metrics_files = [file for file in files_in_directory if file.startswith('system_metrics')]
+    raw_data = []
+    for file in metrics_files:
+        data_dicts = parseSystemMetrics(file)
+        raw_data.append(data_dicts)
+
+    # Extract data for each field to analyze. For this script, resource utilization.
+    cpu_use = []
+    memory_use = []
+    disk_use = []
+    for data in raw_data:
+        for entry in data:
+            cpu_use.append(entry['CPU'])
+            memory_use.append(entry['Memory'])
+            disk_use.append(entry['Disk'])
+
+    # Calculate the average of each field
+    print(f'Dataset duration: {(len(cpu_use) / 60.0):.2f} min')  # 1 hz
+    print(f'Ave CPU usage: {sum(cpu_use) / len(cpu_use):.2f}%')
+    print(f'Ave Disk usage: {sum(disk_use) / len(disk_use):.2f}%')
+    print(f'Ave Memory usage: {sum(memory_use) / len(memory_use):.2f}%')
+
+    # Find and print the highest value of each field
+    print(f'Highest CPU usage: {max(cpu_use):.2f}%')
+    print(f'Highest Disk usage: {max(disk_use):.2f}%')
+    print(f'Highest Memory usage: {max(memory_use):.2f}%')
 
 
 """
