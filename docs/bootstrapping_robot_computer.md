@@ -13,7 +13,7 @@ Once complete, plug this into your robot PC and enter the boot menu and select U
 Optional, but some useful tools to have around and setup SSH for remote access over wifi or wired connections
 
 ```
-sudo apt install htop vim nmap net-tools openssh-client openssh-server tmux
+sudo apt install htop vim nmap net-tools openssh-client openssh-server tmux iftop
 sudo systemctl enable --now ssh
 sudo systemctl start ssh
 ```
