@@ -2,17 +2,23 @@
 
 The following is a simple tutorial for setting up a new computer as a robot system for an AMR.
 
-0. Install some useful tools
+0. Install Ubuntu
+
+With a USB stick, create a boot stick from the Ubuntu ISO [using the instructions here](https://ubuntu.com/tutorials/create-a-usb-stick-on-ubuntu#1-overview).
+
+Once complete, plug this into your robot PC and enter the boot menu and select Ubuntu for Installation. Follow the prompts and make sure to check the box to log in automatically on startup.
+
+1. Install some useful tools
 
 Optional, but some useful tools to have around and setup SSH for remote access over wifi or wired connections
 
 ```
-sudo apt install htop nmap net-tools openssh-client openssh-server tmux
+sudo apt install htop vim nmap net-tools openssh-client openssh-server tmux
 sudo systemctl enable --now ssh
 sudo systemctl start ssh
 ```
 
-1. Setup the robot computer to boot on power up
+2. Setup the robot computer to boot on power up
 
 Its important that your robot computer turns on when the AMR turns on. The easiest way to do that is to setup your computer to boot up on power on. That way, when power is available, you automatically boot on. Alternatively, most computers come with pins for indicating externally to power on or shut down.
 
@@ -23,7 +29,7 @@ Its important that your robot computer turns on when the AMR turns on. The easie
 
 Note: Some computers also have the option to Wake on LAN. If you'd prefer to do this, enable that option in the BIOS and have either another computer or your base power system send a Wake on LAN packet to the computer to power it on via explicit command.
 
-2. Setup the robot computer to automatically log in on startup
+3. Setup the robot computer to automatically log in on startup
 
 It is important that your robot computer is ready to go automatically and not waiting for user input before completing startup. So, we need to set your computer to automatically login.
 
@@ -31,7 +37,7 @@ It is important that your robot computer is ready to go automatically and not wa
 - Unlock the settings with administrator passwords and turn on the option for `Automatic Login` to `On`.
 - Test: Power off the computer, unplug power, and plug it back in. See that the computer boots up and automatically logs into your desired user.
 
-3. Setup Networking
+4. Setup Networking
 
 It is necessary to setup your networking to access the computer remotely once installed into the robot platform and interact with sensors.
 
@@ -133,6 +139,6 @@ If using Cyclone DDS, do the same with the following file's contents and `export
 
 Note: if you do this, you will no longer be able to see the data on your wireless network from a remote PC. You'll need to either SSH into the robot, communicate via a cloud provider, or install a router that you can connect to on the internal network. This is probably a good thing for most users anyway since exposing your ROS 2 system to the entire WAN is probably not a good option and you'd have to set `ROS_LOCALHOST_ONLY` anyway. This way, the network is effectively trapped on localhost.
 
-4. Setup ROS and application specific software
+5. Setup ROS and application specific software
 
 You are now ready to setup the software elements of your application. Install your desired ROS version, dependencies, and build/install/etc your application work for use.

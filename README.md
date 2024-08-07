@@ -78,7 +78,7 @@ Then, we need to pull in some dependencies that we cannot obtain from `rosdep`:
 
 ```
 sudo apt install python3-vcstool  # if don't already have
-vcs import . < opennav_AMD_demos/deps.repos
+vcs import . < opennav_amd_demonstrations/deps.repos
 cd ouster-lidar/ouster-ros && git submodule update --init
 cd ../../../
 ```
@@ -86,7 +86,7 @@ cd ../../../
 Next, we need to obtain our dependencies that are available from `rosdep`:
 
 ```
-rosdep init  # if haven't done
+sudo rosdep init  # if haven't done
 rosdep update
 rosdep install -r -y --from-paths src --ignore-src
 ```
@@ -100,8 +100,8 @@ colcon build
 ## Details on Robot
 
 The robot has an internal network on the 192.168.131.* range.
-- The robot's builtin PC is `192.168.131.1` with username `administrator` & password `clearpath`
-- The AMD backpack PC is `192.168.131.10` with username `administrator` & password `clearpath`
+- The robot's builtin PC is `192.168.131.1` with username `administrator` & password `clearpath` (`cpr-j100-0842` and `cpr-j100-0849`)
+- The AMD backpack PC is `192.168.131.10` with username `administrator` & password `clearpath` (`hex` and `stinger`)
 - The ouster lidar is `192.168.131.20` 
 
 The Lidar is connected to the builtin PC due to limitations on the number of ethernet ports on the AMD computer (but could be easily remedied by an ethernet switch).
@@ -118,4 +118,4 @@ Data from the experiments are recorded and logged by the `nav2_watchdogs` in the
 
 Note: each robot has a `colcon_ws` setup by Clearpath and is a hardcoded path with their auto-generation scripts. It is recommended to not touch this directory to allow for a complete rollback to on-delivery state should issues occur requiring Clearpath's intervention.
 
-Subscribing to large topics over Wifi can hose the network and stall the programs. This can cause the robot to lose scheduling/TF transform timing, bluetooth controller to cutout, and so forth. It is recommended to use the robot in `ROS_LOCALHOST_ONLY` mode or not subscribe to topics off of the robot when not necessary or in current operations (i.e. close rviz so headless, run program in tmux session). This is good for setting up and debugging, but not in deployed applications -- at least with the default DDS settings in ROS 2 Humble.
+Subscribing to large topics over Wifi can hose the network and stall the programs. This can cause the robot to lose scheduling/TF transform timing, bluetooth controller to cutout, and so forth. It is recommended to use the robot in `ROS_LOCALHOST_ONLY` mode or not subscribe to topics off of the robot when not necessary or in current operations (i.e. close rviz so headless, run program in tmux session). This is good for setting up and debugging, but not in deployed applications -- at least with the default DDS settings in ROS 2 Humble. We also recommend using an isolated network for the robot so its not attempting to discover every device on a large corporate or building network (if not setting to localhost only).

@@ -7,6 +7,8 @@ ekf_node:
     two_d_mode: True
     use_sim_time: False
     frequency: 50.0
+    transform_time_offset: 0.02
+    transform_timeout: 0.2
     odom0: 'platform/odom'
     odom0_config: [False, False, False, False, False, False, True, True, False, False, False, False, False, False, False]
     odom0_differential: False

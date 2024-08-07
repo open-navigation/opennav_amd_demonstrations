@@ -475,8 +475,8 @@ collision_monitor:
     cmd_vel_out_topic: "cmd_vel"
     state_topic: "collision_monitor_state"
     transform_tolerance: 0.2
-    source_timeout: 1.0
-    base_shift_correction: True
+    source_timeout: 2.0
+    base_shift_correction: False
     stop_pub_timeout: 2.0
     polygons: ["FootprintApproach"]
     FootprintApproach:
