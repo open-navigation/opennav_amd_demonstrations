@@ -12,21 +12,44 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, GroupAction, IncludeLaunchDescription
+from launch.conditions import IfCondition, UnlessCondition
+from launch.substitutions import LaunchConfiguration
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import PathJoinSubstitution
+from launch.substitutions import EnvironmentVariable, PathJoinSubstitution, PythonExpression
 from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
     bringup_dir = FindPackageShare('honeybee_bringup')
 
-    launch_camera = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([
-            PathJoinSubstitution([
-                bringup_dir, 'launch', 'include', 'realsense.launch.py'])]),
+    use_orbecc = LaunchConfiguration('use_orbecc')
+    use_orbecc_cmd = DeclareLaunchArgument(
+        'use_orbecc',
+        default_value=os.getenv('USE_ORBECC', 'false').lower(),
+        description='Set to true to launch the ORBECC configuration'
     )
+
+    launch_camera = GroupAction([
+        # Realsense
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource([
+                PathJoinSubstitution([
+                    bringup_dir, 'launch', 'include', 'realsense.launch.py'])]),
+            condition=UnlessCondition(PythonExpression(["'", use_orbecc, "' == 'true'"]))
+        ),
+
+        # Orbecc
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource([
+                PathJoinSubstitution([
+                    bringup_dir, 'launch', 'include', 'orbecc.launch.py'])]),
+            condition=IfCondition(PythonExpression(["'", use_orbecc, "' == 'true'"]))
+        ),
+    ])
 
     launch_imu = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
@@ -41,6 +64,7 @@ def generate_launch_description():
     )
 
     ld = LaunchDescription()
+    ld.add_action(use_orbecc_cmd)
     ld.add_action(launch_camera)
     ld.add_action(launch_imu)
     ld.add_action(launch_lidar)

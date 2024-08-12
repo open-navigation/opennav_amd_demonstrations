@@ -81,6 +81,10 @@ sudo apt install python3-vcstool  # if don't already have
 vcs import . < opennav_amd_demonstrations/deps.repos
 cd ouster-lidar/ouster-ros && git submodule update --init
 cd ../../../
+
+# For Orbecc 335 cameras, if used instead of Realsense D435
+sudo bash src/orbbec/OrbbecSDK_ROS2/orbbec_camera/scripts/install_udev_rules.sh
+sudo udevadm control --reload-rules && sudo udevadm trigger
 ```
 
 Next, we need to obtain our dependencies that are available from `rosdep`:
@@ -119,3 +123,5 @@ Data from the experiments are recorded and logged by the `nav2_watchdogs` in the
 Note: each robot has a `colcon_ws` setup by Clearpath and is a hardcoded path with their auto-generation scripts. It is recommended to not touch this directory to allow for a complete rollback to on-delivery state should issues occur requiring Clearpath's intervention.
 
 Subscribing to large topics over Wifi can hose the network and stall the programs. This can cause the robot to lose scheduling/TF transform timing, bluetooth controller to cutout, and so forth. It is recommended to use the robot in `ROS_LOCALHOST_ONLY` mode or not subscribe to topics off of the robot when not necessary or in current operations (i.e. close rviz so headless, run program in tmux session). This is good for setting up and debugging, but not in deployed applications -- at least with the default DDS settings in ROS 2 Humble. We also recommend using an isolated network for the robot so its not attempting to discover every device on a large corporate or building network (if not setting to localhost only).
+
+Some configurations of Honeybee have the Realsense D435 and others have the Orbecc 355 cameras. If using Orbecc, set `USE_ORBECC=True` in your terminal before launching to bringup the Orbecc camera. This has been exported for you in the `~/.bashrc` for robots shipped from Open Navigation.
