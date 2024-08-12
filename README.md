@@ -7,7 +7,7 @@ This project has demonstrations and analysis using AMD's powerful Ryzen CPU, AI,
 These demonstrations orbit around the Honeybee reference platform, a [Clearpath Robotics Jackal](https://clearpathrobotics.com/jackal-small-unmanned-ground-vehicle/) outfitted with:
 - AMD Ryzen Zen4 CPU using a [Miniforum UM790 Pro](https://store.minisforum.com/products/minisforum-um790-pro)
 - [Ouster OS0-32](https://ouster.com/products/hardware/os0-lidar-sensor)
-- [Realsense D435i](https://www.intelrealsense.com/depth-camera-d435i/)
+- [Realsense D435i](https://www.intelrealsense.com/depth-camera-d435i/) or [Orbecc Gemini 355](https://www.orbbec.com/products/stereo-vision-camera/gemini-335/)
 - [Microstrain GX-25](https://www.microstrain.com/inertial-sensors/3dm-gx5-25)
 
 [Demonstration 1: Outdoor GPS Navigation](./honeybee_demos/honeybee_demos/gps_patrol_demo.py) | [Demonstration 2: Urban 3D Navigation](./honeybee_demos/honeybee_demos/urban_navigation_demo.py) 
