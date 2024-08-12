@@ -30,6 +30,7 @@ from sensor_msgs.msg import BatteryState
 A method to easily parse system metrics & analze files for analytics
 """
 
+
 def parseSystemMetrics(file):
     data_dicts = []
     with open(file, 'r') as file:
@@ -47,6 +48,7 @@ def parseSystemMetrics(file):
                 adict[key] = value
             data_dicts.append(adict)
     return data_dicts
+
 
 def analyze_system_metrics():
     # Obtain all the raw data from files

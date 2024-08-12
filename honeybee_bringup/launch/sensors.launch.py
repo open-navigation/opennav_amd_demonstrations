@@ -18,8 +18,8 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, GroupAction, IncludeLaunchDescription
 from launch.conditions import IfCondition, UnlessCondition
 from launch.substitutions import LaunchConfiguration
+from launch.substitutions import PathJoinSubstitution, PythonExpression
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import EnvironmentVariable, PathJoinSubstitution, PythonExpression
 from launch_ros.substitutions import FindPackageShare
 
 

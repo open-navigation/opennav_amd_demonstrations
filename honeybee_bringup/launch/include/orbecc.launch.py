@@ -193,12 +193,14 @@ def generate_launch_description():
                             # Color
                             ('color/image_raw', '/sensors/camera_0/color/image'),
                             ('color/image_raw/compressed', '/sensors/camera_0/color/compressed'),
-                            ('color/image_raw/compressedDepth', '/sensors/camera_0/color/compressedDepth'),
+                            ('color/image_raw/compressedDepth',
+                                '/sensors/camera_0/color/compressedDepth'),
                             ('color/image_raw/theora', '/sensors/camera_0/color/theora'),
                             # Depth
                             ('depth/image_raw', '/sensors/camera_0/depth/image'),
                             ('depth/image_raw/compressed', '/sensors/camera_0/depth/compressed'),
-                            ('depth/image_raw/compressedDepth', '/sensors/camera_0/depth/compressedDepth'),
+                            ('depth/image_raw/compressedDepth',
+                                '/sensors/camera_0/depth/compressedDepth'),
                             ('depth/image_raw/theora', '/sensors/camera_0/depth/theora'),
                             # Points
                             ('depth/points', '/sensors/camera_0/points')
