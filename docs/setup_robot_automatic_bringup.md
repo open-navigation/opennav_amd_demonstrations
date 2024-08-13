@@ -14,6 +14,8 @@ Note: this relies on the workspace `amd_ws` in the root directory of the robot c
 
 You can test this by powering off the computer and powering it back on. After the system is fully initialized, you should be able to see the system started up (i.e. see data with `ros2 topic list`, joystick your robot if you have setup to launch, etc).
 
+Note, if you wish to set environmental variables, you may using `Environment="USE_ORBECC=true"` before `execStart`.
+
 ## Services provided
 
 - `robot_bringup.service` brings up the robot's hardware

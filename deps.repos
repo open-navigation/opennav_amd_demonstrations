@@ -12,6 +12,10 @@ repositories:
     type: git
     url: https://github.com/ouster-lidar/ouster-ros.git
     version: ros2  # 2a0ef50f1dbe3f512321e809d6ca87391ce38f6e
+  orbbec/OrbbecSDK_ROS2:
+    type: git
+    url: https://github.com/orbbec/OrbbecSDK_ROS2
+    version: main
 
   # For GPS demo
   SteveMacenski/nonpersistent_voxel_layer:
