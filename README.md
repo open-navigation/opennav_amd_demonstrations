@@ -1,11 +1,11 @@
 # Open Navigation - AMD Ryzen AI Demonstrations
 
-This project has demonstrations and analysis using AMD's powerful Ryzen CPU, AI, and acceleration technologies with Nav2, ROS 2 Humble, and the open-source robotics community's technologies. These demononstrations show complete & tuned reference applications to perform **indoor 2D-based**, **urban 3D-based**, and **outdoor GPS-based** navigation. They use AMD's compute technologies and show that they are very well suited to robotics tasks and workloads, with plenty of compute time remaining for AI, business logic, application layers, and other computationally demanding tasks on top of advanced mobility and 3D perception. 
+This project has demonstrations and analysis using AMD's powerful Ryzen AI CPU, GPU, NPU, and related acceleration technologies for embedded solutions with Nav2, ROS 2 Humble, and the open-source robotics community's technologies. These demononstrations show complete & tuned reference applications to perform **indoor 2D-based**, **urban 3D-based**, and **outdoor GPS-based** navigation. They use AMD's compute technologies and show that they are very well suited to robotics tasks and workloads, with plenty of compute time remaining for AI, business logic, application layers, and other computationally demanding tasks on top of advanced mobility and 3D perception. 
 
 **⚠️ Need ROS 2, Nav2 help or support? Contact [Open Navigation](https://www.opennav.org/)! ⚠️**
 
 These demonstrations orbit around the Honeybee reference platform, a [Clearpath Robotics Jackal](https://clearpathrobotics.com/jackal-small-unmanned-ground-vehicle/) outfitted with:
-- AMD Ryzen Zen4 CPU using a [Miniforum UM790 Pro](https://store.minisforum.com/products/minisforum-um790-pro)
+- AMD Ryzen AI using a [Miniforum UM790 Pro](https://store.minisforum.com/products/minisforum-um790-pro)
 - [Ouster OS0-32](https://ouster.com/products/hardware/os0-lidar-sensor)
 - [Realsense D435i](https://www.intelrealsense.com/depth-camera-d435i/) or [Orbecc Gemini 355](https://www.orbbec.com/products/stereo-vision-camera/gemini-335/)
 - [Microstrain GX-25](https://www.microstrain.com/inertial-sensors/3dm-gx5-25)
