@@ -16,9 +16,6 @@
 
 - Download the [Clearpath's Jazzy image](https://packages.clearpathrobotics.com/stable/images/2.0.0/) and prepare a bootable flash drive
 - Install the new Operating system following the [instructions](https://docs.clearpathrobotics.com/docs/ros/installation/robot/#operating-system) from Clearpath
-- - Copy these files
-	- `robot.yaml` file to `/etc/clearpath/` folder
-	- and `ona01_jackal` package to `colcon_ws/src` (build this workspace before proceeding)
 - Then run the `clearpath_computer_setup.sh` script to install Clearpath software packages and configuration for Jackal
 
 ### Motor controller firmware
@@ -30,6 +27,9 @@ Restart the computer and the robot should now be in factory state!
 
 ### Restoring a few things from Humble setup
 
+- Copy these files
+	- `robot.yaml` file to `/etc/clearpath/` folder
+	- and `ona01_jackal` package to `colcon_ws/src` (build this workspace before proceeding)
 - Restore the network config by copying the `50-clearpath-bridge.yaml` and `60-wireless.yaml`
 - Create `amd_ws`, clone the [demos](https://github.com/open-navigation/opennav_amd_demonstrations/tree/main) repo, install the dependencies and build the workspace
 - Disable Clearpath services as described in the honeybee [`docs`](https://github.com/open-navigation/opennav_amd_demonstrations/blob/main/docs/disable_clearpath_services.md)
