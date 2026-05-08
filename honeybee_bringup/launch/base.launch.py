@@ -59,14 +59,6 @@ def generate_launch_description():
                 'stderr': 'screen',
             },
             remappings=[
-<<<<<<< Updated upstream
-              ('platform_velocity_controller/odom', 'platform/odom'),
-            #   ('platform_velocity_controller/cmd_vel_unstamped', 'platform/cmd_vel_unstamped'),
-              ('platform_velocity_controller/cmd_vel_out', 'platform/cmd_vel_out'),
-              ('joint_states', 'platform/joint_states'),
-              ('dynamic_joint_states', 'platform/dynamic_joint_states'),
-              ('~/robot_description', 'robot_description')
-=======
                 ('joint_states', 'platform/joint_states'),
                 ('dynamic_joint_states', 'platform/dynamic_joint_states'),
                 ('platform_velocity_controller/odom', 'platform/odom'),
@@ -76,7 +68,6 @@ def generate_launch_description():
                 ('platform_velocity_controller/reference', 'platform/cmd_vel'),
                 ('platform_velocity_controller/transition_event', 'platform/transition_event'),
                 ('~/robot_description', 'robot_description'),
->>>>>>> Stashed changes
             ],
             condition=UnlessCondition(use_sim_time)
         ),
@@ -88,7 +79,6 @@ def generate_launch_description():
             arguments=['--controller-manager-timeout', '60', 'joint_state_broadcaster'],
             parameters=[{'use_sim_time': use_sim_time}],
             output='screen',
-            additional_env={'ROS_SUPER_CLIENT': 'True'},
         ),
 
         # Velocity Controller
@@ -98,7 +88,6 @@ def generate_launch_description():
             arguments=['--controller-manager-timeout', '60', 'platform_velocity_controller'],
             parameters=[{'use_sim_time': use_sim_time}],
             output='screen',
-            additional_env={'ROS_SUPER_CLIENT': 'True'},
         )
     ])
 
@@ -144,11 +133,7 @@ def generate_launch_description():
         package='twist_mux',
         executable='twist_mux',
         output='screen',
-<<<<<<< Updated upstream
-        remappings={('cmd_vel_out', 'platform/cmd_vel_out')},
-=======
         remappings={('cmd_vel_out', 'platform/cmd_vel'),},
->>>>>>> Stashed changes
         parameters=[
             twist_mux_params,
             {'use_sim_time': use_sim_time},
@@ -206,16 +191,6 @@ def generate_launch_description():
         condition=UnlessCondition(use_simulation)
     )
 
-    # node_micro_ros_agent = Node(
-    #     name='micro_ros_agent',
-    #     executable='micro_ros_agent',
-    #     package='micro_ros_agent',
-    #     output='screen',
-    #     arguments=['serial', '--dev', '/dev/clearpath/j100'],
-    #     parameters=[{'use_sim_time': use_sim_time}],
-    #     condition=UnlessCondition(use_simulation)
-    # )
-
     node_nmea_topic_driver = Node(
         name='nmea_topic_driver',
         executable='nmea_topic_driver',
@@ -233,9 +208,7 @@ def generate_launch_description():
 
     launch_proton = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([launch_file_proton]),
-        launch_arguments=[
-            # ('namespace', 'j100_0842'),
-            ('platform', 'j100')]
+        launch_arguments=[('platform', 'j100')]
     )
 
     # Defaults to main namespace, no need for empty namespace
@@ -283,7 +256,6 @@ def generate_launch_description():
     ld.add_action(node_battery_state_estimator)
     ld.add_action(node_battery_state_control)
     ld.add_action(node_imu_filter_node)
-    # ld.add_action(node_micro_ros_agent)
     ld.add_action(node_nmea_topic_driver)
     ld.add_action(launch_proton)
     # ld.add_action(launch_diagnostics)
