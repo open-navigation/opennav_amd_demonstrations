@@ -24,10 +24,8 @@ controller_remappings = [
     ('joint_states', 'platform/joint_states'),
     ('dynamic_joint_states', 'platform/dynamic_joint_states'),
     ('platform_velocity_controller/odom', 'platform/odom'),
-    ('platform_velocity_controller/odometry', 'platform/odom'),
     ('platform_velocity_controller/cmd_vel', 'platform/cmd_vel'),
     ('platform_velocity_controller/cmd_vel_out', 'platform_velocity_controller/debug_cmd_vel_out'),
-    ('platform_velocity_controller/reference', 'platform/cmd_vel'),
     ('platform_velocity_controller/transition_event', 'platform/transition_event'),
     ('~/robot_description', 'robot_description'),
 ]
