@@ -20,7 +20,11 @@
 
   <!-- Clearpath base platform -->
   <!-- <xacro:j100 wheel="default"/> -->
+<<<<<<< Updated upstream
   <xacro:j100 control="diff_fwd" front_wheels="outdoor" rear_wheels="outdoor"/>
+=======
+  <xacro:j100 control="diff_4wd" front_wheels="outdoor" rear_wheels="outdoor"/>
+>>>>>>> Stashed changes
   <xacro:fender name="front_fender" model="default" parent_link="base_link">
     <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
   </xacro:fender>

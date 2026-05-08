@@ -22,7 +22,11 @@
 
   <xacro:property name="mount_spacing" value="0.120" />
 
+<<<<<<< Updated upstream
   <xacro:macro name="j100" params="control:='diff_fwd' front_wheels:='outdoor' rear_wheels:='outdoor'">
+=======
+  <xacro:macro name="j100" params="control:='diff_4wd' front_wheels:='outdoor' rear_wheels:='outdoor'">
+>>>>>>> Stashed changes
     <link name="base_link"></link>
 
     <joint name="base_link_joint" type="fixed">
