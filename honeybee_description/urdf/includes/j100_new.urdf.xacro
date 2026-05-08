@@ -95,7 +95,7 @@
         <update_rate>50</update_rate>
         <visualize>true</visualize>
         <gz_frame_id>imu_0_link</gz_frame_id>
-        <topic>sensors/imu_0/data_raw</topic> <!-- Steve mod: have topic point somewhere reasonable -->
+        <topic>$(arg namespace)/sensors/imu_0/data_raw</topic>
       </sensor>
     </gazebo>
 
@@ -119,7 +119,7 @@
         <always_on>1</always_on>
         <update_rate>10</update_rate>
         <gz_frame_id>gps_0_link</gz_frame_id>
-        <topic>sensors/gps_0/fix</topic>
+        <topic>$(arg namespace)/sensors/gps_0/navsat</topic>
       </sensor>
     </gazebo>
 

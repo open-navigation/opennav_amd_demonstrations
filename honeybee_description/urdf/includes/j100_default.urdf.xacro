@@ -1,0 +1,203 @@
+<?xml version="1.0"?>
+<robot name="j100"
+  xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:include filename="$(find clearpath_platform_description)/urdf/j100/wheels/wheel.urdf.xacro"/>
+  <xacro:arg name="is_sim" default="false" />
+  <xacro:arg name="prefix" default="" />
+  <xacro:arg name="namespace" default="" />
+  <xacro:arg name="gazebo_controllers" default="$(find clearpath_control)/config/j100/control.yaml"/>
+
+  <xacro:property name="PI" value="3.1415926535897931" />
+
+  <xacro:property name="wheelbase" value="0.262" />
+  <xacro:property name="track" value="0.37559" />
+  <xacro:property name="wheel_vertical_offset" value="0.0345" />
+  <xacro:property name="footprint_vertical_offset" value="-0.0655" />
+
+  <xacro:property name="wheel_radius" value="0.098" />
+  <xacro:property name="wheel_width" value="0.040" />
+
+  <xacro:property name="chassis_length" value="0.420" />
+  <xacro:property name="chassis_width" value="0.310" />
+  <xacro:property name="chassis_height" value="0.184" />
+
+  <xacro:property name="dummy_inertia" value="1e-09"/>
+
+  <xacro:property name="mount_spacing" value="0.120" />
+
+  <xacro:macro name="j100" params="wheel:='default'">
+
+    <xacro:j100_wheel prefix="front_left">
+      <origin xyz="${wheelbase/2} ${track/2} ${wheel_vertical_offset}" rpy="0 0 0" />
+    </xacro:j100_wheel>
+    <xacro:j100_wheel prefix="front_right">
+      <origin xyz="${wheelbase/2} ${-track/2} ${wheel_vertical_offset}" rpy="0 0 0" />
+    </xacro:j100_wheel>
+    <xacro:j100_wheel prefix="rear_left">
+      <origin xyz="${-wheelbase/2} ${track/2} ${wheel_vertical_offset}" rpy="0 0 0" />
+    </xacro:j100_wheel>
+    <xacro:j100_wheel prefix="rear_right">
+      <origin xyz="${-wheelbase/2} ${-track/2} ${wheel_vertical_offset}" rpy="0 0 0" />
+    </xacro:j100_wheel>
+
+    <gazebo>
+      <plugin filename="libignition-gazebo-wheel-slip-system.so" name="ignition::gazebo::systems::WheelSlip">
+        <wheel link_name="front_left_wheel_link">
+          <slip_compliance_lateral>1.0</slip_compliance_lateral>
+          <slip_compliance_longitudinal>1.0</slip_compliance_longitudinal>
+          <wheel_normal_force>40</wheel_normal_force>
+          <wheel_radius>${wheel_radius}</wheel_radius>
+        </wheel>
+        <wheel link_name="front_right_wheel_link">
+          <slip_compliance_lateral>1.0</slip_compliance_lateral>
+          <slip_compliance_longitudinal>1.0</slip_compliance_longitudinal>
+          <wheel_normal_force>40</wheel_normal_force>
+          <wheel_radius>${wheel_radius}</wheel_radius>
+        </wheel>
+        <wheel link_name="rear_left_wheel_link">
+          <slip_compliance_lateral>1.0</slip_compliance_lateral>
+          <slip_compliance_longitudinal>1.0</slip_compliance_longitudinal>
+          <wheel_normal_force>40</wheel_normal_force>
+          <wheel_radius>${wheel_radius}</wheel_radius>
+        </wheel>
+        <wheel link_name="rear_right_wheel_link">
+          <slip_compliance_lateral>1.0</slip_compliance_lateral>
+          <slip_compliance_longitudinal>1.0</slip_compliance_longitudinal>
+          <wheel_normal_force>40</wheel_normal_force>
+          <wheel_radius>${wheel_radius}</wheel_radius>
+        </wheel>
+      </plugin>
+    </gazebo>
+
+    <link name="base_link"></link>
+
+    <joint name="base_link_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <parent link="base_link"/>
+      <child link="chassis_link" />
+    </joint>
+
+    <link name="chassis_link">
+      <visual>
+        <origin xyz="0 0 ${footprint_vertical_offset}" rpy="${PI/2} 0 ${PI/2}"/>
+        <geometry>
+          <mesh filename="package://clearpath_platform_description/meshes/j100/j100_base.stl"/>
+        </geometry>
+        <material name="clearpath_dark_grey" />
+      </visual>
+      <collision>
+        <origin xyz="0 0 ${chassis_height/2}"/>
+        <geometry>
+          <box size="${chassis_length} ${chassis_width} ${chassis_height}"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <origin xyz="0.012  0.002 0.067" rpy="0 0 0"/>
+        <mass value="16.523"/>
+        <inertia ixx="0.3136" ixy="-0.0008" ixz="0.0164" iyy="0.3922" iyz="-0.0009" izz="0.4485"/>
+      </inertial>
+    </link>
+
+    <link name="imu_0_link">
+      <inertial>
+        <mass value="0.001"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <inertia ixx="${dummy_inertia}" ixy="0.0" ixz="0.0" iyy="${dummy_inertia}" iyz="0.0" izz="${dummy_inertia}"/>
+      </inertial>
+    </link>
+    <joint name="imu_joint" type="fixed">
+      <parent link="chassis_link" />
+      <child link="imu_0_link" />
+    </joint>
+
+    <gazebo reference="imu_0_link">
+      <sensor type="imu" name="imu_0">
+        <always_on>true</always_on>
+        <update_rate>50</update_rate>
+        <visualize>true</visualize>
+        <ignition_frame_id>imu_0_link</ignition_frame_id>
+        <topic>$(arg namespace)/sensors/imu_0/data_raw</topic>
+      </sensor>
+    </gazebo>
+
+    <link name="gps_0_link">
+      <visual>
+        <geometry>
+          <cylinder radius="0.026" length="0.016" />
+        </geometry>
+        <origin xyz="0 0 0.008" />
+        <material name="clearpath_black" />
+      </visual>
+    </link>
+    <joint name="navsat_joint" type="fixed">
+      <parent link="chassis_link" />
+      <child link="gps_0_link" />
+      <origin xyz="-0.180 0.126 0.1815" />
+    </joint>
+
+    <gazebo reference="gps_0_link">
+      <sensor name="gps_0" type="navsat">
+        <always_on>1</always_on>
+        <update_rate>10</update_rate>
+        <ignition_frame_id>gps_0_link</ignition_frame_id>
+        <topic>$(arg namespace)/sensors/gps_0/navsat</topic>
+      </sensor>
+    </gazebo>
+
+    <link name="default_mount"></link>
+    <joint name="default_mount_joint" type="fixed">
+      <parent link="chassis_link" />
+      <child link="default_mount" />
+      <origin xyz="0 0 ${chassis_height}" />
+    </joint>
+
+    <link name="rear_0_mount"></link>
+    <joint name="rear_0_mount_joint" type="fixed">
+      <parent link="default_mount" />
+      <child link="rear_0_mount" />
+      <origin xyz="${-mount_spacing} 0 0" />
+    </joint>
+
+    <link name="front_0_mount"></link>
+    <joint name="front_0_mount_joint" type="fixed">
+      <parent link="default_mount" />
+      <child link="front_0_mount" />
+      <origin xyz="${mount_spacing} 0 0" />
+    </joint>
+
+    <!-- Gazebo Controller -->
+    <xacro:include filename="$(find clearpath_platform_description)/urdf/generic/gazebo.urdf.xacro"/>
+
+    <!-- ROS2 controls -->
+    <ros2_control name="j100_hardware" type="system">
+      <hardware>
+        <xacro:if value="$(arg is_sim)">
+          <plugin>ign_ros2_control/IgnitionSystem</plugin>
+        </xacro:if>
+        <xacro:unless value="$(arg is_sim)">
+          <plugin>clearpath_platform/J100Hardware</plugin>
+        </xacro:unless>
+      </hardware>
+      <joint name="front_left_wheel_joint">
+        <command_interface name="velocity"/>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="rear_left_wheel_joint">
+        <command_interface name="velocity"/>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="front_right_wheel_joint">
+        <command_interface name="velocity"/>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="rear_right_wheel_joint">
+        <command_interface name="velocity"/>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+    </ros2_control>
+  </xacro:macro>
+</robot>
