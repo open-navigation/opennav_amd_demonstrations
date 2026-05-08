@@ -1,13 +1,13 @@
-serial_number: j100-0849 # or j100-0842
+serial_number: j100-0842
 version: 0
 system:
   hosts:
-    - hostname: cpr-j100-0849 # or j100-0842
+    - hostname: cpr-j100-0842
       ip: 192.168.131.1
   ros2:
-    namespace: j100_0849 # or j100-0842
+    namespace: j100_0842
     domain_id: 0
-    workspaces: [/home/administrator/colcon_ws/install/setup.bash]
+    workspaces: [/home/robot/colcon_ws/install/setup.bash]
 platform:
   attachments:
     - name: front_fender
@@ -24,20 +24,10 @@ platform:
       enabled: true
   extras:
     urdf:
-      package: honeybee_description
-      path: urdf/honeybee_description.urdf.xacro
-links:
-  box: []
-  cylinder: []
-  frame: []
-  mesh: []
-  sphere: []
-mounts:
-  bracket: []
-  fath_pivot: []
-  riser: []
-  disk: []
-  post: []
+      package: ona01_description
+      path: urdf/ona01_jackal_description.urdf.xacro
+  mcu:
+    protocol: proton
 sensors:
   camera:
     - model: intel_realsense
@@ -47,10 +37,10 @@ sensors:
       xyz: [0.0, 0.0, 0.004]
       rpy: [0.0, 0.0, 0.0]
       ros_parameters:
-        camera:
+        intel_realsense:
           camera_name: camera_0
           device_type: d435
-          serial_no: "341622073339" # or the other
+          serial_no: "335222070279"
           enable_color: true
           rgb_camera.profile: 640,480,30
           enable_depth: true
