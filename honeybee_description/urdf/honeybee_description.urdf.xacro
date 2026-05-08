@@ -9,22 +9,17 @@
   <xacro:arg      name="is_sim"       default="false"/>
 
   <!-- Includes -->
-  <xacro:include filename="$(find clearpath_platform_description)/urdf/common.urdf.xacro"/>
-  <xacro:include filename="${find_package}/urdf/includes/j100.urdf.xacro"/>
-  <xacro:include filename="$(find clearpath_platform_description)/urdf/j100/attachments/fender.urdf.xacro"/>
-  <xacro:include filename="$(find clearpath_platform_description)/urdf/j100/attachments/top_plate.urdf.xacro"/>
   <xacro:include filename="${find_package}/urdf/includes/custom_macros.urdf.xacro" />
   <xacro:include filename="${find_package}/urdf/includes/OS0-32.urdf.xacro" />
   <xacro:include filename="${find_package}/urdf/includes/intel_realsense.urdf.xacro"/>
   <xacro:include filename="${find_package}/urdf/includes/microstrain_imu.urdf.xacro"/>
+  <xacro:include filename="${find_package}/urdf/includes/j100.urdf.xacro"/>
+  <xacro:include filename="$(find clearpath_platform_description)/urdf/common.urdf.xacro"/>
+  <xacro:include filename="$(find clearpath_platform_description)/urdf/j100/attachments/fender.urdf.xacro"/>
+  <xacro:include filename="$(find clearpath_platform_description)/urdf/j100/attachments/top_plate.urdf.xacro"/>
 
   <!-- Clearpath base platform -->
-  <!-- <xacro:j100 wheel="default"/> -->
-<<<<<<< Updated upstream
-  <xacro:j100 control="diff_fwd" front_wheels="outdoor" rear_wheels="outdoor"/>
-=======
   <xacro:j100 control="diff_4wd" front_wheels="outdoor" rear_wheels="outdoor"/>
->>>>>>> Stashed changes
   <xacro:fender name="front_fender" model="default" parent_link="base_link">
     <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
   </xacro:fender>
