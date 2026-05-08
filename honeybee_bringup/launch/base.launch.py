@@ -13,7 +13,8 @@
 # limitations under the License.
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, GroupAction
+from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, GroupAction
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.conditions import UnlessCondition
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
@@ -32,6 +33,9 @@ def generate_launch_description():
         FindPackageShare('honeybee_bringup'), 'config', 'twist_mux.yaml'])
     ros_control_params = PathJoinSubstitution([
         FindPackageShare('honeybee_bringup'), 'config', 'ros_control.yaml'])
+    
+    launch_file_proton = PathJoinSubstitution([
+        FindPackageShare('clearpath_firmware'), 'launch', 'proton.launch.py'])
 
     setup_path = PathJoinSubstitution([
         FindPackageShare('honeybee_bringup'), 'config', 'include'])
@@ -56,7 +60,8 @@ def generate_launch_description():
             },
             remappings=[
               ('platform_velocity_controller/odom', 'platform/odom'),
-              ('platform_velocity_controller/cmd_vel_unstamped', 'platform/cmd_vel_unstamped'),
+            #   ('platform_velocity_controller/cmd_vel_unstamped', 'platform/cmd_vel_unstamped'),
+              ('platform_velocity_controller/cmd_vel_out', 'platform/cmd_vel_out'),
               ('joint_states', 'platform/joint_states'),
               ('dynamic_joint_states', 'platform/dynamic_joint_states'),
               ('~/robot_description', 'robot_description')
@@ -71,6 +76,7 @@ def generate_launch_description():
             arguments=['--controller-manager-timeout', '60', 'joint_state_broadcaster'],
             parameters=[{'use_sim_time': use_sim_time}],
             output='screen',
+            additional_env={'ROS_SUPER_CLIENT': 'True'},
         ),
 
         # Velocity Controller
@@ -80,6 +86,7 @@ def generate_launch_description():
             arguments=['--controller-manager-timeout', '60', 'platform_velocity_controller'],
             parameters=[{'use_sim_time': use_sim_time}],
             output='screen',
+            additional_env={'ROS_SUPER_CLIENT': 'True'},
         )
     ])
 
@@ -113,7 +120,8 @@ def generate_launch_description():
         name='teleop_twist_joy_node',
         parameters=[
             teleop_joy_params,
-            {'use_sim_time': use_sim_time}],
+            {'use_sim_time': use_sim_time},
+            {'publish_stamped_twist': True}],
         remappings=[
             ('joy', 'joy_teleop/joy'),
             ('cmd_vel', 'joy_teleop/cmd_vel'),
@@ -124,10 +132,11 @@ def generate_launch_description():
         package='twist_mux',
         executable='twist_mux',
         output='screen',
-        remappings={('cmd_vel_out', 'platform/cmd_vel_unstamped')},
+        remappings={('cmd_vel_out', 'platform/cmd_vel_out')},
         parameters=[
             twist_mux_params,
-            {'use_sim_time': use_sim_time}]
+            {'use_sim_time': use_sim_time},
+            {'use_stamped': True}]
     )
 
     node_teleop_estop = Node(
@@ -164,7 +173,7 @@ def generate_launch_description():
     node_battery_state_estimator = Node(
         name='battery_state_estimator',
         executable='battery_state_estimator',
-        package='clearpath_diagnostics',
+        package='clearpath_hardware_interfaces',
         output='screen',
         arguments=['-s', setup_path],
         parameters=[{'use_sim_time': use_sim_time}],
@@ -174,22 +183,22 @@ def generate_launch_description():
     node_battery_state_control = Node(
         name='battery_state_control',
         executable='battery_state_control',
-        package='clearpath_diagnostics',
+        package='clearpath_hardware_interfaces',
         output='screen',
         arguments=['-s', setup_path],
         parameters=[{'use_sim_time': use_sim_time}],
         condition=UnlessCondition(use_simulation)
     )
 
-    node_micro_ros_agent = Node(
-        name='micro_ros_agent',
-        executable='micro_ros_agent',
-        package='micro_ros_agent',
-        output='screen',
-        arguments=['serial', '--dev', '/dev/clearpath/j100'],
-        parameters=[{'use_sim_time': use_sim_time}],
-        condition=UnlessCondition(use_simulation)
-    )
+    # node_micro_ros_agent = Node(
+    #     name='micro_ros_agent',
+    #     executable='micro_ros_agent',
+    #     package='micro_ros_agent',
+    #     output='screen',
+    #     arguments=['serial', '--dev', '/dev/clearpath/j100'],
+    #     parameters=[{'use_sim_time': use_sim_time}],
+    #     condition=UnlessCondition(use_simulation)
+    # )
 
     node_nmea_topic_driver = Node(
         name='nmea_topic_driver',
@@ -204,6 +213,13 @@ def generate_launch_description():
              ('vel', 'sensors/gps_0/vel')],
         parameters=[{'use_sim_time': use_sim_time}],
         condition=UnlessCondition(use_simulation)
+    )
+
+    launch_proton = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([launch_file_proton]),
+        launch_arguments=[
+            # ('namespace', 'j100_0842'),
+            ('platform', 'j100')]
     )
 
     # Defaults to main namespace, no need for empty namespace
@@ -251,8 +267,9 @@ def generate_launch_description():
     ld.add_action(node_battery_state_estimator)
     ld.add_action(node_battery_state_control)
     ld.add_action(node_imu_filter_node)
-    ld.add_action(node_micro_ros_agent)
+    # ld.add_action(node_micro_ros_agent)
     ld.add_action(node_nmea_topic_driver)
+    ld.add_action(launch_proton)
     # ld.add_action(launch_diagnostics)
     # ld.add_action(process_configure_mcu)
     return ld
