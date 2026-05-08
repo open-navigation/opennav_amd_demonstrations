@@ -1,17 +1,16 @@
 controller_manager:
   ros__parameters:
-    update_rate: 50  # Hz
+    update_rate: 50
     use_sim_time: False
 
-    joint_state_broadcaster.type: joint_state_broadcaster/JointStateBroadcaster
-
-    platform_velocity_controller.type: diff_drive_controller/DiffDriveController
+    joint_state_broadcaster.type: 'joint_state_broadcaster/JointStateBroadcaster'
+    platform_velocity_controller.type: 'diff_drive_controller/DiffDriveController'
 
 platform_velocity_controller:
   ros__parameters:
     use_sim_time: False
-    left_wheel_names: [ "front_left_wheel_joint", "rear_left_wheel_joint" ]
-    right_wheel_names: [ "front_right_wheel_joint", "rear_right_wheel_joint" ]
+    left_wheel_names: [ 'front_left_wheel_joint', 'rear_left_wheel_joint' ]
+    right_wheel_names: [ 'front_right_wheel_joint', 'rear_right_wheel_joint' ]
 
     wheel_separation: 0.37559
     wheels_per_side: 1
@@ -21,9 +20,9 @@ platform_velocity_controller:
     right_wheel_radius_multiplier: 1.0
 
     publish_rate: 50.0
-    odom_frame_id: odom
-    base_frame_id: base_link
-    pose_covariance_diagonal : [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
+    odom_frame_id: 'odom'
+    base_frame_id: 'base_link'
+    pose_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
     twist_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
 
     open_loop: false
