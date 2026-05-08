@@ -13,9 +13,9 @@
 # limitations under the License.
 
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, GroupAction
-from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.actions import DeclareLaunchArgument, GroupAction, IncludeLaunchDescription
 from launch.conditions import UnlessCondition
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
@@ -33,7 +33,7 @@ def generate_launch_description():
         FindPackageShare('honeybee_bringup'), 'config', 'twist_mux.yaml'])
     ros_control_params = PathJoinSubstitution([
         FindPackageShare('honeybee_bringup'), 'config', 'ros_control.yaml'])
-    
+
     launch_file_proton = PathJoinSubstitution([
         FindPackageShare('clearpath_firmware'), 'launch', 'proton.launch.py'])
 
@@ -48,6 +48,18 @@ def generate_launch_description():
         description='Use simulation or hardware'
     )
 
+    controller_remappings = [
+        ('joint_states', 'platform/joint_states'),
+        ('dynamic_joint_states', 'platform/dynamic_joint_states'),
+        ('platform_velocity_controller/odom', 'platform/odom'),
+        ('platform_velocity_controller/odometry', 'platform/odom'),
+        ('platform_velocity_controller/cmd_vel', 'platform/cmd_vel'),
+        ('platform_velocity_controller/cmd_vel_out', 'platform_velocity_controller/debug_cmd_vel_out'),
+        ('platform_velocity_controller/reference', 'platform/cmd_vel'),
+        ('platform_velocity_controller/transition_event', 'platform/transition_event'),
+        ('~/robot_description', 'robot_description'),
+    ]
+
     # Nodes and launch files for robot base
     action_control_group = GroupAction([
         Node(
@@ -58,17 +70,7 @@ def generate_launch_description():
                 'stdout': 'screen',
                 'stderr': 'screen',
             },
-            remappings=[
-                ('joint_states', 'platform/joint_states'),
-                ('dynamic_joint_states', 'platform/dynamic_joint_states'),
-                ('platform_velocity_controller/odom', 'platform/odom'),
-                ('platform_velocity_controller/odometry', 'platform/odom'),
-                ('platform_velocity_controller/cmd_vel', 'platform/cmd_vel'),
-                ('platform_velocity_controller/cmd_vel_out', 'platform_velocity_controller/debug_cmd_vel_out'),
-                ('platform_velocity_controller/reference', 'platform/cmd_vel'),
-                ('platform_velocity_controller/transition_event', 'platform/transition_event'),
-                ('~/robot_description', 'robot_description'),
-            ],
+            remappings=controller_remappings,
             condition=UnlessCondition(use_sim_time)
         ),
 
@@ -133,7 +135,7 @@ def generate_launch_description():
         package='twist_mux',
         executable='twist_mux',
         output='screen',
-        remappings={('cmd_vel_out', 'platform/cmd_vel'),},
+        remappings={('cmd_vel_out', 'platform/cmd_vel'), },
         parameters=[
             twist_mux_params,
             {'use_sim_time': use_sim_time},
