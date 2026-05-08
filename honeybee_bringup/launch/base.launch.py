@@ -59,12 +59,24 @@ def generate_launch_description():
                 'stderr': 'screen',
             },
             remappings=[
+<<<<<<< Updated upstream
               ('platform_velocity_controller/odom', 'platform/odom'),
             #   ('platform_velocity_controller/cmd_vel_unstamped', 'platform/cmd_vel_unstamped'),
               ('platform_velocity_controller/cmd_vel_out', 'platform/cmd_vel_out'),
               ('joint_states', 'platform/joint_states'),
               ('dynamic_joint_states', 'platform/dynamic_joint_states'),
               ('~/robot_description', 'robot_description')
+=======
+                ('joint_states', 'platform/joint_states'),
+                ('dynamic_joint_states', 'platform/dynamic_joint_states'),
+                ('platform_velocity_controller/odom', 'platform/odom'),
+                ('platform_velocity_controller/odometry', 'platform/odom'),
+                ('platform_velocity_controller/cmd_vel', 'platform/cmd_vel'),
+                ('platform_velocity_controller/cmd_vel_out', 'platform_velocity_controller/debug_cmd_vel_out'),
+                ('platform_velocity_controller/reference', 'platform/cmd_vel'),
+                ('platform_velocity_controller/transition_event', 'platform/transition_event'),
+                ('~/robot_description', 'robot_description'),
+>>>>>>> Stashed changes
             ],
             condition=UnlessCondition(use_sim_time)
         ),
@@ -132,7 +144,11 @@ def generate_launch_description():
         package='twist_mux',
         executable='twist_mux',
         output='screen',
+<<<<<<< Updated upstream
         remappings={('cmd_vel_out', 'platform/cmd_vel_out')},
+=======
+        remappings={('cmd_vel_out', 'platform/cmd_vel'),},
+>>>>>>> Stashed changes
         parameters=[
             twist_mux_params,
             {'use_sim_time': use_sim_time},
