@@ -8,6 +8,10 @@ repositories:
     type: git
     url: https://github.com/orbbec/OrbbecSDK_ROS2
     version: v2-main # edb0ee91a6f1dc501f0e7cbd94cfb9506dd2d807
+  ros-perception/image_pipeline:
+    type: git
+    url: https://github.com/open-navigation/image_pipeline
+    version: jazzy
 
   # For GPS demo
   SteveMacenski/nonpersistent_voxel_layer:
