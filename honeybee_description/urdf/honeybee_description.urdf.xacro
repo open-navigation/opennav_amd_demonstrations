@@ -27,8 +27,8 @@
     <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 3.1415"/>
   </xacro:fender>
   <xacro:top_plate name="ark_enclosure" model="ark_enclosure" parent_link="default_mount">
-    <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
-  </xacro:top_plate>
+    <origin xyz="0.0 0.0 0.035" rpy="0.0 0.0 0.0"/> <!-- + 0.035m for Ryzen AI Max standoffs -->
+  </xacro:top_plate>  
 
   <!-- Metal enclosure -->
   <xacro:link name="ark_enclosure_top" parent="ark_enclosure_link" type="fixed">

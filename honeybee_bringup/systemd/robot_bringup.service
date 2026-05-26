@@ -5,6 +5,8 @@ After=network-online.target
 [Service]
 User=robot
 Type=simple
+Environment="RMW_IMPLEMENTATION=rmw_cyclonedds_cpp"
+Environment="CYCLONEDDS_URI=/home/robot/cyclonedds.xml"  # TODO: Use your username!
 Environment="USE_ORBECC=true"
 ExecStart=/bin/bash -c 'source ~/amd_ws/install/setup.bash; ros2 launch honeybee_bringup robot.launch.py;'
 
