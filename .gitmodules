@@ -1,0 +1,3 @@
+[submodule "opennav_amd_semantic_navigation"]
+	path = opennav_amd_semantic_navigation
+	url = https://github.com/open-navigation/opennav_amd_semantic_navigation

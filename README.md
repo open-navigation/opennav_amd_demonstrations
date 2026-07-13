@@ -1,11 +1,15 @@
 # Open Navigation - AMD Ryzen AI Demonstrations
 
-This project has demonstrations and analysis using AMD's powerful Ryzen AI CPU, GPU, NPU, and related acceleration technologies for embedded solutions with Nav2, ROS 2 Humble, and the open-source robotics community's technologies. These demononstrations show complete & tuned reference applications to perform **indoor 2D-based**, **urban 3D-based**, and **outdoor GPS-based** navigation. They use AMD's compute technologies and show that they are very well suited to robotics tasks and workloads, with plenty of compute time remaining for AI, business logic, application layers, and other computationally demanding tasks on top of advanced mobility and 3D perception. 
+This project has demonstrations and analysis using AMD's powerful Ryzen AI CPU, GPU, NPU, and related acceleration technologies for embedded solutions with Nav2, ROS 2 Humble/Jazzy, and the open-source robotics community's technologies. These demononstrations show complete & tuned reference applications to perform **indoor 2D-based**, **urban 3D-based**, and **outdoor GPS-based** navigation. They use AMD's compute technologies and show that they are very well suited to robotics tasks and workloads, with plenty of compute time remaining for AI, business logic, application layers, and other computationally demanding tasks on top of advanced mobility and 3D perception. 
+
+<p align="center">
+<img src="./honeybee_demos/images/opennav_amd_ggb.png" width="500">
+</p>
 
 **⚠️ Need ROS 2, Nav2 help or support? Contact [Open Navigation](https://www.opennav.org/)! ⚠️**
 
 These demonstrations orbit around the Honeybee reference platform, a [Clearpath Robotics Jackal](https://clearpathrobotics.com/jackal-small-unmanned-ground-vehicle/) outfitted with:
-- AMD Ryzen AI using a [Miniforum UM790 Pro](https://store.minisforum.com/products/minisforum-um790-pro)
+- AMD Ryzen AI using a [Miniforum UM790 Pro](https://store.minisforum.com/products/minisforum-um790-pro) or AMD Strix Halo using a [GMKtec EVO-X2 AMD Ryzen AI Max+ 395](https://www.gmktec.com/products/amd-ryzen%E2%84%A2-ai-max-395-evo-x2-ai-mini-pc?srsltid=AfmBOoqxVU89DrI1gDHwbVT5_xadAwmB2H4RURL3yLy8rI0heLWBPxiw&variant=64bbb08e-da87-4bed-949b-1652cd311770)
 - [Ouster OS0-32](https://ouster.com/products/hardware/os0-lidar-sensor)
 - [Realsense D435i](https://www.intelrealsense.com/depth-camera-d435i/) or [Orbecc Gemini 355](https://www.orbbec.com/products/stereo-vision-camera/gemini-335/)
 - [Microstrain GX-25](https://www.microstrain.com/inertial-sensors/3dm-gx5-25)
@@ -13,8 +17,8 @@ These demonstrations orbit around the Honeybee reference platform, a [Clearpath 
 [Demonstration 1: Outdoor GPS Navigation](./honeybee_demos/honeybee_demos/gps_patrol_demo.py) | [Demonstration 2: Urban 3D Navigation](./honeybee_demos/honeybee_demos/urban_navigation_demo.py) 
 :-------------------------:|:-------------------------:
 [![ALT TEXT](./honeybee_demos/images/demo1_gif.gif)](https://www.youtube.com/watch?v=255o4IS3rHg) |  [![ALT TEXT](./honeybee_demos/images/demo2_gif.gif)](https://www.youtube.com/watch?v=sL2GZdODUcE)
-[**Demonstration 3: Long-Duration Indoor Navigation**](./honeybee_demos/honeybee_demos/indoor_long_duration_picking_demo.py) | **Glamour Shot** |
-[![ALT TEXT](./honeybee_demos/images/demo3_gif.gif)](https://www.youtube.com/watch?v=evZ-GvswU4o) | <img src="./honeybee_demos/images/opennav_amd_ggb.png" width="500">
+[**Demonstration 3: Long-Duration Indoor Navigation**](./honeybee_demos/honeybee_demos/indoor_long_duration_picking_demo.py) | [**Demonstration 4: SAM3 Semantic Navigation**](./opennav_amd_semantic_navigation) |
+[![ALT TEXT](./honeybee_demos/images/demo3_gif.gif)](https://www.youtube.com/watch?v=evZ-GvswU4o) | [![ALT TEXT](./honeybee_demos/images/hero.gif)](https://www.youtube.com/watch?v=a4E9vwTxbZE)
 
 **Click on the demo gifs to see the full videos on YouTube!**
 
@@ -26,6 +30,8 @@ This project contains a typical layout for a ROS-based mobile robot:
 - `honeybee_nav2` contains the navigation configurations for the various demonstrations
 - `honeybee_demos` contains the demo scripts, launch files, and so forth to perform the applications. These would be notionally replaced by business logic for a refined, deployed application.
 - `scripts` contain developer scripts used by Open Navigation to perform the demonstrations which have potential useful value to the community in getting started
+
+There's also a submodule to the SAM3 Semantic Navigation demonstrations which require the Strix Halo, X100, or Ryzen AI Max+ 395 to run server-class semantic segmentation foundation models on the edge. See that project for its respective configurations, additional setup instructions, and detailed demonstrations.
 
 Bonus: `docs` contains a number of developer guides for bootstrapping new computers for robots, network setup with ROS 2, setting up field experimental networks, how to visualize data remotely, make software run on startup, and so on.
 
@@ -71,7 +77,7 @@ This is straight forward to build and work with. Clone this repository into your
 ```
 mkdir -p amd_ws/src
 cd amd_ws/src
-git clone git@github.com:open-navigation/opennav_amd_demos.git
+git clone --recurse-submodules git@github.com:open-navigation/opennav_amd_demos.git
 ```
 
 Then, we need to pull in some dependencies that we cannot obtain from `rosdep`:
